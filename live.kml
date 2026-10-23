@@ -183,5 +183,35 @@
       </Style>
       <Point><coordinates>121.53237,25.001363,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[邪教營地]]></name>
+      <description><![CDATA[[分類: 🔴 災情 / 危險管制區]
+
+座標：51R UH 51889 65893 (25.00129, 121.53233)
+更新：2026/10/24 01:16:40 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff0000ff</color>
+          <scale>0.85</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+        <LineStyle>
+          <color>ff0000ff</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>660000ff</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
+      <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.532529,25.001113,0 121.532325,25.001089,0 121.532138,25.001213,0 121.532148,25.001417,0 121.53228,25.001495,0 121.532443,25.001427,0 121.532445,25.001303,0 121.532519,25.001233,0 121.532529,25.001113,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
+    </Placemark>
   </Document>
 </kml>
