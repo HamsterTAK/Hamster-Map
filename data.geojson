@@ -7,7 +7,8 @@
         "name": "邪惡祭壇",
         "category": "danger",
         "desc": "",
-        "time": "2026/10/23 23:28:16"
+        "time": "2026/10/23 23:28:16",
+        "coord": "51R UH 51890 65877 (25.00115, 121.53235)"
       },
       "geometry": {
         "type": "Point",
@@ -23,7 +24,8 @@
         "name": "Stephanie",
         "category": "friendly",
         "desc": "",
-        "time": "2026/10/23 23:30:44"
+        "time": "2026/10/23 23:30:44",
+        "coord": "51R UH 51945 65858 (25.00099, 121.53289)"
       },
       "geometry": {
         "type": "Point",
@@ -39,7 +41,8 @@
         "name": "人質",
         "category": "rescue",
         "desc": "",
-        "time": "2026/10/23 23:31:04"
+        "time": "2026/10/23 23:31:04",
+        "coord": "51R UH 51910 65899 (25.00135, 121.53254)"
       },
       "geometry": {
         "type": "Point",
@@ -55,7 +58,8 @@
         "name": "UAS",
         "category": "supply",
         "desc": "",
-        "time": "2026/10/23 23:31:21"
+        "time": "2026/10/23 23:31:21",
+        "coord": "51R UH 51968 65839 (25.00081, 121.53312)"
       },
       "geometry": {
         "type": "Point",
@@ -72,7 +76,8 @@
         "category": "friendly",
         "desc": "",
         "time": "2026/10/23 23:48:13 (Felicia)",
-        "updatedBy": "Felicia"
+        "updatedBy": "Felicia",
+        "coord": "51R UH 51949 65876 (25.00115, 121.53293)"
       },
       "geometry": {
         "type": "Point",
@@ -89,13 +94,32 @@
         "category": "friendly",
         "desc": "",
         "time": "2026/10/23 23:48:48 (Neoyang)",
-        "updatedBy": "Neoyang"
+        "updatedBy": "Neoyang",
+        "coord": "51R UH 51865 65835 (25.00077, 121.53210)"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
           121.532097,
           25.000766
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "教徒",
+        "category": "danger",
+        "desc": "",
+        "coord": "51R UH 51876 65870 (25.00108, 121.53220)",
+        "time": "2026/10/24 00:24:12 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532205,
+          25.001082
         ]
       }
     }
