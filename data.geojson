@@ -1,21 +1,4 @@
 {
   "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "邪惡祭壇",
-        "category": "danger",
-        "desc": "",
-        "time": "2026/10/23 18:17:10"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.53239,
-          25.001157
-        ]
-      }
-    }
-  ]
+  "features": []
 }
