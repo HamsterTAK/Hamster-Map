@@ -159,6 +159,24 @@
           25.000813
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Team Charlie",
+        "category": "friendly",
+        "desc": "",
+        "coord": "51R UH 51934 65921 (25.00155, 121.53278)",
+        "time": "2026/10/24 03:03:06 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532776,
+          25.001553
+        ]
+      }
     }
   ]
 }
