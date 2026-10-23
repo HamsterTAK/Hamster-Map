@@ -141,6 +141,24 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Team Bravo",
+        "category": "friendly",
+        "desc": "",
+        "coord": "51R UH 51851 65854 (25.00094, 121.53196)",
+        "time": "2026/10/24 02:46:02 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.531963,
+          25.000937
+        ]
+      }
     }
   ]
 }
