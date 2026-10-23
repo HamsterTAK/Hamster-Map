@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>救災戰術協作地圖 (GitHub.io -> ATAK)</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body, html { margin: 0; padding: 0; height: 100%; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; }
+    #topbar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      background: #1e293b; color: #f8fafc; padding: 10px 15px; font-size: 14px;
+      border-bottom: 1px solid #334155;
+    }
+    #topbar input, #topbar select, #topbar button {
+      padding: 6px 10px; border-radius: 4px; border: 1px solid #475569; font-size: 13px;
+    }
+    #topbar input, #topbar select { background: #0f172a; color: #fff; }
+    .btn { cursor: pointer; font-weight: 600; border: none !important; color: white; transition: opacity 0.2s; }
+    .btn:hover { opacity: 0.9; }
+    .btn-save { background: #ef4444; }
+    .btn-local { background: #10b981; }
+    .btn-atak { background: #3b82f6; }
+    #status { margin-left: auto; color: #38bdf8; font-weight: bold; font-size: 13px; }
+    #map { height: calc(100% - 54px); width: 100%; background: #000000; }
+
+    #modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.65); z-index: 9999; align-items: center; justify-content: center;
+    }
+    #modal-box {
+      background: #1e293b; color: #fff; padding: 20px; border-radius: 8px;
+      width: 360px; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      border: 1px solid #475569;
+    }
+    #modal-box h3 { margin: 0 0 15px 0; font-size: 16px; color: #38bdf8; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; margin-bottom: 4px; font-size: 13px; color: #cbd5e1; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #475569;
+      background: #0f172a; color: #fff; font-size: 14px;
+    }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px; }
+    .btn-cancel { background: #64748b; }
+  </style>
+</head>
+<body>
+
+<div id="topbar">
+  <strong>🛠️ 救災圖資系統</strong>
+  <input type="password" id="gh-token" placeholder="GitHub Token (寫入密碼)" style="width:175px;" />
+  <input type="text" id="gh-owner" placeholder="GitHub 帳號" style="width:115px;" />
+  <input type="text" id="gh-repo" placeholder="Repo 名稱" style="width:115px;" />
+  
+  <button class="btn btn-save" onclick="publishToGitHub()">☁️ 儲存並發布至 GitHub</button>
+  <button class="btn btn-local" onclick="exportLocalKML()">📥 下載 live.kml (本機備忘)</button>
+  <button class="btn btn-atak" onclick="downloadBootstrapKML()">📲 下載 ATAK 連線檔</button>
+  <span id="status">準備就緒</span>
+</div>
+
+<div id="map"></div>
+
+<div id="modal-overlay">
+  <div id="modal-box">
+    <h3>📍 設定救災圖資屬性</h3>
+    <div class="form-group">
+      <label>名稱 / 地點代號 *</label>
+      <input type="text" id="feat-name" placeholder="例如：台9線168K土石流阻斷" />
+    </div>
+    <div class="form-group">
+      <label>戰術分類與顏色</label>
+      <select id="feat-cat">
+        <option value="danger">🔴 災情 / 阻斷 / 危險管制區</option>
+        <option value="rescue">🟡 待援點 / 搜索目標區</option>
+        <option value="supply">🟢 物資站 / 醫療點 / 安全集結區</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>現場狀況 / 聯絡人 / 需求備註</label>
+      <textarea id="feat-desc" rows="3" placeholder="輸入詳細資訊，匯入 ATAK 後點擊圖標即可查看..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" style="padding:7px 14px; border-radius:4px;" onclick="cancelModal()">取消刪除</button>
+      <button class="btn btn-atak" style="padding:7px 14px; border-radius:4px;" onclick="saveModal()">確認套用</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.min.js"></script>
+
+<script>
+  // 1. 初始化底圖 (包含 5 款 ATAK 圖資 + 國土測繪圖資)
+  const map = L.map('map', { maxZoom: 22 }).setView([23.663, 121.425], 13);
+
+  const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    minZoom: 0, maxZoom: 20, attribution: '© Google Hybrid'
+  }).addTo(map);
+
+  const twHappyman = L.tileLayer('https://tile.happyman.idv.tw/map/rudy/{z}/{x}/{y}.png', {
+    minZoom: 1, maxZoom: 22, maxNativeZoom: 18, attribution: '© 魯地圖 TW_HAPPYMAN'
+  });
+
+  const googleRoadmap = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+    minZoom: 0, maxZoom: 20, attribution: '© Google Roadmap'
+  });
+
+  const googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    minZoom: 0, maxZoom: 20, attribution: '© Google Satellite'
+  });
+
+  const openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    subdomains: ['a', 'b', 'c'], minZoom: 1, maxZoom: 17, attribution: '© OpenTopoMap'
+  });
+
+  const nlscEMap = L.tileLayer('https://wmts.nlsc.gov.tw/wmts/EMAP/default/GoogleMapsCompatible/{z}/{y}/{x}', {
+    maxZoom: 19, attribution: '© 內政部國土測繪中心'
+  });
+  const nlscPhoto = L.tileLayer('https://wmts.nlsc.gov.tw/wmts/PHOTO2/default/GoogleMapsCompatible/{z}/{y}/{x}', {
+    maxZoom: 19, attribution: '© 內政部國土測繪中心航照'
+  });
+
+  L.control.layers({
+    "🛰️ Google Hybrid (衛星+路名)": googleHybrid,
+    "⛰️ TW_HAPPYMAN (台灣魯地圖)": twHappyman,
+    "🗺️ Google Roadmap (標準街道)": googleRoadmap,
+    "🌎 Google Satellite (純衛星)": googleSat,
+    "🧭 Open Topo Map (等高線)": openTopo,
+    "🇹🇼 國土測繪通用電子地圖": nlscEMap,
+    "✈️ 國土測繪航照正射影像": nlscPhoto
+  }).addTo(map);
+
+  // 2. 繪圖控制器
+  const drawnItems = new L.FeatureGroup().addTo(map);
+  map.pm.addControls({
+    position: 'topleft',
+    drawMarker: true, drawPolyline: true, drawPolygon: true, drawRectangle: true,
+    drawCircle: false, drawCircleMarker: false, drawText: false,
+    editMode: true, dragMode: true, cutPolygon: false, removalMode: true
+  });
+
+  const colorMap = { danger: '#ef4444', rescue: '#eab308', supply: '#22c55e' };
+  let pendingLayer = null;
+
+  map.on('pm:create', (e) => {
+    pendingLayer = e.layer;
+    document.getElementById('feat-name').value = '';
+    document.getElementById('feat-desc').value = '';
+    document.getElementById('modal-overlay').style.display = 'flex';
+    document.getElementById('feat-name').focus();
+  });
+
+  function cancelModal() {
+    if (pendingLayer) { map.removeLayer(pendingLayer); pendingLayer = null; }
+    document.getElementById('modal-overlay').style.display = 'none';
+  }
+
+  function saveModal() {
+    if (!pendingLayer) return;
+    const name = document.getElementById('feat-name').value.trim() || '未命名標記';
+    const cat = document.getElementById('feat-cat').value;
+    const desc = document.getElementById('feat-desc').value.trim();
+    const time = new Date().toLocaleString('zh-TW', { hour12: false });
+
+    applyFeatureProperties(pendingLayer, { name, category: cat, desc, time });
+    drawnItems.addLayer(pendingLayer);
+    pendingLayer = null;
+    document.getElementById('modal-overlay').style.display = 'none';
+  }
+
+  function applyFeatureProperties(layer, props) {
+    layer.feature = layer.feature || { type: 'Feature', properties: {} };
+    layer.feature.properties = props;
+    const color = colorMap[props.category] || '#ef4444';
+    if (layer.setStyle) layer.setStyle({ color: color, fillColor: color, fillOpacity: 0.35, weight: 4 });
+
+    const catLabel = { danger: '🔴 災情/危險區', rescue: '🟡 待援/搜索區', supply: '🟢 物資/安全區' }[props.category] || '標記';
+    layer.bindPopup(`
+      <div style="font-size:14px; min-width:180px;">
+        <strong style="font-size:15px;">${escapeHTML(props.name)}</strong><br>
+        <span style="color:#64748b; font-size:12px;">${catLabel}</span>
+        <hr style="border:0; border-top:1px solid #e2e8f0; margin:6px 0;">
+        <div style="white-space:pre-wrap;">${escapeHTML(props.desc || '無備註')}</div>
+        <div style="margin-top:8px; font-size:11px; color:#94a3b8;">更新：${escapeHTML(props.time || '')}</div>
+      </div>
+    `);
+  }
+
+  function escapeHTML(str) {
+    return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  }
+
+  // 3. 自動偵測 GitHub Pages 帳號並讀取既有圖資
+  window.addEventListener('DOMContentLoaded', () => {
+    const host = window.location.hostname;
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    if (host.endsWith('github.io')) {
+      document.getElementById('gh-owner').value = host.split('.')[0];
+      if (pathParts.length > 0) document.getElementById('gh-repo').value = pathParts[0];
+    }
+    const savedToken = localStorage.getItem('rescue_gh_token');
+    if (savedToken) document.getElementById('gh-token').value = savedToken;
+
+    loadExistingData();
+  });
+
+  async function loadExistingData() {
+    try {
+      const res = await fetch('./data.geojson?t=' + Date.now());
+      if (!res.ok) return;
+      const geojson = await res.json();
+      L.geoJSON(geojson, {
+        onEachFeature: (feature, layer) => {
+          applyFeatureProperties(layer, feature.properties || {});
+          drawnItems.addLayer(layer);
+        }
+      });
+      document.getElementById('status').innerText = '✅ 已載入線上既有圖資';
+    } catch (e) {
+      console.log('尚無既有圖資檔案，將於首次儲存時自動建立');
+    }
+  }
+
+  // 4. 圖資轉 KML
+  function collectGeoJSON() {
+    const collection = { type: 'FeatureCollection', features: [] };
+    map.eachLayer(layer => {
+      if (layer.pm && !layer.pm.isTempLayer() && layer.feature && (layer instanceof L.Marker || layer instanceof L.Path)) {
+        const gj = layer.toGeoJSON();
+        gj.properties = layer.feature.properties;
+        collection.features.push(gj);
+      }
+    });
+    return collection;
+  }
+
+  function generateKML(geojson) {
+    const styles = `
+    <Style id="danger">
+      <IconStyle><color>ff4444ef</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href></Icon></IconStyle>
+      <LineStyle><color>ff4444ef</color><width>4</width></LineStyle>
+      <PolyStyle><color>664444ef</color></PolyStyle>
+    </Style>
+    <Style id="rescue">
+      <IconStyle><color>ff08b3ea</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/ylw-circle.png</href></Icon></IconStyle>
+      <LineStyle><color>ff08b3ea</color><width>4</width></LineStyle>
+      <PolyStyle><color>6608b3ea</color></PolyStyle>
+    </Style>
+    <Style id="supply">
+      <IconStyle><color>ff5ec522</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/grn-circle.png</href></Icon></IconStyle>
+      <LineStyle><color>ff5ec522</color><width>4</width></LineStyle>
+      <PolyStyle><color>665ec522</color></PolyStyle>
+    </Style>`;
+
+    let placemarks = '';
+    geojson.features.forEach(f => {
+      const p = f.properties || {};
+      const g = f.geometry;
+      if (!g) return;
+      const styleId = p.category || 'danger';
+      const descText = `${p.desc || ''}\n[更新時間: ${p.time || ''}]`;
+      let geomKml = '';
+
+      if (g.type === 'Point') {
+        geomKml = `<Point><coordinates>${g.coordinates[0]},${g.coordinates[1]},0</coordinates></Point>`;
+      } else if (g.type === 'LineString') {
+        const coords = g.coordinates.map(c => `${c[0]},${c[1]},0`).join(' ');
+        geomKml = `<LineString><tessellate>1</tessellate><coordinates>${coords}</coordinates></LineString>`;
+      } else if (g.type === 'Polygon') {
+        const coords = g.coordinates[0].map(c => `${c[0]},${c[1]},0`).join(' ');
+        geomKml = `<Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>${coords}</coordinates></LinearRing></outerBoundaryIs></Polygon>`;
+      }
+
+      if (geomKml) {
+        placemarks += `
+    <Placemark>
+      <name><![CDATA[${p.name || '未命名'}]]></name>
+      <description><![CDATA[${descText}]]></description>
+      <styleUrl>#${styleId}</styleUrl>
+      ${geomKml}
+    </Placemark>`;
+      }
+    });
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>救災即時態勢圖</name>
+    ${styles}
+    ${placemarks}
+  </Document>
+</kml>`;
+  }
+
+  // 5. GitHub API 寫入與連線檔匯出
+  async function putGitHubFile(owner, repo, path, content, token, message) {
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    let sha = null;
+    const getRes = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (getRes.ok) {
+      const getJson = await getRes.json();
+      sha = getJson.sha;
+    }
+    const base64Content = btoa(unescape(encodeURIComponent(content)));
+    const body = { message, content: base64Content };
+    if (sha) body.sha = sha;
+
+    const putRes = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!putRes.ok) {
+      const err = await putRes.json();
+      throw new Error(err.message || 'GitHub API 寫入失敗');
+    }
+  }
+
+  async function publishToGitHub() {
+    const token = document.getElementById('gh-token').value.trim();
+    const owner = document.getElementById('gh-owner').value.trim();
+    const repo = document.getElementById('gh-repo').value.trim();
+
+    if (!token || !owner || !repo) {
+      alert('請先在上方輸入 GitHub Token、GitHub 帳號與 Repo 名稱！');
+      return;
+    }
+
+    localStorage.setItem('rescue_gh_token', token);
+    const statusEl = document.getElementById('status');
+    statusEl.innerText = '⏳ 正在同步至 GitHub...';
+
+    try {
+      const collection = collectGeoJSON();
+      const geojsonStr = JSON.stringify(collection, null, 2);
+      const kmlStr = generateKML(collection);
+      const timeStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+
+      await putGitHubFile(owner, repo, 'data.geojson', geojsonStr, token, `更新地圖資料 (${timeStr})`);
+      await putGitHubFile(owner, repo, 'live.kml', kmlStr, token, `更新 ATAK KML (${timeStr})`);
+
+      statusEl.innerText = `✅ 發布成功 (${timeStr})`;
+      alert(`發布成功！\n\nATAK 訂閱網址：\nhttps://${owner}.github.io/${repo}/live.kml`);
+    } catch (err) {
+      statusEl.innerText = '❌ 發布失敗';
+      alert('儲存失敗：' + err.message);
+    }
+  }
+
+  function exportLocalKML() {
+    const blob = new Blob([generateKML(collectGeoJSON())], { type: 'application/vnd.google-earth.kml+xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'live.kml';
+    a.click();
+  }
+
+  function downloadBootstrapKML() {
+    const owner = document.getElementById('gh-owner').value.trim() || 'YOUR_GITHUB_USERNAME';
+    const repo = document.getElementById('gh-repo').value.trim() || 'rescue-map';
+    const liveKmlUrl = `https://${owner}.github.io/${repo}/live.kml`;
+
+    const netLinkKml = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Folder>
+    <name>救災即時同步圖層 (${repo})</name>
+    <NetworkLink>
+      <name>救災標記與管制區 (每5分鐘自動更新)</name>
+      <Link>
+        <href>${liveKmlUrl}</href>
+        <refreshMode>onInterval</refreshMode>
+        <refreshInterval>300</refreshInterval>
+      </Link>
+    </NetworkLink>
+  </Folder>
+</kml>`;
+    const blob = new Blob([netLinkKml], { type: 'application/vnd.google-earth.kml+xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `ATAK_自動更新連線檔_${repo}.kml`;
+    a.click();
+  }
+</script>
+</body>
+</html>
