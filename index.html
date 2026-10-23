@@ -55,16 +55,16 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.5);
     }
 
-    /* [新增註記] 網頁端常駐標籤名稱樣式 (顯示在點位旁邊) */
+    /* 網頁端常駐標籤名稱樣式 (顯示在點位上方) */
     .map-persistent-label {
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.88);
       color: #f8fafc;
       font-weight: bold;
       font-size: 12px;
       padding: 2px 6px;
       border: 1px solid #475569;
       border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
       white-space: nowrap;
     }
 
@@ -215,7 +215,7 @@
   L.control.layers(baseMaps, overlayMaps).addTo(map);
 
   // ============================================================================
-  // 2. MGRS 座標換算與動態縮放網格引擎
+  // 2. MGRS 座標換算與動態縮放網格引擎 (100m / 1km / 10km)
   // ============================================================================
   let currentGridStepText = '100m';
   let lastMouseLatLng = null;
@@ -388,8 +388,45 @@
   }
 
   // ============================================================================
-  // 3. [需求 2 具體實作] 放大網頁端點位 1.5 倍與常駐名稱顯示 (需求 1)
+  // 3. [核心修正] 產生給 ATAK 專用的「Google 水滴圖示 (`google_pin.png`)」
   // ============================================================================
+  // 說明：
+  // 1. 為什麼 ATAK 的字會蓋在圖示正中間？
+  //    因為 ATAK 渲染 KML Placemark 時，固定把 <name> 文字標籤畫在圖片畫布的「正中心 (Center)」。
+  // 2. 怎麼讓字浮在水滴「上方」（像截圖右邊的綠色「因因」一樣）？
+  //    我們建立一個 64x96 的透明畫布，把「Google 水滴」畫在畫布的「下半部 (y=46 ~ 94)」，
+  //    上半部 (y=0 ~ 45) 保持全透明！這樣 ATAK 把文字放在畫布正中心 (y=40) 時，
+  //    文字就會剛好浮在水滴頭頂正上方，完全不會蓋住水滴本體！
+  function generateATAKWaterdropBase64() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 96;
+    const ctx = canvas.getContext('2d');
+
+    // 在畫布下半部繪製與 ATAK Google Iconset (因因) 完全同款的「黑邊純白水滴」
+    // 水滴圓頭中心在 (32, 62)，水滴尖端在底部正中央 (32, 92)
+    ctx.beginPath();
+    ctx.moveTo(32, 92); // 水滴最底端尖針
+    ctx.bezierCurveTo(30, 82, 18, 72, 18, 61); // 左側水滴弧線
+    ctx.arc(32, 61, 14, Math.PI, 0, false);    // 頂部圓弧 (半徑 14)
+    ctx.bezierCurveTo(46, 72, 34, 82, 32, 92); // 右側水滴弧線
+    ctx.closePath();
+
+    // 填充純白色基底 (供 KML <color> ABGR 染色出鮮豔的紅/黃/綠/藍)
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+
+    // 繪製像「因因」一樣的黑色立體外框線
+    ctx.lineWidth = 2.8;
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    return canvas.toDataURL('image/png').split(',')[1];
+  }
+
+  const ATAK_WATERDROP_RAW_BASE64 = generateATAKWaterdropBase64();
+
   const categoryConfig = {
     danger: {
       label: '🔴 災情 / 危險管制區',
@@ -417,7 +454,7 @@
     }
   };
 
-  // [需求 2 實作] 網頁端 CoT 小圓球放大 1.5 倍 (尺寸從 22x22 放大至 33x33，半徑 1.5 倍)
+  // Hamster-Map 網頁端：維持 1.5 倍大的 CoT 小圓球 (33x33)
   function createCoTDotIcon(cat) {
     const cfg = categoryConfig[cat] || categoryConfig.danger;
     const svg = `
@@ -529,7 +566,7 @@
     localStorage.setItem('rescue_callsign', e.target.value.trim());
   });
 
-  // 套用屬性、座標計算、Popup 與 [需求 1 具體實作] 點位上方常駐名稱標籤 (bindTooltip)
+  // 套用屬性、座標計算與 [修正] 網頁端名稱顯示在點位「正上方 (direction: 'top')」
   function applyFeatureProperties(layer, props) {
     props.coord = getLayerCoordString(layer);
 
@@ -545,13 +582,14 @@
       layer.setStyle({ color: cfg.webColor, fillColor: cfg.webColor, fillOpacity: 0.35, weight: 4 });
     }
 
-    // [需求 1 具體實作] 在點位旁邊常駐顯示 "名稱 / 地點代號" 標籤
+    // [修正註記] 讓點位名稱在網頁上也固定浮在點位的「正上方 (top)」
     if (props.name) {
       layer.unbindTooltip();
+      const isMarker = layer instanceof L.Marker;
       layer.bindTooltip(escapeHTML(props.name), {
         permanent: true,
-        direction: 'right',
-        offset: [16, 0],
+        direction: 'top',
+        offset: isMarker ? [0, -18] : [0, 0],
         className: 'map-persistent-label'
       });
     }
@@ -625,7 +663,9 @@
   }
 
   // ============================================================================
-  // 6. [需求 3 具體實作] 圖資轉 KML 對接 ATAK Google Iconset 水滴圖示 (`wht-pushpin.png`)
+  // 6. [核心修正] 圖資轉 KML：
+  //    (1) 點位改用「上方留白透明的 Google 水滴圖示 (`google_pin.png`)」，讓文字浮在水滴上方！
+  //    (2) 多邊形 (Polygon) 與線條 (LineString) 徹底移除 <IconStyle>，消除邪教營地中間的大紅圓！
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
@@ -642,6 +682,10 @@
 
   function generateKML(geojson) {
     let placemarks = '';
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
+    // 指向自動部署於同一個 GitHub Pages 下的「Google 水滴圖檔 (含上方文字防重疊透明區)」
+    const waterdropPinUrl = `https://${owner}.github.io/${repo}/google_pin.png`;
 
     geojson.features.forEach(f => {
       const p = f.properties || {};
@@ -651,20 +695,11 @@
       const cat = p.category || 'danger';
       const cfg = categoryConfig[cat] || categoryConfig.danger;
       const descText = `[分類: ${cfg.label}]\n${p.desc || ''}\n座標：${p.coord || ''}\n更新：${p.time || ''}`;
-      let geomKml = '';
 
+      // ------------------------------------------------------------------------
+      // 分流 A：如果是「點位 (Point)」-> 使用 Google 水滴圖示，且文字浮在上方
+      // ------------------------------------------------------------------------
       if (g.type === 'Point') {
-        geomKml = `<Point><coordinates>${g.coordinates[0]},${g.coordinates[1]},0</coordinates></Point>`;
-      } else if (g.type === 'LineString') {
-        const coords = g.coordinates.map(c => `${c[0]},${c[1]},0`).join(' ');
-        geomKml = `<LineString><tessellate>1</tessellate><coordinates>${coords}</coordinates></LineString>`;
-      } else if (g.type === 'Polygon') {
-        const coords = g.coordinates[0].map(c => `${c[0]},${c[1]},0`).join(' ');
-        geomKml = `<Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>${coords}</coordinates></LinearRing></outerBoundaryIs></Polygon>`;
-      }
-
-      if (geomKml) {
-        // [需求 3 具體實作] 直接對接 ATAK 內建 Google Iconset 水滴圖示 (`wht-pushpin.png`)，實現完美染色
         placemarks += `
     <Placemark>
       <name><![CDATA[${p.name || '未命名'}]]></name>
@@ -674,11 +709,43 @@
           <color>${cfg.kmlColor}</color>
           <scale>1.1</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>${waterdropPinUrl}</href>
           </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
-          <color>${cfg.kmlColor}</color>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>${g.coordinates[0]},${g.coordinates[1]},0</coordinates></Point>
+    </Placemark>`;
+      }
+      // ------------------------------------------------------------------------
+      // 分流 B：如果是「多邊形 (Polygon) 或 線條 (LineString)」
+      // [關鍵修正] 絕對不放點位圖示，並將 IconStyle scale 設為 0，徹底消除「邪教營地」中間的大紅圓！
+      // ------------------------------------------------------------------------
+      else if (g.type === 'LineString' || g.type === 'Polygon') {
+        let geomKml = '';
+        if (g.type === 'LineString') {
+          const coords = g.coordinates.map(c => `${c[0]},${c[1]},0`).join(' ');
+          geomKml = `<LineString><tessellate>1</tessellate><coordinates>${coords}</coordinates></LineString>`;
+        } else {
+          const coords = g.coordinates[0].map(c => `${c[0]},${c[1]},0`).join(' ');
+          geomKml = `<Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>${coords}</coordinates></LinearRing></outerBoundaryIs></Polygon>`;
+        }
+
+        placemarks += `
+    <Placemark>
+      <name><![CDATA[${p.name || '未命名區域'}]]></name>
+      <description><![CDATA[${descText}]]></description>
+      <Style>
+        <IconStyle>
+          <scale>0</scale>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
         </LabelStyle>
         <LineStyle>
           <color>${cfg.kmlColor}</color>
@@ -705,9 +772,9 @@
   }
 
   // ============================================================================
-  // 7. GitHub API 寫入與發布
+  // 7. GitHub API 寫入與自動部署 `google_pin.png` 水滴圖檔
   // ============================================================================
-  async function putGitHubFile(owner, repo, path, content, token, message) {
+  async function putGitHubFile(owner, repo, path, content, token, message, isRawBase64 = false) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
     let sha = null;
     const getRes = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -715,7 +782,7 @@
       const getJson = await getRes.json();
       sha = getJson.sha;
     }
-    const base64Content = btoa(unescape(encodeURIComponent(content)));
+    const base64Content = isRawBase64 ? content : btoa(unescape(encodeURIComponent(content)));
     const body = { message, content: base64Content };
     if (sha) body.sha = sha;
 
@@ -745,7 +812,7 @@
     if (callsign) localStorage.setItem('rescue_callsign', callsign);
 
     const statusEl = document.getElementById('status');
-    statusEl.innerText = '⏳ 正在同步至 GitHub...';
+    statusEl.innerText = '⏳ 正在同步圖資與 Google 水滴圖示至 GitHub...';
 
     try {
       const collection = collectGeoJSON();
@@ -754,6 +821,9 @@
       const timeStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
       const byWho = callsign ? ` by ${callsign}` : '';
 
+      // 1. 自動上傳 `google_pin.png` (與「因因」同款的 Google 水滴基底圖檔)
+      await putGitHubFile(owner, repo, 'google_pin.png', ATAK_WATERDROP_RAW_BASE64, token, `部署 ATAK Google 水滴圖示`, true);
+      // 2. 更新 GeoJSON 與 KML
       await putGitHubFile(owner, repo, 'data.geojson', geojsonStr, token, `更新地圖資料 (${timeStr}${byWho})`);
       await putGitHubFile(owner, repo, 'live.kml', kmlStr, token, `更新 ATAK KML (${timeStr}${byWho})`);
 
