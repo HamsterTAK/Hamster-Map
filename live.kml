@@ -3,28 +3,61 @@
   <Document>
     <name>救災即時態勢圖</name>
     
-    <Style id="danger">
-      <IconStyle><color>ff4444ef</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href></Icon></IconStyle>
-      <LineStyle><color>ff4444ef</color><width>4</width></LineStyle>
-      <PolyStyle><color>664444ef</color></PolyStyle>
-    </Style>
-    <Style id="rescue">
-      <IconStyle><color>ff08b3ea</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/ylw-circle.png</href></Icon></IconStyle>
-      <LineStyle><color>ff08b3ea</color><width>4</width></LineStyle>
-      <PolyStyle><color>6608b3ea</color></PolyStyle>
-    </Style>
-    <Style id="supply">
-      <IconStyle><color>ff5ec522</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/grn-circle.png</href></Icon></IconStyle>
-      <LineStyle><color>ff5ec522</color><width>4</width></LineStyle>
-      <PolyStyle><color>665ec522</color></PolyStyle>
-    </Style>
-    
     <Placemark>
       <name><![CDATA[Stephanie]]></name>
-      <description><![CDATA[
+      <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
+
 [更新時間: 2026/10/23 20:25:55]]]></description>
-      <styleUrl>#friendly</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ffffaa00</color>
+          <scale>1.2</scale>
+          <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+          </Icon>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffaa00</color>
+        </LabelStyle>
+        <LineStyle>
+          <color>ffffaa00</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>66ffaa00</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
       <Point><coordinates>121.532452,25.0012,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[邪惡祭壇]]></name>
+      <description><![CDATA[[分類: 🔴 災情 / 危險管制區]
+
+[更新時間: 2026/10/23 23:28:16]]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff0000ff</color>
+          <scale>1.2</scale>
+          <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+          </Icon>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+        <LineStyle>
+          <color>ff0000ff</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>660000ff</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
+      <Point><coordinates>121.532347,25.001148,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
