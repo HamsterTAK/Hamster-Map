@@ -176,5 +176,27 @@
       </Style>
       <Point><coordinates>121.532776,25.001553,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[CC]]></name>
+      <description><![CDATA[[分類: 🟢 物資站 / 安全集結區]
+
+座標：51R UH 51952 65767 (25.00017, 121.53297)
+更新：2026/10/24 03:04:18 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff00ff00</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.532972,25.000166,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
