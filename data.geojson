@@ -21,23 +21,6 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Stephanie",
-        "category": "friendly",
-        "desc": "",
-        "time": "2026/10/23 23:30:44",
-        "coord": "51R UH 51945 65858 (25.00099, 121.53289)"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.532886,
-          25.000985
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "name": "人質",
         "category": "rescue",
         "desc": "",
