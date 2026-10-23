@@ -4,22 +4,6 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Stephanie",
-        "category": "friendly",
-        "desc": "",
-        "time": "2026/10/23 20:25:55"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.532452,
-          25.0012
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "name": "邪惡祭壇",
         "category": "danger",
         "desc": "",
@@ -30,6 +14,54 @@
         "coordinates": [
           121.532347,
           25.001148
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Stephanie",
+        "category": "friendly",
+        "desc": "",
+        "time": "2026/10/23 23:30:44"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532886,
+          25.000985
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "人質",
+        "category": "rescue",
+        "desc": "",
+        "time": "2026/10/23 23:31:04"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532543,
+          25.001354
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "UAS",
+        "category": "supply",
+        "desc": "",
+        "time": "2026/10/23 23:31:21"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.533122,
+          25.000813
         ]
       }
     }
