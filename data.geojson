@@ -76,33 +76,33 @@
         "name": "Team Bravo",
         "category": "friendly",
         "desc": "",
-        "time": "2026/10/23 23:48:48 (Neoyang)",
-        "updatedBy": "Neoyang",
-        "coord": "51R UH 51865 65835 (25.00077, 121.53210)"
+        "coord": "51R UH 51866 65834 (25.00076, 121.53211)",
+        "time": "2026/10/24 00:41:07 (Neoyang)",
+        "updatedBy": "Neoyang"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          121.532097,
-          25.000766
+          121.532108,
+          25.000761
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "教徒",
+        "name": "邪教教徒",
         "category": "danger",
         "desc": "",
-        "coord": "51R UH 51876 65870 (25.00108, 121.53220)",
-        "time": "2026/10/24 00:24:12 (Neoyang)",
+        "coord": "51R UH 51893 65900 (25.00136, 121.53237)",
+        "time": "2026/10/24 00:41:49 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          121.532205,
-          25.001082
+          121.53237,
+          25.001363
         ]
       }
     }
