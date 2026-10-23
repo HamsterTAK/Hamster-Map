@@ -48,28 +48,6 @@
       <Point><coordinates>121.532543,25.001354,0</coordinates></Point>
     </Placemark>
     <Placemark>
-      <name><![CDATA[UAS]]></name>
-      <description><![CDATA[[分類: 🟢 物資站 / 安全集結區]
-
-座標：51R UH 51968 65839 (25.00081, 121.53312)
-更新：2026/10/23 23:31:21]]></description>
-      <Style>
-        <IconStyle>
-          <color>ff00ff00</color>
-          <scale>1.1</scale>
-          <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
-          </Icon>
-          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
-      </Style>
-      <Point><coordinates>121.533122,25.000813,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
       <name><![CDATA[Team Alpha]]></name>
       <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
 
@@ -153,6 +131,28 @@
         </LabelStyle>
       </Style>
       <Point><coordinates>121.531963,25.000937,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[UAS]]></name>
+      <description><![CDATA[[分類: 🟢 物資站 / 安全集結區]
+
+座標：51R UH 51968 65839 (25.00081, 121.53312)
+更新：2026/10/23 23:31:21]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff00ff00</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.533122,25.000813,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
