@@ -19,12 +19,5 @@
       <PolyStyle><color>665ec522</color></PolyStyle>
     </Style>
     
-    <Placemark>
-      <name><![CDATA[邪惡祭壇]]></name>
-      <description><![CDATA[
-[更新時間: 2026/10/23 18:17:10]]]></description>
-      <styleUrl>#danger</styleUrl>
-      <Point><coordinates>121.53239,25.001157,0</coordinates></Point>
-    </Placemark>
   </Document>
 </kml>
