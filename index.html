@@ -28,7 +28,17 @@
     .right-group { margin-left: auto; display: flex; align-items: center; gap: 10px; }
     #status { color: #38bdf8; font-weight: bold; font-size: 13px; }
     #user-callsign { border-color: #38bdf8 !important; width: 135px; }
-    #map { height: calc(100% - 54px); width: 100%; background: #000000; }
+    #map { height: calc(100% - 54px); width: 100%; background: #000000; position: relative; }
+
+    /* 底部即時 MGRS 戰術座標列 (仿 ATAK 底部 HUD) */
+    #coord-bar {
+      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.9); color: #38bdf8; padding: 6px 18px;
+      border-radius: 6px; font-family: 'Courier New', Consolas, monospace; font-size: 14px;
+      font-weight: bold; z-index: 1000; border: 1px solid #334155;
+      pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      white-space: nowrap; letter-spacing: 0.5px;
+    }
 
     /* 彈窗樣式 */
     #modal-overlay {
@@ -58,7 +68,7 @@
     }
     .popup-btn-edit { background: #3b82f6; }
     .popup-btn-del { background: #ef4444; }
-    .custom-pin-icon { background: transparent; border: none; }
+    .custom-cot-icon { background: transparent; border: none; }
   </style>
 </head>
 <body>
@@ -78,6 +88,9 @@
 </div>
 
 <div id="map"></div>
+
+<!-- 底部游標即時 MGRS 顯示列 -->
+<div id="coord-bar">🎯 移動滑鼠顯示 MGRS 戰術座標...</div>
 
 <!-- 新增 / 編輯標記共用彈窗 -->
 <div id="modal-overlay">
@@ -107,12 +120,14 @@
   </div>
 </div>
 
+<!-- 引入 Leaflet, Geoman 與 MGRS 軍用格網座標轉換庫 -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.min.js"></script>
+<script src="https://unpkg.com/mgrs@1.0.0/dist/mgrs.js"></script>
 
 <script>
   // ==========================================
-  // 1. 初始化底圖 (5 款 ATAK 圖資 + 國土測繪圖資)
+  // 1. 初始化底圖 (7 款 ATAK 圖資 + 2 款國土測繪圖資)
   // ==========================================
   const map = L.map('map', { maxZoom: 22 }).setView([23.663, 121.425], 13);
 
@@ -122,6 +137,16 @@
 
   const twHappyman = L.tileLayer('https://tile.happyman.idv.tw/map/rudy/{z}/{x}/{y}.png', {
     minZoom: 1, maxZoom: 22, maxNativeZoom: 18, attribution: '© 魯地圖 TW_HAPPYMAN'
+  });
+
+  // [新增] Cycle OSM (OSM Cycle.xml)
+  const cycleOsm = L.tileLayer('https://a.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+    minZoom: 0, maxZoom: 21, maxNativeZoom: 20, attribution: '© CycleOSM'
+  });
+
+  // [新增] Aviation Enroute (AviationEnroute.xml - 注意其順序為 {z}/{y}/{x})
+  const aviationEnroute = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Specialty/World_Navigation_Charts/MapServer/tile/{z}/{y}/{x}', {
+    minZoom: 3, maxNativeZoom: 12, maxZoom: 20, attribution: '© Esri Aviation Enroute'
   });
 
   const googleRoadmap = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
@@ -146,68 +171,104 @@
   L.control.layers({
     "🛰️ Google Hybrid (衛星+路名)": googleHybrid,
     "⛰️ TW_HAPPYMAN (台灣魯地圖)": twHappyman,
+    "🚴 Cycle OSM (單車等高線圖)": cycleOsm,
+    "✈️ Aviation Enroute (航空航路圖)": aviationEnroute,
     "🗺️ Google Roadmap (標準街道)": googleRoadmap,
     "🌎 Google Satellite (純衛星)": googleSat,
     "🧭 Open Topo Map (等高線)": openTopo,
     "🇹🇼 國土測繪通用電子地圖": nlscEMap,
-    "✈️ 國土測繪航照正射影像": nlscPhoto
+    "📷 國土測繪航照正射影像": nlscPhoto
   }).addTo(map);
 
   // ==========================================
-  // 2. 戰術顏色設定與 SVG 動態彩色圖釘產生器
+  // 2. MGRS 軍用格網座標換算與游標即時監聽
   // ==========================================
-  // 註：改用 wht-pushpin.png (白色圖釘基底) + 正純色 KML ABGR，避免黃色圖釘乘上藍色變成綠色！
+  // 將經緯度轉成可讀性高的空白分隔 MGRS (例如: "51R UH 51941 65869")
+  function toFormattedMGRS(lat, lng) {
+    try {
+      if (typeof mgrs !== 'undefined') {
+        const raw = mgrs.forward([lng, lat], 5); // 5位數 = 1公尺精度
+        return raw.replace(/^(\d+[A-Z])([A-Z]{2})(\d{5})(\d{5})$/, '$1 $2 $3 $4');
+      }
+    } catch (e) {}
+    return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  }
+
+  // 取得任何圖層 (點、線、多邊形) 的代表座標字串
+  function getLayerCoordString(layer) {
+    let latlng = null;
+    if (typeof layer.getLatLng === 'function') {
+      latlng = layer.getLatLng();
+    } else if (typeof layer.getBounds === 'function' && layer.getBounds().isValid()) {
+      latlng = layer.getBounds().getCenter();
+    }
+    if (!latlng) return '未知座標';
+    const mgrsStr = toFormattedMGRS(latlng.lat, latlng.lng);
+    return `${mgrsStr} (${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)})`;
+  }
+
+  // 滑鼠移動時在畫面下方即時顯示 MGRS
+  map.on('mousemove', (e) => {
+    const { lat, lng } = e.latlng;
+    const mgrsStr = toFormattedMGRS(lat, lng);
+    document.getElementById('coord-bar').innerText = `🎯 游標 MGRS: ${mgrsStr} ｜ WGS84: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  });
+
+  // ==========================================
+  // 3. 戰術顏色設定與 CoT 風格小圓點產生器
+  // ==========================================
+  // 註：ATAK KML 改用 shaded_dot.png (純白圓點基底)，渲染出來就是像原生 CoT 一樣的彩色戰術小圓點！
   const categoryConfig = {
     danger: {
       label: '🔴 災情 / 危險管制區',
       webColor: '#ef4444',
-      kmlColor: 'ff0000ff',     // KML ABGR: 純紅 (Alpha=ff, B=00, G=00, R=ff)
+      kmlColor: 'ff0000ff',     // KML ABGR: 純紅
       kmlPolyColor: '660000ff', // KML ABGR: 半透明紅
-      kmlIcon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png'
+      kmlIcon: 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png'
     },
     rescue: {
       label: '🟡 待援點 / 搜索目標區',
       webColor: '#eab308',
-      kmlColor: 'ff00ffff',     // KML ABGR: 純黃 (Alpha=ff, B=00, G=ff, R=ff)
+      kmlColor: 'ff00ffff',     // KML ABGR: 純黃
       kmlPolyColor: '6600ffff', // KML ABGR: 半透明黃
-      kmlIcon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png'
+      kmlIcon: 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png'
     },
     supply: {
       label: '🟢 物資站 / 安全集結區',
       webColor: '#22c55e',
-      kmlColor: 'ff00ff00',     // KML ABGR: 純綠 (Alpha=ff, B=00, G=ff, R=00)
+      kmlColor: 'ff00ff00',     // KML ABGR: 純綠
       kmlPolyColor: '6600ff00', // KML ABGR: 半透明綠
-      kmlIcon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png'
+      kmlIcon: 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png'
     },
     friendly: {
       label: '🔵 友軍單位 / 搜救隊',
       webColor: '#3b82f6',
-      kmlColor: 'ffff0000',     // KML ABGR: 純正藍 (Alpha=ff, B=ff, G=00, R=00)，解決變綠問題！
+      kmlColor: 'ffff0000',     // KML ABGR: 純正藍
       kmlPolyColor: '66ff0000', // KML ABGR: 半透明藍
-      kmlIcon: 'http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png'
+      kmlIcon: 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png'
     }
   };
 
-  // 為 Hamster-Map 網頁產生對應顏色的 SVG 戰術水滴圖釘
-  function createColoredIcon(cat) {
+  // 為 Hamster-Map 網頁產生 CoT 風格的戰術同心小圓點 (中心正對座標點)
+  function createCoTDotIcon(cat) {
     const cfg = categoryConfig[cat] || categoryConfig.danger;
     const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 42" width="30" height="40">
-        <path d="M16 1 C7.7 1 1 7.7 1 16 C1 26.5 16 40 16 40 C16 40 31 26.5 31 16 C31 7.7 24.3 1 16 1 Z"
-              fill="${cfg.webColor}" stroke="#ffffff" stroke-width="2.5"/>
-        <circle cx="16" cy="15" r="5.5" fill="#ffffff"/>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22">
+        <circle cx="12" cy="12" r="9" fill="${cfg.webColor}" stroke="#000000" stroke-width="2"/>
+        <circle cx="12" cy="12" r="7" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+        <circle cx="12" cy="12" r="2" fill="#ffffff"/>
       </svg>`;
     return L.divIcon({
-      className: 'custom-pin-icon',
+      className: 'custom-cot-icon',
       html: svg,
-      iconSize: [30, 40],
-      iconAnchor: [15, 40],
-      popupAnchor: [0, -36]
+      iconSize: [22, 22],
+      iconAnchor: [11, 11], // 錨點設於正中心，與 CoT 圓點一致
+      popupAnchor: [0, -11]
     });
   }
 
   // ==========================================
-  // 3. 啟用 Geoman 繪圖與「新增 / 編輯」視窗邏輯
+  // 4. 啟用 Geoman 繪圖與「新增 / 編輯 / 拖曳更新座標」邏輯
   // ==========================================
   const drawnItems = new L.FeatureGroup().addTo(map);
   map.pm.addControls({
@@ -283,54 +344,64 @@
     const desc = document.getElementById('feat-desc').value.trim();
     const callsign = document.getElementById('user-callsign').value.trim();
     
-    // 記憶 Callsign 到瀏覽器
     localStorage.setItem('rescue_callsign', callsign);
 
-    // 組合時間戳與 Callsign，例如："2026/10/23 23:28:16 (Stephanie)"
     const rawTime = new Date().toLocaleString('zh-TW', { hour12: false });
     const time = callsign ? `${rawTime} (${callsign})` : rawTime;
+    const coord = getLayerCoordString(activeLayer);
 
     if (!drawnItems.hasLayer(activeLayer)) {
       drawnItems.addLayer(activeLayer);
     }
 
-    applyFeatureProperties(activeLayer, { name, category: cat, desc, time, updatedBy: callsign });
+    applyFeatureProperties(activeLayer, { name, category: cat, desc, coord, time, updatedBy: callsign });
 
     activeLayer = null;
     isEditingExisting = false;
     document.getElementById('modal-overlay').style.display = 'none';
   }
 
-  // 當使用者在頂部更改 Callsign 輸入框時即時記憶
   document.getElementById('user-callsign').addEventListener('change', (e) => {
     localStorage.setItem('rescue_callsign', e.target.value.trim());
   });
 
-  // 套用外觀顏色（包含點位圖釘變色、多邊形變色）與綁定含編輯按鈕的 Popup
+  // 套用外觀顏色、MGRS 座標計算與綁定含編輯按鈕的 Popup
   function applyFeatureProperties(layer, props) {
+    // 自動補算或更新 MGRS 座標
+    props.coord = getLayerCoordString(layer);
+
     layer.feature = layer.feature || { type: 'Feature', properties: {} };
     layer.feature.properties = props;
 
     const cat = props.category || 'danger';
     const cfg = categoryConfig[cat] || categoryConfig.danger;
 
-    // 1. 如果是點位 (Marker)，換成對應顏色的 SVG 圖釘
+    // 1. 如果是點位 (Marker)，換成對應顏色的 CoT 小圓點
     if (layer instanceof L.Marker) {
-      layer.setIcon(createColoredIcon(cat));
+      layer.setIcon(createCoTDotIcon(cat));
     }
     // 2. 如果是線條或多邊形，換成對應顏色
     else if (layer.setStyle) {
       layer.setStyle({ color: cfg.webColor, fillColor: cfg.webColor, fillOpacity: 0.35, weight: 4 });
     }
 
+    // 若圖層被拖曳或編輯頂點，自動重新計算最新位置的 MGRS 座標
+    if (!layer._hasCoordUpdateListener) {
+      layer.on('pm:dragend pm:edit', () => {
+        applyFeatureProperties(layer, layer.feature.properties);
+      });
+      layer._hasCoordUpdateListener = true;
+    }
+
     const layerId = L.stamp(layer);
     layer.bindPopup(`
-      <div style="font-size:14px; min-width:200px;">
+      <div style="font-size:14px; min-width:230px;">
         <strong style="font-size:15px;">${escapeHTML(props.name)}</strong><br>
         <span style="color:#475569; font-size:12px; font-weight:600;">${cfg.label}</span>
         <hr style="border:0; border-top:1px solid #e2e8f0; margin:6px 0;">
         <div style="white-space:pre-wrap; color:#1e293b;">${escapeHTML(props.desc || '無備註')}</div>
-        <div style="margin-top:8px; font-size:11px; color:#64748b;">更新：${escapeHTML(props.time || '')}</div>
+        <div style="margin-top:8px; font-size:11px; color:#0284c7; font-family:monospace; font-weight:bold;">座標：${escapeHTML(props.coord || '')}</div>
+        <div style="margin-top:2px; font-size:11px; color:#64748b;">更新：${escapeHTML(props.time || '')}</div>
         <div class="popup-btn-group">
           <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">✏️ 編輯內容 / 改色</button>
           <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">🗑️ 刪除</button>
@@ -344,7 +415,7 @@
   }
 
   // ==========================================
-  // 4. 自動偵測 GitHub Pages 帳號並讀取既有圖資
+  // 5. 自動偵測 GitHub Pages 帳號並讀取既有圖資
   // ==========================================
   window.addEventListener('DOMContentLoaded', () => {
     const host = window.location.hostname;
@@ -380,12 +451,14 @@
   }
 
   // ==========================================
-  // 5. 圖資轉 KML (針對 ATAK 原生圖釘染色深度優化)
+  // 6. 圖資轉 KML (CoT 圓點 + MGRS 座標紀錄)
   // ==========================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
     drawnItems.eachLayer(layer => {
       if (map.hasLayer(layer) && layer.feature && (layer instanceof L.Marker || layer instanceof L.Path)) {
+        // 匯出前確保座標是最新的
+        layer.feature.properties.coord = getLayerCoordString(layer);
         const gj = layer.toGeoJSON();
         gj.properties = layer.feature.properties;
         collection.features.push(gj);
@@ -404,7 +477,8 @@
 
       const cat = p.category || 'danger';
       const cfg = categoryConfig[cat] || categoryConfig.danger;
-      const descText = `[分類: ${cfg.label}]\n${p.desc || ''}\n更新：${p.time || ''}`;
+      // 在時間戳正上方記錄 MGRS 點位座標
+      const descText = `[分類: ${cfg.label}]\n${p.desc || ''}\n座標：${p.coord || ''}\n更新：${p.time || ''}`;
       let geomKml = '';
 
       if (g.type === 'Point') {
@@ -425,10 +499,11 @@
       <Style>
         <IconStyle>
           <color>${cfg.kmlColor}</color>
-          <scale>1.2</scale>
+          <scale>1.1</scale>
           <Icon>
             <href>${cfg.kmlIcon}</href>
           </Icon>
+          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>${cfg.kmlColor}</color>
@@ -458,7 +533,7 @@
   }
 
   // ==========================================
-  // 6. GitHub API 寫入與連線檔匯出
+  // 7. GitHub API 寫入與連線檔匯出
   // ==========================================
   async function putGitHubFile(owner, repo, path, content, token, message) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
