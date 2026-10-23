@@ -132,5 +132,27 @@
       </Style>
       <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.532529,25.001113,0 121.532325,25.001089,0 121.532138,25.001213,0 121.532148,25.001417,0 121.53228,25.001495,0 121.532443,25.001427,0 121.532445,25.001303,0 121.532519,25.001233,0 121.532529,25.001113,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[Team Bravo]]></name>
+      <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
+
+座標：51R UH 51851 65854 (25.00094, 121.53196)
+更新：2026/10/24 02:46:02 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ffff0000</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.531963,25.000937,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
