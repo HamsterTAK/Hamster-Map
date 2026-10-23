@@ -10,5 +10,11 @@
     "user": "Neoyang",
     "type": "chat",
     "text": "Testen"
+  },
+  {
+    "time": "2026/10/24 03:03:35",
+    "user": "Neoyang",
+    "type": "action",
+    "text": "手動發布並同步了最新圖資至雲端"
   }
 ]
