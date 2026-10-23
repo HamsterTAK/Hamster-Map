@@ -1,4 +1,21 @@
 {
   "type": "FeatureCollection",
-  "features": []
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Stephanie",
+        "category": "friendly",
+        "desc": "",
+        "time": "2026/10/23 20:25:55"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532452,
+          25.0012
+        ]
+      }
+    }
+  ]
 }
