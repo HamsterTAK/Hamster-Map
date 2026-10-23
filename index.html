@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>救災戰術協作地圖 (GitHub.io -> ATAK)</title>
+  <title>情資地圖協作 (GitHub.io -> ATAK)</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.css" />
   <style>
@@ -49,12 +49,12 @@
 <body>
 
 <div id="topbar">
-  <strong>🛠️ 救災圖資系統</strong>
+  <strong>🛠️ 圖資系統</strong>
   <input type="password" id="gh-token" placeholder="GitHub Token (寫入密碼)" style="width:175px;" />
   <input type="text" id="gh-owner" placeholder="GitHub 帳號" style="width:115px;" />
   <input type="text" id="gh-repo" placeholder="Repo 名稱" style="width:115px;" />
   
-  <button class="btn btn-save" onclick="publishToGitHub()">☁️ 儲存並發布至 GitHub</button>
+  <button class="btn btn-save" onclick="publishToGitHub()">☁️ 儲存並發布</button>
   <button class="btn btn-local" onclick="exportLocalKML()">📥 下載 live.kml (本機備忘)</button>
   <button class="btn btn-atak" onclick="downloadBootstrapKML()">📲 下載 ATAK 連線檔</button>
   <span id="status">準備就緒</span>
@@ -64,7 +64,7 @@
 
 <div id="modal-overlay">
   <div id="modal-box">
-    <h3>📍 設定救災圖資屬性</h3>
+    <h3>📍 設定圖資屬性</h3>
     <div class="form-group">
       <label>名稱 / 地點代號 *</label>
       <input type="text" id="feat-name" placeholder="例如：台9線168K土石流阻斷" />
