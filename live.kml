@@ -7,14 +7,16 @@
       <name><![CDATA[邪惡祭壇]]></name>
       <description><![CDATA[[分類: 🔴 災情 / 危險管制區]
 
+座標：51R UH 51890 65877 (25.00115, 121.53235)
 更新：2026/10/23 23:28:16]]></description>
       <Style>
         <IconStyle>
           <color>ff0000ff</color>
-          <scale>1.2</scale>
+          <scale>0.85</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ff0000ff</color>
@@ -35,14 +37,16 @@
       <name><![CDATA[Stephanie]]></name>
       <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
 
+座標：51R UH 51945 65858 (25.00099, 121.53289)
 更新：2026/10/23 23:30:44]]></description>
       <Style>
         <IconStyle>
           <color>ffff0000</color>
-          <scale>1.2</scale>
+          <scale>0.85</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffff0000</color>
@@ -63,14 +67,16 @@
       <name><![CDATA[人質]]></name>
       <description><![CDATA[[分類: 🟡 待援點 / 搜索目標區]
 
+座標：51R UH 51910 65899 (25.00135, 121.53254)
 更新：2026/10/23 23:31:04]]></description>
       <Style>
         <IconStyle>
           <color>ff00ffff</color>
-          <scale>1.2</scale>
+          <scale>0.85</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ff00ffff</color>
@@ -91,14 +97,16 @@
       <name><![CDATA[UAS]]></name>
       <description><![CDATA[[分類: 🟢 物資站 / 安全集結區]
 
+座標：51R UH 51968 65839 (25.00081, 121.53312)
 更新：2026/10/23 23:31:21]]></description>
       <Style>
         <IconStyle>
           <color>ff00ff00</color>
-          <scale>1.2</scale>
+          <scale>0.85</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ff00ff00</color>
@@ -119,14 +127,16 @@
       <name><![CDATA[Team Alpha]]></name>
       <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
 
+座標：51R UH 51949 65876 (25.00115, 121.53293)
 更新：2026/10/23 23:48:13 (Felicia)]]></description>
       <Style>
         <IconStyle>
           <color>ffff0000</color>
-          <scale>1.2</scale>
+          <scale>0.85</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffff0000</color>
@@ -147,14 +157,16 @@
       <name><![CDATA[Team Bravo]]></name>
       <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
 
+座標：51R UH 51865 65835 (25.00077, 121.53210)
 更新：2026/10/23 23:48:48 (Neoyang)]]></description>
       <Style>
         <IconStyle>
           <color>ffff0000</color>
-          <scale>1.2</scale>
+          <scale>0.85</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffff0000</color>
@@ -170,6 +182,36 @@
         </PolyStyle>
       </Style>
       <Point><coordinates>121.532097,25.000766,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[教徒]]></name>
+      <description><![CDATA[[分類: 🔴 災情 / 危險管制區]
+
+座標：51R UH 51876 65870 (25.00108, 121.53220)
+更新：2026/10/24 00:24:12 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff0000ff</color>
+          <scale>0.85</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+        <LineStyle>
+          <color>ff0000ff</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>660000ff</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
+      <Point><coordinates>121.532205,25.001082,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
