@@ -12,11 +12,10 @@
       <Style>
         <IconStyle>
           <color>ff0000ff</color>
-          <scale>0.85</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ff0000ff</color>
@@ -42,11 +41,10 @@
       <Style>
         <IconStyle>
           <color>ff00ffff</color>
-          <scale>0.85</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ff00ffff</color>
@@ -72,11 +70,10 @@
       <Style>
         <IconStyle>
           <color>ff00ff00</color>
-          <scale>0.85</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ff00ff00</color>
@@ -102,11 +99,10 @@
       <Style>
         <IconStyle>
           <color>ffff0000</color>
-          <scale>0.85</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffff0000</color>
@@ -132,11 +128,10 @@
       <Style>
         <IconStyle>
           <color>ffff0000</color>
-          <scale>0.85</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffff0000</color>
@@ -162,11 +157,10 @@
       <Style>
         <IconStyle>
           <color>ff0000ff</color>
-          <scale>0.85</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ff0000ff</color>
@@ -192,11 +186,10 @@
       <Style>
         <IconStyle>
           <color>ff0000ff</color>
-          <scale>0.85</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ff0000ff</color>
