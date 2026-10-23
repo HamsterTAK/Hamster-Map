@@ -4,34 +4,6 @@
     <name>救災即時態勢圖</name>
     
     <Placemark>
-      <name><![CDATA[Stephanie]]></name>
-      <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
-
-[更新時間: 2026/10/23 20:25:55]]]></description>
-      <Style>
-        <IconStyle>
-          <color>ffffaa00</color>
-          <scale>1.2</scale>
-          <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-          </Icon>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffaa00</color>
-        </LabelStyle>
-        <LineStyle>
-          <color>ffffaa00</color>
-          <width>4</width>
-        </LineStyle>
-        <PolyStyle>
-          <color>66ffaa00</color>
-          <fill>1</fill>
-          <outline>1</outline>
-        </PolyStyle>
-      </Style>
-      <Point><coordinates>121.532452,25.0012,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
       <name><![CDATA[邪惡祭壇]]></name>
       <description><![CDATA[[分類: 🔴 災情 / 危險管制區]
 
@@ -58,6 +30,90 @@
         </PolyStyle>
       </Style>
       <Point><coordinates>121.532347,25.001148,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[Stephanie]]></name>
+      <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
+
+[更新時間: 2026/10/23 23:30:44]]]></description>
+      <Style>
+        <IconStyle>
+          <color>ffffaa00</color>
+          <scale>1.2</scale>
+          <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+          </Icon>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffaa00</color>
+        </LabelStyle>
+        <LineStyle>
+          <color>ffffaa00</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>66ffaa00</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
+      <Point><coordinates>121.532886,25.000985,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[人質]]></name>
+      <description><![CDATA[[分類: 🟡 待援點 / 搜索目標區]
+
+[更新時間: 2026/10/23 23:31:04]]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff00ffff</color>
+          <scale>1.2</scale>
+          <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+          </Icon>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff00ffff</color>
+        </LabelStyle>
+        <LineStyle>
+          <color>ff00ffff</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>6600ffff</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
+      <Point><coordinates>121.532543,25.001354,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[UAS]]></name>
+      <description><![CDATA[[分類: 🟢 物資站 / 安全集結區]
+
+[更新時間: 2026/10/23 23:31:21]]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff00ff00</color>
+          <scale>1.2</scale>
+          <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+          </Icon>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff00ff00</color>
+        </LabelStyle>
+        <LineStyle>
+          <color>ff00ff00</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>6600ff00</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
+      <Point><coordinates>121.533122,25.000813,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
