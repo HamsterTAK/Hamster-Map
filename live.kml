@@ -143,5 +143,33 @@
       </Style>
       <Point><coordinates>121.532926,25.001145,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[Team Bravo]]></name>
+      <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
+
+更新：2026/10/23 23:48:48 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ffff0000</color>
+          <scale>1.2</scale>
+          <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+          </Icon>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffff0000</color>
+        </LabelStyle>
+        <LineStyle>
+          <color>ffff0000</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>66ff0000</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
+      <Point><coordinates>121.532097,25.000766,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
