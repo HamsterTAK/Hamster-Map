@@ -19,5 +19,19 @@
       <PolyStyle><color>665ec522</color></PolyStyle>
     </Style>
     
+    <Placemark>
+      <name><![CDATA[Stephanie]]></name>
+      <description><![CDATA[無人機控制站
+[更新時間: 2026/10/23 18:52:46]]]></description>
+      <styleUrl>#friendly</styleUrl>
+      <Point><coordinates>121.532457,25.001112,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[無人機起降區]]></name>
+      <description><![CDATA[聽從現場ATC指示
+[更新時間: 2026/10/23 18:54:03]]]></description>
+      <styleUrl>#supply</styleUrl>
+      <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.532344,25.001286,0 121.532433,25.001422,0 121.532602,25.001395,0 121.532594,25.001252,0 121.532553,25.001211,0 121.532358,25.001235,0 121.532344,25.001286,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
+    </Placemark>
   </Document>
 </kml>
