@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hamster-Map (GitHub.io -> ATAK)</title>
+  <title>HamsterTAK-Map (GitHub.io -> ATAK)</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.css" />
   <style>
@@ -26,13 +26,14 @@
     #status { margin-left: auto; color: #38bdf8; font-weight: bold; font-size: 13px; }
     #map { height: calc(100% - 54px); width: 100%; background: #000000; }
 
+    /* 彈窗樣式 */
     #modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.65); z-index: 9999; align-items: center; justify-content: center;
     }
     #modal-box {
       background: #1e293b; color: #fff; padding: 20px; border-radius: 8px;
-      width: 360px; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      width: 370px; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       border: 1px solid #475569;
     }
     #modal-box h3 { margin: 0 0 15px 0; font-size: 16px; color: #38bdf8; }
@@ -44,25 +45,36 @@
     }
     .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px; }
     .btn-cancel { background: #64748b; }
+
+    /* Popup 內按鈕樣式 */
+    .popup-btn-group { display: flex; gap: 6px; margin-top: 10px; }
+    .popup-btn {
+      flex: 1; padding: 5px 8px; border: none; border-radius: 4px;
+      color: #fff; font-size: 12px; font-weight: bold; cursor: pointer;
+    }
+    .popup-btn-edit { background: #3b82f6; }
+    .popup-btn-del { background: #ef4444; }
+    .custom-pin-icon { background: transparent; border: none; }
   </style>
 </head>
 <body>
 
 <div id="topbar">
-  <strong>🐹 Hamster-Map</strong>
+  <strong>🐹黃金鼠圖資系統</strong>
   <input type="password" id="gh-token" placeholder="GitHub Token (寫入密碼)" style="width:175px;" />
   <input type="text" id="gh-owner" placeholder="GitHub 帳號" style="width:115px;" />
   <input type="text" id="gh-repo" placeholder="Repo 名稱" style="width:115px;" />
   
-  <button class="btn btn-save" onclick="publishToGitHub()">☁️ 儲存並發布</button>
+  <button class="btn btn-save" onclick="publishToGitHub()">☁️ 儲存並發布至 GitHub</button>
   <span id="status">準備就緒</span>
 </div>
 
 <div id="map"></div>
 
+<!-- 新增 / 編輯標記共用彈窗 -->
 <div id="modal-overlay">
   <div id="modal-box">
-    <h3>📍 設定圖資屬性</h3>
+    <h3 id="modal-title">📍 設定救災圖資屬性</h3>
     <div class="form-group">
       <label>名稱 / 地點代號 *</label>
       <input type="text" id="feat-name" placeholder="例如：台9線168K土石流阻斷" />
@@ -70,10 +82,10 @@
     <div class="form-group">
       <label>戰術分類與顏色</label>
       <select id="feat-cat">
-        <option value="danger">🔴 災情 / 阻斷 / 危險管制區</option>
-        <option value="rescue">🟡 待援點 / 搜索目標區</option>
-        <option value="friendly">🔵 我方人員</option>
-        <option value="supply">🟢 物資站 / 醫療點 / 安全集結區</option>
+        <option value="danger">🔴 災情 / 阻斷 / 危險管制區 (Red)</option>
+        <option value="rescue">🟡 待援點 / 搜索目標區 (Yellow)</option>
+        <option value="supply">🟢 物資站 / 醫療點 / 安全區 (Green)</option>
+        <option value="friendly">🔵 友軍單位 / 指揮所 / 搜救隊 (Friendly Blue)</option>
       </select>
     </div>
     <div class="form-group">
@@ -81,7 +93,7 @@
       <textarea id="feat-desc" rows="3" placeholder="輸入詳細資訊，匯入 ATAK 後點擊圖標即可查看..."></textarea>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-cancel" style="padding:7px 14px; border-radius:4px;" onclick="cancelModal()">取消刪除</button>
+      <button class="btn btn-cancel" id="modal-cancel-btn" style="padding:7px 14px; border-radius:4px;" onclick="cancelModal()">取消</button>
       <button class="btn btn-atak" style="padding:7px 14px; border-radius:4px;" onclick="saveModal()">確認套用</button>
     </div>
   </div>
@@ -91,7 +103,9 @@
 <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.min.js"></script>
 
 <script>
-  // 1. 初始化底圖 (包含 5 款 ATAK 圖資 + 國土測繪圖資)
+  // ==========================================
+  // 1. 初始化底圖 (5 款 ATAK 圖資 + 國土測繪圖資)
+  // ==========================================
   const map = L.map('map', { maxZoom: 22 }).setView([23.663, 121.425], 13);
 
   const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
@@ -131,7 +145,57 @@
     "✈️ 國土測繪航照正射影像": nlscPhoto
   }).addTo(map);
 
-  // 2. 繪圖控制器
+  // ==========================================
+  // 2. 戰術顏色設定與 SVG 動態彩色圖釘產生器
+  // ==========================================
+  const categoryConfig = {
+    danger: {
+      label: '🔴 災情 / 危險管制區',
+      webColor: '#ef4444',
+      kmlColor: 'ff0000ff',     // KML ABGR: 純紅
+      kmlPolyColor: '660000ff'  // KML ABGR: 半透明紅
+    },
+    rescue: {
+      label: '🟡 待援點 / 搜索目標區',
+      webColor: '#eab308',
+      kmlColor: 'ff00ffff',     // KML ABGR: 純黃
+      kmlPolyColor: '6600ffff'  // KML ABGR: 半透明黃
+    },
+    supply: {
+      label: '🟢 物資站 / 安全集結區',
+      webColor: '#22c55e',
+      kmlColor: 'ff00ff00',     // KML ABGR: 純綠
+      kmlPolyColor: '6600ff00'  // KML ABGR: 半透明綠
+    },
+    friendly: {
+      label: '🔵 友軍單位 / 搜救隊',
+      webColor: '#3b82f6',
+      kmlColor: 'ffffaa00',     // KML ABGR: 戰術亮藍
+      kmlPolyColor: '66ffaa00'  // KML ABGR: 半透明藍
+    }
+  };
+
+  // 為 Hamster-Map 網頁產生對應顏色的 SVG 戰術水滴圖釘
+  function createColoredIcon(cat) {
+    const cfg = categoryConfig[cat] || categoryConfig.danger;
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 42" width="30" height="40">
+        <path d="M16 1 C7.7 1 1 7.7 1 16 C1 26.5 16 40 16 40 C16 40 31 26.5 31 16 C31 7.7 24.3 1 16 1 Z"
+              fill="${cfg.webColor}" stroke="#ffffff" stroke-width="2.5"/>
+        <circle cx="16" cy="15" r="5.5" fill="#ffffff"/>
+      </svg>`;
+    return L.divIcon({
+      className: 'custom-pin-icon',
+      html: svg,
+      iconSize: [30, 40],
+      iconAnchor: [15, 40],
+      popupAnchor: [0, -36]
+    });
+  }
+
+  // ==========================================
+  // 3. 啟用 Geoman 繪圖與「新增 / 編輯」視窗邏輯
+  // ==========================================
   const drawnItems = new L.FeatureGroup().addTo(map);
   map.pm.addControls({
     position: 'topleft',
@@ -140,49 +204,112 @@
     editMode: true, dragMode: true, cutPolygon: false, removalMode: true
   });
 
-  const colorMap = { danger: '#ef4444', rescue: '#eab308', supply: '#22c55e' };
-  let pendingLayer = null;
+  let activeLayer = null;
+  let isEditingExisting = false;
 
+  // 新增圖形時觸發
   map.on('pm:create', (e) => {
-    pendingLayer = e.layer;
+    activeLayer = e.layer;
+    isEditingExisting = false;
+    document.getElementById('modal-title').innerText = '📍 新增救災圖資屬性';
+    document.getElementById('modal-cancel-btn').innerText = '取消刪除';
     document.getElementById('feat-name').value = '';
+    document.getElementById('feat-cat').value = 'danger';
     document.getElementById('feat-desc').value = '';
     document.getElementById('modal-overlay').style.display = 'flex';
     document.getElementById('feat-name').focus();
   });
 
+  // 橡皮擦刪除時同步移除
+  map.on('pm:remove', (e) => {
+    drawnItems.removeLayer(e.layer);
+  });
+
+  // 點擊既有圖標的「編輯內容 / 改色」按鈕時觸發
+  window.openEditModal = function(leafletId) {
+    const layer = drawnItems.getLayer(leafletId);
+    if (!layer) return;
+    layer.closePopup();
+
+    activeLayer = layer;
+    isEditingExisting = true;
+    const props = (layer.feature && layer.feature.properties) ? layer.feature.properties : {};
+
+    document.getElementById('modal-title').innerText = '✏️ 修改圖資內容與顏色';
+    document.getElementById('modal-cancel-btn').innerText = '關閉取消';
+    document.getElementById('feat-name').value = props.name || '';
+    document.getElementById('feat-cat').value = props.category || 'danger';
+    document.getElementById('feat-desc').value = props.desc || '';
+    document.getElementById('modal-overlay').style.display = 'flex';
+    document.getElementById('feat-name').focus();
+  };
+
+  // 點擊既有圖標的「刪除此標記」按鈕時觸發
+  window.deleteLayerById = function(leafletId) {
+    const layer = drawnItems.getLayer(leafletId);
+    if (!layer) return;
+    if (confirm('確定要刪除此標記嗎？（刪除後請記得點擊上方「儲存並發布至 GitHub」）')) {
+      map.removeLayer(layer);
+      drawnItems.removeLayer(layer);
+    }
+  };
+
   function cancelModal() {
-    if (pendingLayer) { map.removeLayer(pendingLayer); pendingLayer = null; }
+    if (activeLayer && !isEditingExisting) {
+      map.removeLayer(activeLayer);
+    }
+    activeLayer = null;
+    isEditingExisting = false;
     document.getElementById('modal-overlay').style.display = 'none';
   }
 
   function saveModal() {
-    if (!pendingLayer) return;
+    if (!activeLayer) return;
     const name = document.getElementById('feat-name').value.trim() || '未命名標記';
     const cat = document.getElementById('feat-cat').value;
     const desc = document.getElementById('feat-desc').value.trim();
     const time = new Date().toLocaleString('zh-TW', { hour12: false });
 
-    applyFeatureProperties(pendingLayer, { name, category: cat, desc, time });
-    drawnItems.addLayer(pendingLayer);
-    pendingLayer = null;
+    if (!drawnItems.hasLayer(activeLayer)) {
+      drawnItems.addLayer(activeLayer);
+    }
+
+    applyFeatureProperties(activeLayer, { name, category: cat, desc, time });
+
+    activeLayer = null;
+    isEditingExisting = false;
     document.getElementById('modal-overlay').style.display = 'none';
   }
 
+  // 套用外觀顏色（包含點位圖釘變色、多邊形變色）與綁定含編輯按鈕的 Popup
   function applyFeatureProperties(layer, props) {
     layer.feature = layer.feature || { type: 'Feature', properties: {} };
     layer.feature.properties = props;
-    const color = colorMap[props.category] || '#ef4444';
-    if (layer.setStyle) layer.setStyle({ color: color, fillColor: color, fillOpacity: 0.35, weight: 4 });
 
-    const catLabel = { danger: '🔴 災情/危險區', rescue: '🟡 待援/搜索區', friendly: '🔵 人員' , supply: '🟢 物資/安全區' }[props.category] || '標記';
+    const cat = props.category || 'danger';
+    const cfg = categoryConfig[cat] || categoryConfig.danger;
+
+    // 1. 如果是點位 (Marker)，換成對應顏色的 SVG 圖釘
+    if (layer instanceof L.Marker) {
+      layer.setIcon(createColoredIcon(cat));
+    }
+    // 2. 如果是線條或多邊形，換成對應顏色
+    else if (layer.setStyle) {
+      layer.setStyle({ color: cfg.webColor, fillColor: cfg.webColor, fillOpacity: 0.35, weight: 4 });
+    }
+
+    const layerId = L.stamp(layer);
     layer.bindPopup(`
-      <div style="font-size:14px; min-width:180px;">
+      <div style="font-size:14px; min-width:200px;">
         <strong style="font-size:15px;">${escapeHTML(props.name)}</strong><br>
-        <span style="color:#64748b; font-size:12px;">${catLabel}</span>
+        <span style="color:#475569; font-size:12px; font-weight:600;">${cfg.label}</span>
         <hr style="border:0; border-top:1px solid #e2e8f0; margin:6px 0;">
-        <div style="white-space:pre-wrap;">${escapeHTML(props.desc || '無備註')}</div>
-        <div style="margin-top:8px; font-size:11px; color:#94a3b8;">更新：${escapeHTML(props.time || '')}</div>
+        <div style="white-space:pre-wrap; color:#1e293b;">${escapeHTML(props.desc || '無備註')}</div>
+        <div style="margin-top:8px; font-size:11px; color:#64748b;">更新：${escapeHTML(props.time || '')}</div>
+        <div class="popup-btn-group">
+          <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">✏️ 編輯內容 / 改色</button>
+          <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">🗑️ 刪除</button>
+        </div>
       </div>
     `);
   }
@@ -191,12 +318,14 @@
     return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
   }
 
-  // 3. 自動偵測 GitHub Pages 帳號並讀取既有圖資
+  // ==========================================
+  // 4. 自動偵測 GitHub Pages 帳號並讀取既有圖資
+  // ==========================================
   window.addEventListener('DOMContentLoaded', () => {
     const host = window.location.hostname;
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     if (host.endsWith('github.io')) {
-      document.getElementById('gh-owner').value = host.split('.')[0];
+      document.getElementById('gh-owner').value = 'HamsterTAK';
       if (pathParts.length > 0) document.getElementById('gh-repo').value = pathParts[0];
     }
     const savedToken = localStorage.getItem('rescue_gh_token');
@@ -212,8 +341,8 @@
       const geojson = await res.json();
       L.geoJSON(geojson, {
         onEachFeature: (feature, layer) => {
-          applyFeatureProperties(layer, feature.properties || {});
           drawnItems.addLayer(layer);
+          applyFeatureProperties(layer, feature.properties || {});
         }
       });
       document.getElementById('status').innerText = '✅ 已載入線上既有圖資';
@@ -222,16 +351,13 @@
     }
   }
 
-  // 4. 圖資轉 KML
-// ✅ 新的（完全不依賴 isTempLayer，乾淨穩定）
-  map.on('pm:remove', (e) => {
-    drawnItems.removeLayer(e.layer);
-  });
-
+  // ==========================================
+  // 5. 圖資轉 KML (針對 ATAK 原生圖釘染色深度優化)
+  // ==========================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
     drawnItems.eachLayer(layer => {
-      if ( map.hasLayer(layer) && layer.feature && (layer instanceof L.Marker || layer instanceof L.Path)) {
+      if (map.hasLayer(layer) && layer.feature && (layer instanceof L.Marker || layer instanceof L.Path)) {
         const gj = layer.toGeoJSON();
         gj.properties = layer.feature.properties;
         collection.features.push(gj);
@@ -241,30 +367,16 @@
   }
 
   function generateKML(geojson) {
-    const styles = `
-    <Style id="danger">
-      <IconStyle><color>ff4444ef</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href></Icon></IconStyle>
-      <LineStyle><color>ff4444ef</color><width>4</width></LineStyle>
-      <PolyStyle><color>664444ef</color></PolyStyle>
-    </Style>
-    <Style id="rescue">
-      <IconStyle><color>ff08b3ea</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/ylw-circle.png</href></Icon></IconStyle>
-      <LineStyle><color>ff08b3ea</color><width>4</width></LineStyle>
-      <PolyStyle><color>6608b3ea</color></PolyStyle>
-    </Style>
-    <Style id="supply">
-      <IconStyle><color>ff5ec522</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/grn-circle.png</href></Icon></IconStyle>
-      <LineStyle><color>ff5ec522</color><width>4</width></LineStyle>
-      <PolyStyle><color>665ec522</color></PolyStyle>
-    </Style>`;
-
     let placemarks = '';
+
     geojson.features.forEach(f => {
       const p = f.properties || {};
       const g = f.geometry;
       if (!g) return;
-      const styleId = p.category || 'danger';
-      const descText = `${p.desc || ''}\n[更新時間: ${p.time || ''}]`;
+
+      const cat = p.category || 'danger';
+      const cfg = categoryConfig[cat] || categoryConfig.danger;
+      const descText = `[分類: ${cfg.label}]\n${p.desc || ''}\n[更新時間: ${p.time || ''}]`;
       let geomKml = '';
 
       if (g.type === 'Point') {
@@ -278,11 +390,32 @@
       }
 
       if (geomKml) {
+        // 直接在每個 Placemark 內嵌 <Style> 與 ylw-pushpin.png 基底圖釘，確保 ATAK 100% 依照 <color> 染出紅/黃/綠/藍
         placemarks += `
     <Placemark>
       <name><![CDATA[${p.name || '未命名'}]]></name>
       <description><![CDATA[${descText}]]></description>
-      <styleUrl>#${styleId}</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>${cfg.kmlColor}</color>
+          <scale>1.2</scale>
+          <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+          </Icon>
+        </IconStyle>
+        <LabelStyle>
+          <color>${cfg.kmlColor}</color>
+        </LabelStyle>
+        <LineStyle>
+          <color>${cfg.kmlColor}</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>${cfg.kmlPolyColor}</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
       ${geomKml}
     </Placemark>`;
       }
@@ -292,15 +425,16 @@
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
     <name>救災即時態勢圖</name>
-    ${styles}
     ${placemarks}
   </Document>
 </kml>`;
   }
 
-  // 5. GitHub API 寫入與連線檔匯出
+  // ==========================================
+  // 6. GitHub API 寫入與連線檔匯出
+  // ==========================================
   async function putGitHubFile(owner, repo, path, content, token, message) {
-    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
     let sha = null;
     const getRes = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
     if (getRes.ok) {
@@ -311,7 +445,7 @@
     const body = { message, content: base64Content };
     if (sha) body.sha = sha;
 
-    const putRes = await fetch(url, {
+    const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -362,8 +496,8 @@
   }
 
   function downloadBootstrapKML() {
-    const owner = document.getElementById('gh-owner').value.trim() || 'YOUR_GITHUB_USERNAME';
-    const repo = document.getElementById('gh-repo').value.trim() || 'rescue-map';
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const liveKmlUrl = `https://${owner}.github.io/${repo}/live.kml`;
 
     const netLinkKml = `<?xml version="1.0" encoding="UTF-8"?>
