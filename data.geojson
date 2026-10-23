@@ -38,23 +38,6 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "UAS",
-        "category": "supply",
-        "desc": "",
-        "time": "2026/10/23 23:31:21",
-        "coord": "51R UH 51968 65839 (25.00081, 121.53312)"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.533122,
-          25.000813
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "name": "Team Alpha",
         "category": "friendly",
         "desc": "",
@@ -157,6 +140,23 @@
         "coordinates": [
           121.531963,
           25.000937
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "UAS",
+        "category": "supply",
+        "desc": "",
+        "time": "2026/10/23 23:31:21",
+        "coord": "51R UH 51968 65839 (25.00081, 121.53312)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.533122,
+          25.000813
         ]
       }
     }
