@@ -20,16 +20,50 @@
     #topbar input, #topbar select { background: #0f172a; color: #fff; }
     .btn { cursor: pointer; font-weight: 600; border: none !important; color: white; transition: opacity 0.2s; }
     .btn:hover:not(:disabled) { opacity: 0.9; }
-    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .btn-save { background: #ef4444; }
-    /* [新增註記] 恢復上一步按鈕樣式 */
-    .btn-undo { background: #f59e0b; color: #0f172a; }
     
     /* 右側狀態與 Callsign 區塊 */
     .right-group { margin-left: auto; display: flex; align-items: center; gap: 10px; }
     #status { color: #38bdf8; font-weight: bold; font-size: 13px; }
     #user-callsign { border-color: #38bdf8 !important; width: 135px; }
     #map { height: calc(100% - 54px); width: 100%; background: #000000; position: relative; }
+
+    /* [新增註記] 左側工具列「恢復上一步 (Undo)」圖示按鈕與步數小徽章樣式 */
+    .pm-undo-btn {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    .pm-undo-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: #333;
+      transition: opacity 0.2s;
+    }
+    .pm-undo-disabled {
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .pm-undo-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 9px;
+      font-weight: bold;
+      line-height: 12px;
+      min-width: 12px;
+      height: 12px;
+      padding: 0 3px;
+      border-radius: 6px;
+      text-align: center;
+      display: none;
+    }
 
     /* 底部即時 MGRS 戰術座標列 (仿 ATAK 底部 HUD) */
     #coord-bar {
@@ -110,8 +144,6 @@
   <input type="text" id="gh-repo" placeholder="Repo 名稱" style="width:115px;" />
   
   <button class="btn btn-save" onclick="publishToGitHub()">☁️ 儲存並發布至 GitHub</button>
-  <!-- [新增註記] 恢復上一步按鈕 (最多10步，每步保留5分鐘，亦支援 Ctrl+Z) -->
-  <button class="btn btn-undo" id="btn-undo" onclick="undoLastAction()" disabled title="恢復上一步操作 (最多保留10步，每步時效5分鐘，快捷鍵 Ctrl+Z)">↩️ 恢復上一步 (0)</button>
   
   <div class="right-group">
     <span id="status">準備就緒</span>
@@ -465,40 +497,59 @@
   }
 
   // ============================================================================
-  // 4. [新增註記] 恢復上一步 (Undo) 歷史堆疊系統 (最多保留 10 步，每步保留 5 分鐘)
+  // 4. [核心修正] 恢復上一步 (Undo) 系統：
+  //    (1) 移至左側 Geoman 工具列 Rotate Layers 下方，採用純圖示 + 步數小徽章
+  //    (2) 徹底修復「橡皮擦刪除」與「彈窗刪除」無法救回的問題！
   // ============================================================================
   const drawnItems = new L.FeatureGroup().addTo(map);
   const MAX_UNDO_STEPS = 10;           // 最多恢復 10 步
   const UNDO_EXPIRE_MS = 5 * 60 * 1000; // 每一步保留 5 分鐘 (300,000 毫秒)
   let undoStack = [];                  // 儲存結構: { geojsonStr, timestamp }
 
-  // 清除超過 5 分鐘的過期步驟並更新按鈕文字
+  // 清除超過 5 分鐘的過期步驟並更新左側工具列圖示狀態
   function cleanAndRefreshUndoUI() {
     const now = Date.now();
     undoStack = undoStack.filter(item => (now - item.timestamp) < UNDO_EXPIRE_MS);
-    const btn = document.getElementById('btn-undo');
-    if (btn) {
-      btn.innerText = `↩️ 恢復上一步 (${undoStack.length})`;
-      btn.disabled = (undoStack.length === 0);
+
+    const btnContainer = document.getElementById('pm-undo-container');
+    const badge = document.getElementById('pm-undo-badge');
+    if (btnContainer && badge) {
+      if (undoStack.length > 0) {
+        btnContainer.classList.remove('pm-undo-disabled');
+        badge.style.display = 'block';
+        badge.innerText = undoStack.length;
+      } else {
+        btnContainer.classList.add('pm-undo-disabled');
+        badge.style.display = 'none';
+      }
     }
   }
 
-  // 每秒定期檢查是否有超過 5 分鐘的步驟需要自動淘汰
   setInterval(cleanAndRefreshUndoUI, 1000);
 
-  // 在任何變更發生前呼叫此函式，將當前圖資狀態存入歷史堆疊
-  function recordUndoSnapshot() {
+  // [關鍵修正] 記錄快照函式：支援傳入 extraRemovedLayer (當 Geoman 橡皮擦已經先把圖層從 map 拔除時，強制將該被刪圖層一併寫入刪除前快照！)
+  function recordUndoSnapshot(extraRemovedLayer = null) {
     cleanAndRefreshUndoUI();
-    const currentGeoJSONStr = JSON.stringify(collectGeoJSON());
-    // 若與上一筆快照完全相同則不重複記錄
+    const collection = collectGeoJSON();
+
+    // 如果是橡皮擦刪除觸發，此時 extraRemovedLayer 已經不在 map 上，我們手動把它塞回這張「刪除前快照」中！
+    if (extraRemovedLayer && extraRemovedLayer.feature && (extraRemovedLayer instanceof L.Marker || extraRemovedLayer instanceof L.Path)) {
+      extraRemovedLayer.feature.properties.coord = getLayerCoordString(extraRemovedLayer);
+      const gj = extraRemovedLayer.toGeoJSON();
+      gj.properties = extraRemovedLayer.feature.properties;
+      collection.features.push(gj);
+    }
+
+    const currentGeoJSONStr = JSON.stringify(collection);
     if (undoStack.length > 0 && undoStack[undoStack.length - 1].geojsonStr === currentGeoJSONStr) {
       return;
     }
+
     undoStack.push({
       geojsonStr: currentGeoJSONStr,
       timestamp: Date.now()
     });
-    // 若超過 10 步，移除最舊的一步
+
     if (undoStack.length > MAX_UNDO_STEPS) {
       undoStack.shift();
     }
@@ -513,7 +564,6 @@
     const lastSnapshot = undoStack.pop();
     const geojson = JSON.parse(lastSnapshot.geojsonStr);
 
-    // 清空目前畫布並還原快照中的圖資
     drawnItems.clearLayers();
     L.geoJSON(geojson, {
       onEachFeature: (feature, layer) => {
@@ -539,13 +589,42 @@
   });
 
   // ============================================================================
-  // 5. 啟用 Geoman 繪圖與「新增 / 編輯 / 拖曳更新座標」邏輯 (整合 Undo 快照)
+  // 5. 啟用 Geoman 左側工具列，並在 Rotate Layers 下方加入「上一步圖示按鈕」
   // ============================================================================
   map.pm.addControls({
     position: 'topleft',
     drawMarker: true, drawPolyline: true, drawPolygon: true, drawRectangle: true,
     drawCircle: false, drawCircleMarker: false, drawText: false,
-    editMode: true, dragMode: true, cutPolygon: false, removalMode: true
+    editMode: true, dragMode: true, cutPolygon: false, removalMode: true, rotateMode: true
+  });
+
+  // [新增註記] 在左側工具列的 edit 區塊 (Rotate Layers 正下方) 建立自訂「上一步」圖示按鈕
+  map.pm.Toolbar.createCustomControl({
+    name: 'UndoAction',
+    block: 'edit',
+    title: '恢復上一步 (最多10步 / 保留5分鐘 / 快捷鍵 Ctrl+Z)',
+    toggle: false,
+    onClick: () => {
+      undoLastAction();
+    },
+    afterClick: () => {},
+    className: 'leaflet-pm-icon-undo'
+  });
+
+  // 將按鈕內容替換為乾淨的逆時針還原箭頭 SVG 圖示與步數小徽章
+  window.addEventListener('DOMContentLoaded', () => {
+    const undoIconEl = document.querySelector('.leaflet-pm-icon-undo');
+    if (undoIconEl) {
+      undoIconEl.innerHTML = `
+        <div id="pm-undo-container" class="pm-undo-btn pm-undo-disabled">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7v6h6"></path>
+            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+          </svg>
+          <span id="pm-undo-badge" class="pm-undo-badge">0</span>
+        </div>
+      `;
+    }
   });
 
   let activeLayer = null;
@@ -563,12 +642,13 @@
     document.getElementById('feat-name').focus();
   });
 
-  // 橡皮擦刪除時：先記錄舊狀態快照再移除
+  // [關鍵修正] 當使用左側工具列「橡皮擦 (Removal Mode)」點擊刪除任何物件時：
+  // Geoman 會在觸發 pm:remove 前先把 e.layer 從 map 移除。
+  // 我們先從 drawnItems 移除它，再呼叫 recordUndoSnapshot(e.layer) 把被刪的 e.layer 強制寫入刪除前快照！
   map.on('pm:remove', (e) => {
-    // 暫時把被刪的圖層加回 drawnItems 以擷取完整刪除前快照，再正式移除
-    drawnItems.addLayer(e.layer);
-    recordUndoSnapshot();
     drawnItems.removeLayer(e.layer);
+    recordUndoSnapshot(e.layer);
+    document.getElementById('status').innerText = '🗑️ 已刪除標記 (可點左側 ↩️ 恢復)';
   });
 
   window.openEditModal = function(leafletId) {
@@ -589,14 +669,16 @@
     document.getElementById('feat-name').focus();
   };
 
+  // [關鍵修正] 當從彈窗點擊「🗑️ 刪除」按鈕時，在移除前先完整記錄快照
   window.deleteLayerById = function(leafletId) {
     const layer = drawnItems.getLayer(leafletId);
     if (!layer) return;
-    if (confirm('確定要刪除此標記嗎？（若誤刪可於 5 分鐘內點「恢復上一步」還原）')) {
-      recordUndoSnapshot(); // 刪除前先記錄快照
-      map.removeLayer(layer);
-      drawnItems.removeLayer(layer);
-    }
+    layer.closePopup();
+    // 刪除前先拍下包含此物件的完整快照
+    recordUndoSnapshot();
+    map.removeLayer(layer);
+    drawnItems.removeLayer(layer);
+    document.getElementById('status').innerText = '🗑️ 已刪除標記 (可點左側 ↩️ 恢復)';
   };
 
   function cancelModal() {
@@ -611,7 +693,7 @@
   function saveModal() {
     if (!activeLayer) return;
 
-    // [新增註記] 在套用新增或修改屬性前，先記錄變更前的快照供「恢復上一步」使用
+    // 在新增套用或編輯修改前，先拍下變更前的狀態快照
     recordUndoSnapshot();
 
     const name = document.getElementById('feat-name').value.trim() || '未命名標記';
@@ -666,12 +748,12 @@
       });
     }
 
-    // 綁定拖曳開始與頂點編輯事件，在移動前自動記錄 Undo 快照，移動後更新 MGRS 座標
+    // 綁定拖曳、旋轉與頂點編輯事件，在變更開始前自動記錄快照，結束後重算 MGRS 座標
     if (!layer._hasCoordUpdateListener) {
-      layer.on('pm:dragstart pm:markerdragstart', () => {
+      layer.on('pm:dragstart pm:markerdragstart pm:rotatestart', () => {
         recordUndoSnapshot();
       });
-      layer.on('pm:dragend pm:edit', () => {
+      layer.on('pm:dragend pm:edit pm:rotateend', () => {
         applyFeatureProperties(layer, layer.feature.properties);
       });
       layer._hasCoordUpdateListener = true;
@@ -739,9 +821,7 @@
   }
 
   // ============================================================================
-  // 7. [核心修正] 圖資轉 KML：
-  //    多邊形 (Polygon) 與線條 (LineString) 徹底移除 <IconStyle> 與 <LabelStyle>，
-  //    確保 ATAK 絕對不會在多邊形中心畫出那顆黑白預設圓球或中心點圖示！
+  // 7. 圖資轉 KML (維持點位水滴 + 多邊形無中心圓球)
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
@@ -771,7 +851,6 @@
       const cfg = categoryConfig[cat] || categoryConfig.danger;
       const descText = `[分類: ${cfg.label}]\n${p.desc || ''}\n座標：${p.coord || ''}\n更新：${p.time || ''}`;
 
-      // 分流 A：點位 (Point) -> 使用 Google 水滴圖示
       if (g.type === 'Point') {
         placemarks += `
     <Placemark>
@@ -793,10 +872,7 @@
       </Style>
       <Point><coordinates>${g.coordinates[0]},${g.coordinates[1]},0</coordinates></Point>
     </Placemark>`;
-      }
-      // 分流 B：多邊形 (Polygon) 與 線條 (LineString)
-      // [關鍵修正] 完全不寫 <IconStyle>，只保留 <LineStyle> 與 <PolyStyle>，讓多邊形 100% 乾淨無中心圓球！
-      else if (g.type === 'LineString' || g.type === 'Polygon') {
+      } else if (g.type === 'LineString' || g.type === 'Polygon') {
         let geomKml = '';
         if (g.type === 'LineString') {
           const coords = g.coordinates.map(c => `${c[0]},${c[1]},0`).join(' ');
@@ -836,7 +912,7 @@
   }
 
   // ============================================================================
-  // 8. GitHub API 寫入與自動部署 `google_pin.png`
+  // 8. GitHub API 寫入與發布
   // ============================================================================
   async function putGitHubFile(owner, repo, path, content, token, message, isRawBase64 = false) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
