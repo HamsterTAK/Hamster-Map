@@ -16,6 +16,22 @@
           25.0012
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "邪惡祭壇",
+        "category": "danger",
+        "desc": "",
+        "time": "2026/10/23 23:28:16"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532347,
+          25.001148
+        ]
+      }
     }
   ]
 }
