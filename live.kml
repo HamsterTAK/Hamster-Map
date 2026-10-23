@@ -19,5 +19,12 @@
       <PolyStyle><color>665ec522</color></PolyStyle>
     </Style>
     
+    <Placemark>
+      <name><![CDATA[Stephanie]]></name>
+      <description><![CDATA[UAS Pilot
+[更新時間: 2026/10/23 18:57:12]]]></description>
+      <styleUrl>#friendly</styleUrl>
+      <Point><coordinates>121.532435,25.001123,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
