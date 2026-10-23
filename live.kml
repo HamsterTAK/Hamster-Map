@@ -92,28 +92,6 @@
       <Point><coordinates>121.532926,25.001145,0</coordinates></Point>
     </Placemark>
     <Placemark>
-      <name><![CDATA[Team Bravo]]></name>
-      <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
-
-座標：51R UH 51866 65834 (25.00076, 121.53211)
-更新：2026/10/24 00:41:07 (Neoyang)]]></description>
-      <Style>
-        <IconStyle>
-          <color>ffff0000</color>
-          <scale>1.1</scale>
-          <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
-          </Icon>
-          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
-      </Style>
-      <Point><coordinates>121.532108,25.000761,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
       <name><![CDATA[邪教教徒]]></name>
       <description><![CDATA[[分類: 🔴 災情 / 危險管制區]
 
@@ -142,13 +120,6 @@
 座標：51R UH 51889 65893 (25.00129, 121.53233)
 更新：2026/10/24 01:16:40 (Neoyang)]]></description>
       <Style>
-        <IconStyle>
-          <scale>0</scale>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
         <LineStyle>
           <color>ff0000ff</color>
           <width>4</width>
