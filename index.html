@@ -74,6 +74,7 @@
       <select id="feat-cat">
         <option value="danger">🔴 災情 / 阻斷 / 危險管制區</option>
         <option value="rescue">🟡 待援點 / 搜索目標區</option>
+        <option value="friendly">🔵 我方人員</option>
         <option value="supply">🟢 物資站 / 醫療點 / 安全集結區</option>
       </select>
     </div>
@@ -176,7 +177,7 @@
     const color = colorMap[props.category] || '#ef4444';
     if (layer.setStyle) layer.setStyle({ color: color, fillColor: color, fillOpacity: 0.35, weight: 4 });
 
-    const catLabel = { danger: '🔴 災情/危險區', rescue: '🟡 待援/搜索區', supply: '🟢 物資/安全區' }[props.category] || '標記';
+    const catLabel = { danger: '🔴 災情/危險區', rescue: '🟡 待援/搜索區', friendly: '🔵 人員' , supply: '🟢 物資/安全區' }[props.category] || '標記';
     layer.bindPopup(`
       <div style="font-size:14px; min-width:180px;">
         <strong style="font-size:15px;">${escapeHTML(props.name)}</strong><br>
