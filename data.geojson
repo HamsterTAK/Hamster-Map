@@ -64,6 +64,23 @@
           25.000813
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Team Alpha",
+        "category": "friendly",
+        "desc": "",
+        "time": "2026/10/23 23:48:13 (Felicia)",
+        "updatedBy": "Felicia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532926,
+          25.001145
+        ]
+      }
     }
   ]
 }
