@@ -7,13 +7,13 @@
       <name><![CDATA[邪惡祭壇]]></name>
       <description><![CDATA[[分類: 🔴 災情 / 危險管制區]
 
-[更新時間: 2026/10/23 23:28:16]]]></description>
+更新：2026/10/23 23:28:16]]></description>
       <Style>
         <IconStyle>
           <color>ff0000ff</color>
           <scale>1.2</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
         </IconStyle>
         <LabelStyle>
@@ -35,24 +35,24 @@
       <name><![CDATA[Stephanie]]></name>
       <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
 
-[更新時間: 2026/10/23 23:30:44]]]></description>
+更新：2026/10/23 23:30:44]]></description>
       <Style>
         <IconStyle>
-          <color>ffffaa00</color>
+          <color>ffff0000</color>
           <scale>1.2</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
         </IconStyle>
         <LabelStyle>
-          <color>ffffaa00</color>
+          <color>ffff0000</color>
         </LabelStyle>
         <LineStyle>
-          <color>ffffaa00</color>
+          <color>ffff0000</color>
           <width>4</width>
         </LineStyle>
         <PolyStyle>
-          <color>66ffaa00</color>
+          <color>66ff0000</color>
           <fill>1</fill>
           <outline>1</outline>
         </PolyStyle>
@@ -63,13 +63,13 @@
       <name><![CDATA[人質]]></name>
       <description><![CDATA[[分類: 🟡 待援點 / 搜索目標區]
 
-[更新時間: 2026/10/23 23:31:04]]]></description>
+更新：2026/10/23 23:31:04]]></description>
       <Style>
         <IconStyle>
           <color>ff00ffff</color>
           <scale>1.2</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
         </IconStyle>
         <LabelStyle>
@@ -91,13 +91,13 @@
       <name><![CDATA[UAS]]></name>
       <description><![CDATA[[分類: 🟢 物資站 / 安全集結區]
 
-[更新時間: 2026/10/23 23:31:21]]]></description>
+更新：2026/10/23 23:31:21]]></description>
       <Style>
         <IconStyle>
           <color>ff00ff00</color>
           <scale>1.2</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
           </Icon>
         </IconStyle>
         <LabelStyle>
@@ -114,6 +114,34 @@
         </PolyStyle>
       </Style>
       <Point><coordinates>121.533122,25.000813,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[Team Alpha]]></name>
+      <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
+
+更新：2026/10/23 23:48:13 (Felicia)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ffff0000</color>
+          <scale>1.2</scale>
+          <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+          </Icon>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffff0000</color>
+        </LabelStyle>
+        <LineStyle>
+          <color>ffff0000</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>66ff0000</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
+      <Point><coordinates>121.532926,25.001145,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
