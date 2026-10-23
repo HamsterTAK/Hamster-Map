@@ -14,21 +14,14 @@
           <color>ff0000ff</color>
           <scale>1.1</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
-          <color>ff0000ff</color>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
         </LabelStyle>
-        <LineStyle>
-          <color>ff0000ff</color>
-          <width>4</width>
-        </LineStyle>
-        <PolyStyle>
-          <color>660000ff</color>
-          <fill>1</fill>
-          <outline>1</outline>
-        </PolyStyle>
       </Style>
       <Point><coordinates>121.532347,25.001148,0</coordinates></Point>
     </Placemark>
@@ -43,21 +36,14 @@
           <color>ff00ffff</color>
           <scale>1.1</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
-          <color>ff00ffff</color>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
         </LabelStyle>
-        <LineStyle>
-          <color>ff00ffff</color>
-          <width>4</width>
-        </LineStyle>
-        <PolyStyle>
-          <color>6600ffff</color>
-          <fill>1</fill>
-          <outline>1</outline>
-        </PolyStyle>
       </Style>
       <Point><coordinates>121.532543,25.001354,0</coordinates></Point>
     </Placemark>
@@ -72,21 +58,14 @@
           <color>ff00ff00</color>
           <scale>1.1</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
-          <color>ff00ff00</color>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
         </LabelStyle>
-        <LineStyle>
-          <color>ff00ff00</color>
-          <width>4</width>
-        </LineStyle>
-        <PolyStyle>
-          <color>6600ff00</color>
-          <fill>1</fill>
-          <outline>1</outline>
-        </PolyStyle>
       </Style>
       <Point><coordinates>121.533122,25.000813,0</coordinates></Point>
     </Placemark>
@@ -101,21 +80,14 @@
           <color>ffff0000</color>
           <scale>1.1</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
-          <color>ffff0000</color>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
         </LabelStyle>
-        <LineStyle>
-          <color>ffff0000</color>
-          <width>4</width>
-        </LineStyle>
-        <PolyStyle>
-          <color>66ff0000</color>
-          <fill>1</fill>
-          <outline>1</outline>
-        </PolyStyle>
       </Style>
       <Point><coordinates>121.532926,25.001145,0</coordinates></Point>
     </Placemark>
@@ -130,21 +102,14 @@
           <color>ffff0000</color>
           <scale>1.1</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
-          <color>ffff0000</color>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
         </LabelStyle>
-        <LineStyle>
-          <color>ffff0000</color>
-          <width>4</width>
-        </LineStyle>
-        <PolyStyle>
-          <color>66ff0000</color>
-          <fill>1</fill>
-          <outline>1</outline>
-        </PolyStyle>
       </Style>
       <Point><coordinates>121.532108,25.000761,0</coordinates></Point>
     </Placemark>
@@ -159,21 +124,14 @@
           <color>ff0000ff</color>
           <scale>1.1</scale>
           <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
-          <color>ff0000ff</color>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
         </LabelStyle>
-        <LineStyle>
-          <color>ff0000ff</color>
-          <width>4</width>
-        </LineStyle>
-        <PolyStyle>
-          <color>660000ff</color>
-          <fill>1</fill>
-          <outline>1</outline>
-        </PolyStyle>
       </Style>
       <Point><coordinates>121.53237,25.001363,0</coordinates></Point>
     </Placemark>
@@ -185,14 +143,11 @@
 更新：2026/10/24 01:16:40 (Neoyang)]]></description>
       <Style>
         <IconStyle>
-          <color>ff0000ff</color>
-          <scale>1.1</scale>
-          <Icon>
-            <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
-          </Icon>
+          <scale>0</scale>
         </IconStyle>
         <LabelStyle>
-          <color>ff0000ff</color>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
         </LabelStyle>
         <LineStyle>
           <color>ff0000ff</color>
