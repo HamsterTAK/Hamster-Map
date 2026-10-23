@@ -1,4 +1,21 @@
 {
   "type": "FeatureCollection",
-  "features": []
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Stephanie",
+        "category": "friendly",
+        "desc": "UAS Pilot",
+        "time": "2026/10/23 18:57:12"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532435,
+          25.001123
+        ]
+      }
+    }
+  ]
 }
