@@ -33,11 +33,36 @@
     /* 底部即時 MGRS 戰術座標列 (仿 ATAK 底部 HUD) */
     #coord-bar {
       position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.9); color: #38bdf8; padding: 6px 18px;
+      background: rgba(15, 23, 42, 0.92); color: #38bdf8; padding: 6px 18px;
       border-radius: 6px; font-family: 'Courier New', Consolas, monospace; font-size: 14px;
       font-weight: bold; z-index: 1000; border: 1px solid #334155;
       pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
       white-space: nowrap; letter-spacing: 0.5px;
+    }
+
+    /* [新增註記] MGRS 網格座標標籤樣式 (仿 ATAK 邊緣黑底白字標籤，如 51900 / 65900) */
+    .mgrs-grid-label {
+      background: rgba(15, 23, 42, 0.85);
+      color: #f8fafc;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: 'Courier New', Consolas, monospace;
+      font-size: 11px;
+      font-weight: bold;
+      border: 1px solid #3b82f6;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+    .mgrs-grid-center-label {
+      background: rgba(30, 58, 138, 0.65);
+      color: #93c5fd;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-family: 'Courier New', Consolas, monospace;
+      font-size: 10px;
+      pointer-events: none;
+      white-space: nowrap;
     }
 
     /* 彈窗樣式 */
@@ -126,49 +151,52 @@
 <script src="https://unpkg.com/mgrs@1.0.0/dist/mgrs.js"></script>
 
 <script>
-  // ==========================================
+  // ============================================================================
   // 1. 初始化底圖 (7 款 ATAK 圖資 + 2 款國土測繪圖資)
-  // ==========================================
-  const map = L.map('map', { maxZoom: 22 }).setView([23.663, 121.425], 13);
+  // ============================================================================
+  const map = L.map('map', { maxZoom: 22 }).setView([25.002, 121.533], 16);
 
   const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-    minZoom: 0, maxZoom: 20, attribution: '© Google Hybrid'
+    minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© Google Hybrid'
   }).addTo(map);
 
   const twHappyman = L.tileLayer('https://tile.happyman.idv.tw/map/rudy/{z}/{x}/{y}.png', {
     minZoom: 1, maxZoom: 22, maxNativeZoom: 18, attribution: '© 魯地圖 TW_HAPPYMAN'
   });
 
-  // [新增] Cycle OSM (OSM Cycle.xml)
+  // [新增註記] Cycle OSM 單車等高線圖 (對應 OSM Cycle.xml)
   const cycleOsm = L.tileLayer('https://a.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
-    minZoom: 0, maxZoom: 21, maxNativeZoom: 20, attribution: '© CycleOSM'
+    minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© CycleOSM'
   });
 
-  // [新增] Aviation Enroute (AviationEnroute.xml - 注意其順序為 {z}/{y}/{x})
+  // [新增註記] Aviation Enroute 航路圖 (對應 AviationEnroute.xml，注意其參數順序為 {z}/{y}/{x})
   const aviationEnroute = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Specialty/World_Navigation_Charts/MapServer/tile/{z}/{y}/{x}', {
-    minZoom: 3, maxNativeZoom: 12, maxZoom: 20, attribution: '© Esri Aviation Enroute'
+    minZoom: 3, maxNativeZoom: 12, maxZoom: 22, attribution: '© Esri Aviation Enroute'
   });
 
   const googleRoadmap = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-    minZoom: 0, maxZoom: 20, attribution: '© Google Roadmap'
+    minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© Google Roadmap'
   });
 
   const googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-    minZoom: 0, maxZoom: 20, attribution: '© Google Satellite'
+    minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© Google Satellite'
   });
 
   const openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-    subdomains: ['a', 'b', 'c'], minZoom: 1, maxZoom: 17, attribution: '© OpenTopoMap'
+    subdomains: ['a', 'b', 'c'], minZoom: 1, maxZoom: 22, maxNativeZoom: 17, attribution: '© OpenTopoMap'
   });
 
   const nlscEMap = L.tileLayer('https://wmts.nlsc.gov.tw/wmts/EMAP/default/GoogleMapsCompatible/{z}/{y}/{x}', {
-    maxZoom: 19, attribution: '© 內政部國土測繪中心'
+    maxZoom: 22, maxNativeZoom: 19, attribution: '© 內政部國土測繪中心'
   });
   const nlscPhoto = L.tileLayer('https://wmts.nlsc.gov.tw/wmts/PHOTO2/default/GoogleMapsCompatible/{z}/{y}/{x}', {
-    maxZoom: 19, attribution: '© 內政部國土測繪中心航照'
+    maxZoom: 22, maxNativeZoom: 19, attribution: '© 內政部國土測繪中心航照'
   });
 
-  L.control.layers({
+  // [新增註記] 建立 MGRS 戰術網格圖層群組 (預設開啟並疊加在地圖上)
+  const mgrsGridGroup = L.layerGroup().addTo(map);
+
+  const baseMaps = {
     "🛰️ Google Hybrid (衛星+路名)": googleHybrid,
     "⛰️ TW_HAPPYMAN (台灣魯地圖)": twHappyman,
     "🚴 Cycle OSM (單車等高線圖)": cycleOsm,
@@ -178,12 +206,21 @@
     "🧭 Open Topo Map (等高線)": openTopo,
     "🇹🇼 國土測繪通用電子地圖": nlscEMap,
     "📷 國土測繪航照正射影像": nlscPhoto
-  }).addTo(map);
+  };
 
-  // ==========================================
-  // 2. MGRS 軍用格網座標換算與游標即時監聽
-  // ==========================================
-  // 將經緯度轉成可讀性高的空白分隔 MGRS (例如: "51R UH 51941 65869")
+  const overlayMaps = {
+    "🟦 MGRS 戰術座標網格 (自動縮放)": mgrsGridGroup
+  };
+
+  L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+  // ============================================================================
+  // 2. [新增註記] MGRS 座標換算與「動態縮放 MGRS 網格繪製引擎 (100m / 1km / 10km)」
+  // ============================================================================
+  let currentGridStepText = '100m';
+  let lastMouseLatLng = null;
+
+  // 將經緯度轉成空白分隔 MGRS (例如: "51R UH 51909 65861")
   function toFormattedMGRS(lat, lng) {
     try {
       if (typeof mgrs !== 'undefined') {
@@ -194,7 +231,188 @@
     return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   }
 
-  // 取得任何圖層 (點、線、多邊形) 的代表座標字串
+  // 解析 MGRS 字串為結構化物件：{ gzd: "51R", sq: "UH", e: 51909, n: 65861 }
+  function parseMGRS(mgrsRaw) {
+    const m = mgrsRaw.match(/^(\d+[A-Z])([A-Z]{2})(\d{5})(\d{5})$/);
+    if (!m) return null;
+    return { gzd: m[1], sq: m[2], e: parseInt(m[3], 10), n: parseInt(m[4], 10) };
+  }
+
+  // [核心新增] 根據目前地圖縮放級別 (Zoom)，動態計算並繪製 MGRS 網格 (100m / 1km / 10km)
+  function updateMGRSGrid() {
+    mgrsGridGroup.clearLayers();
+    if (!map.hasLayer(mgrsGridGroup) || typeof mgrs === 'undefined') return;
+
+    const zoom = map.getZoom();
+    let step = 0;
+
+    // 依縮放層級決定網格間距 (最小 100m x 100m，往上皆為 10 的倍數)
+    if (zoom >= 16) {
+      step = 100;       // 100m x 100m
+      currentGridStepText = '100m × 100m';
+    } else if (zoom >= 13) {
+      step = 1000;      // 1km x 1km
+      currentGridStepText = '1km × 1km';
+    } else if (zoom >= 10) {
+      step = 10000;     // 10km x 10km
+      currentGridStepText = '10km × 10km';
+    } else {
+      currentGridStepText = '縮放過小隱藏網格 (請放大至 Zoom 10+)';
+      updateCoordBarText();
+      return;
+    }
+
+    updateCoordBarText();
+
+    const bounds = map.getBounds();
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
+    const nw = bounds.getNorthWest();
+    const se = bounds.getSouthEast();
+
+    // 取畫面中心點與四角的 MGRS 100km 方格代號 (如 51R UH)
+    const center = map.getCenter();
+    const centerParsed = parseMGRS(mgrs.forward([center.lng, center.lat], 5));
+    if (!centerParsed) return;
+
+    // 收集畫面內涵蓋的 100km 字母方格 (避免跨區界時漏畫)
+    const zonesMap = new Map();
+    [center, sw, ne, nw, se].forEach(pt => {
+      try {
+        const p = parseMGRS(mgrs.forward([pt.lng, pt.lat], 5));
+        if (p) zonesMap.set(`${p.gzd}${p.sq}`, p);
+      } catch (e) {}
+    });
+
+    zonesMap.forEach((zoneInfo) => {
+      const prefix = `${zoneInfo.gzd}${zoneInfo.sq}`;
+
+      // 估算當前視窗在該 100km 方格內的 Easting / Northing 範圍
+      let minE = 99999, maxE = 0, minN = 99999, maxN = 0;
+      const samplePts = [sw, ne, nw, se, center];
+      samplePts.forEach(pt => {
+        try {
+          const p = parseMGRS(mgrs.forward([pt.lng, pt.lat], 5));
+          if (p && `${p.gzd}${p.sq}` === prefix) {
+            if (p.e < minE) minE = p.e;
+            if (p.e > maxE) maxE = p.e;
+            if (p.n < minN) minN = p.n;
+            if (p.n > maxN) maxN = p.n;
+          }
+        } catch (e) {}
+      });
+
+      if (minE > maxE) return;
+
+      // 向外擴展 2 格緩衝區確保填滿螢幕邊緣
+      const startE = Math.max(0, Math.floor(minE / step) * step - step * 2);
+      const endE   = Math.min(100000 - step, Math.ceil(maxE / step) * step + step * 2);
+      const startN = Math.max(0, Math.floor(minN / step) * step - step * 2);
+      const endN   = Math.min(100000 - step, Math.ceil(maxN / step) * step + step * 2);
+
+      // 安全閥：避免極端情況產生過多線段卡頓
+      if ((endE - startE) / step > 65 || (endN - startN) / step > 65) return;
+
+      // 將 MGRS (Easting, Northing) 反算回 WGS84 [lat, lng]
+      function mgrsToLatLng(eVal, nVal) {
+        const eClamped = Math.min(99999, Math.max(0, Math.round(eVal)));
+        const nClamped = Math.min(99999, Math.max(0, Math.round(nVal)));
+        const eStr = String(eClamped).padStart(5, '0');
+        const nStr = String(nClamped).padStart(5, '0');
+        const pt = mgrs.toPoint(`${prefix}${eStr}${nStr}`); // 回傳 [lng, lat]
+        return [pt[1], pt[0]];
+      }
+
+      // 格式化邊緣標籤文字 (仿 ATAK：100m 顯示 51900，1km 顯示 51，10km 顯示 50km)
+      function formatGridLabel(val) {
+        const s = String(val).padStart(5, '0');
+        if (step === 100) return s;                // 例如: 51900
+        if (step === 1000) return s.slice(0, 2);   // 例如: 51
+        return s.slice(0, 1) + '0k';               // 例如: 50k
+      }
+
+      // 1. 繪製垂直網格線 (Easting 固定，Northing 從 startN 到 endN+step)
+      for (let e = startE; e <= endE + step; e += step) {
+        if (e > 99999) continue;
+        try {
+          const p1 = mgrsToLatLng(e, startN);
+          const p2 = mgrsToLatLng(e, Math.min(99999, endN + step));
+          // 畫出仿 ATAK 的亮藍色格網線
+          L.polyline([p1, p2], {
+            color: '#2563eb',
+            weight: 1.6,
+            opacity: 0.75,
+            interactive: false
+          }).addTo(mgrsGridGroup);
+
+          // 在畫面頂部邊緣下方貼上 Easting 座標標籤 (如 51900)
+          const topLat = bounds.getNorth() - (bounds.getNorth() - bounds.getSouth()) * 0.06;
+          const lonAtLine = p1[1] + (p2[1] - p1[1]) * 0.5;
+          if (lonAtLine >= bounds.getWest() && lonAtLine <= bounds.getEast()) {
+            L.marker([topLat, lonAtLine], {
+              interactive: false,
+              icon: L.divIcon({
+                className: '',
+                html: `<span class="mgrs-grid-label">${formatGridLabel(e)}</span>`,
+                iconAnchor: [22, 10]
+              })
+            }).addTo(mgrsGridGroup);
+          }
+        } catch (err) {}
+      }
+
+      // 2. 繪製水平網格線 (Northing 固定，Easting 從 startE 到 endE+step)
+      for (let n = startN; n <= endN + step; n += step) {
+        if (n > 99999) continue;
+        try {
+          const p1 = mgrsToLatLng(startE, n);
+          const p2 = mgrsToLatLng(Math.min(99999, endE + step), n);
+          L.polyline([p1, p2], {
+            color: '#2563eb',
+            weight: 1.6,
+            opacity: 0.75,
+            interactive: false
+          }).addTo(mgrsGridGroup);
+
+          // 在畫面左側邊緣右方貼上 Northing 座標標籤 (如 65900)
+          const leftLng = bounds.getWest() + (bounds.getEast() - bounds.getWest()) * 0.04;
+          const latAtLine = p1[0] + (p2[0] - p1[0]) * 0.5;
+          if (latAtLine >= bounds.getSouth() && latAtLine <= bounds.getNorth()) {
+            L.marker([latAtLine, leftLng], {
+              interactive: false,
+              icon: L.divIcon({
+                className: '',
+                html: `<span class="mgrs-grid-label">${formatGridLabel(n)}</span>`,
+                iconAnchor: [0, 10]
+              })
+            }).addTo(mgrsGridGroup);
+          }
+        } catch (err) {}
+      }
+    });
+  }
+
+  // 綁定地圖縮放與平移事件，即時重繪 MGRS 動態網格
+  map.on('moveend zoomend overlayadd overlayremove', updateMGRSGrid);
+
+  // 更新底部狀態列文字 (顯示游標 MGRS + 當前網格大小)
+  function updateCoordBarText() {
+    const bar = document.getElementById('coord-bar');
+    if (!lastMouseLatLng) {
+      bar.innerText = `🎯 移動滑鼠顯示 MGRS 戰術座標 ｜ 🟦 目前網格: ${currentGridStepText}`;
+      return;
+    }
+    const { lat, lng } = lastMouseLatLng;
+    const mgrsStr = toFormattedMGRS(lat, lng);
+    bar.innerText = `🎯 游標 MGRS: ${mgrsStr} ｜ WGS84: ${lat.toFixed(5)}, ${lng.toFixed(5)} ｜ 🟦 網格: ${currentGridStepText}`;
+  }
+
+  map.on('mousemove', (e) => {
+    lastMouseLatLng = e.latlng;
+    updateCoordBarText();
+  });
+
+  // 取得任何圖層 (點、線、多邊形) 的代表 MGRS 座標字串
   function getLayerCoordString(layer) {
     let latlng = null;
     if (typeof layer.getLatLng === 'function') {
@@ -207,49 +425,76 @@
     return `${mgrsStr} (${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)})`;
   }
 
-  // 滑鼠移動時在畫面下方即時顯示 MGRS
-  map.on('mousemove', (e) => {
-    const { lat, lng } = e.latlng;
-    const mgrsStr = toFormattedMGRS(lat, lng);
-    document.getElementById('coord-bar').innerText = `🎯 游標 MGRS: ${mgrsStr} ｜ WGS84: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  });
+  // ============================================================================
+  // 3. [新增註記] ATAK 專用「CoT 立體小圓球圖示產生器」與戰術顏色配置
+  // ============================================================================
+  // 說明：ATAK 預設會拒絕載入未知的外部 http 圖示並強制退回「大頭針 (Pushpin)」。
+  // 這裡我們動態生成一顆純白高光立體小圓球的 PNG (Base64)，同時在儲存時自動上傳一份
+  // `cot_dot.png` 到您的 GitHub Repo，確保 ATAK 100% 顯示為 CoT 圓球而非圖釘！
+  function generateWhiteCoTSphereBase64() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 48;
+    canvas.height = 48;
+    const ctx = canvas.getContext('2d');
 
-  // ==========================================
-  // 3. 戰術顏色設定與 CoT 風格小圓點產生器
-  // ==========================================
-  // 註：ATAK KML 改用 shaded_dot.png (純白圓點基底)，渲染出來就是像原生 CoT 一樣的彩色戰術小圓點！
+    // 1. 繪製外圍黑色戰術抗鋸齒邊框 (讓圓球在淺色底圖也清晰可見)
+    ctx.beginPath();
+    ctx.arc(24, 24, 16, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+    ctx.fill();
+
+    // 2. 繪製純白球體基底 (供 KML <color> ABGR 染色相乘出紅/黃/綠/藍)
+    const grad = ctx.createRadialGradient(19, 19, 2, 24, 24, 14);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.85, '#e2e8f0');
+    grad.addColorStop(1, '#cbd5e1');
+
+    ctx.beginPath();
+    ctx.arc(24, 24, 13.5, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // 3. 繪製中心戰術準心小內環 (標準 CoT Spot Map 風格)
+    ctx.beginPath();
+    ctx.arc(24, 24, 4, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    return canvas.toDataURL('image/png');
+  }
+
+  const COT_SPHERE_DATA_URI = generateWhiteCoTSphereBase64();
+  const COT_SPHERE_RAW_BASE64 = COT_SPHERE_DATA_URI.split(',')[1];
+
   const categoryConfig = {
     danger: {
       label: '🔴 災情 / 危險管制區',
       webColor: '#ef4444',
       kmlColor: 'ff0000ff',     // KML ABGR: 純紅
-      kmlPolyColor: '660000ff', // KML ABGR: 半透明紅
-      kmlIcon: 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png'
+      kmlPolyColor: '660000ff'  // KML ABGR: 半透明紅
     },
     rescue: {
       label: '🟡 待援點 / 搜索目標區',
       webColor: '#eab308',
       kmlColor: 'ff00ffff',     // KML ABGR: 純黃
-      kmlPolyColor: '6600ffff', // KML ABGR: 半透明黃
-      kmlIcon: 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png'
+      kmlPolyColor: '6600ffff'  // KML ABGR: 半透明黃
     },
     supply: {
       label: '🟢 物資站 / 安全集結區',
       webColor: '#22c55e',
       kmlColor: 'ff00ff00',     // KML ABGR: 純綠
-      kmlPolyColor: '6600ff00', // KML ABGR: 半透明綠
-      kmlIcon: 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png'
+      kmlPolyColor: '6600ff00'  // KML ABGR: 半透明綠
     },
     friendly: {
       label: '🔵 友軍單位 / 搜救隊',
       webColor: '#3b82f6',
       kmlColor: 'ffff0000',     // KML ABGR: 純正藍
-      kmlPolyColor: '66ff0000', // KML ABGR: 半透明藍
-      kmlIcon: 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png'
+      kmlPolyColor: '66ff0000'  // KML ABGR: 半透明藍
     }
   };
 
-  // 為 Hamster-Map 網頁產生 CoT 風格的戰術同心小圓點 (中心正對座標點)
+  // 為 Hamster-Map 網頁端產生 CoT 風格的戰術同心小圓球 (中心正對座標點)
   function createCoTDotIcon(cat) {
     const cfg = categoryConfig[cat] || categoryConfig.danger;
     const svg = `
@@ -262,14 +507,14 @@
       className: 'custom-cot-icon',
       html: svg,
       iconSize: [22, 22],
-      iconAnchor: [11, 11], // 錨點設於正中心，與 CoT 圓點一致
+      iconAnchor: [11, 11], // 錨點設於正中心，與 ATAK CoT 圓球一致
       popupAnchor: [0, -11]
     });
   }
 
-  // ==========================================
+  // ============================================================================
   // 4. 啟用 Geoman 繪圖與「新增 / 編輯 / 拖曳更新座標」邏輯
-  // ==========================================
+  // ============================================================================
   const drawnItems = new L.FeatureGroup().addTo(map);
   map.pm.addControls({
     position: 'topleft',
@@ -367,7 +612,6 @@
 
   // 套用外觀顏色、MGRS 座標計算與綁定含編輯按鈕的 Popup
   function applyFeatureProperties(layer, props) {
-    // 自動補算或更新 MGRS 座標
     props.coord = getLayerCoordString(layer);
 
     layer.feature = layer.feature || { type: 'Feature', properties: {} };
@@ -376,7 +620,7 @@
     const cat = props.category || 'danger';
     const cfg = categoryConfig[cat] || categoryConfig.danger;
 
-    // 1. 如果是點位 (Marker)，換成對應顏色的 CoT 小圓點
+    // 1. 如果是點位 (Marker)，換成對應顏色的 CoT 小圓球
     if (layer instanceof L.Marker) {
       layer.setIcon(createCoTDotIcon(cat));
     }
@@ -414,9 +658,9 @@
     return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
   }
 
-  // ==========================================
-  // 5. 自動偵測 GitHub Pages 帳號並讀取既有圖資
-  // ==========================================
+  // ============================================================================
+  // 5. 自動偵測 GitHub Pages 帳號、繪製初始網格並讀取既有圖資
+  // ============================================================================
   window.addEventListener('DOMContentLoaded', () => {
     const host = window.location.hostname;
     const pathParts = window.location.pathname.split('/').filter(Boolean);
@@ -430,6 +674,8 @@
     const savedCallsign = localStorage.getItem('rescue_callsign');
     if (savedCallsign) document.getElementById('user-callsign').value = savedCallsign;
 
+    // 首次繪製 MGRS 網格
+    updateMGRSGrid();
     loadExistingData();
   });
 
@@ -444,20 +690,23 @@
           applyFeatureProperties(layer, feature.properties || {});
         }
       });
+      // 若有既有圖資，自動將畫面飛往圖資所在區域，方便立即看到 100m 網格與點位
+      if (drawnItems.getLayers().length > 0) {
+        map.fitBounds(drawnItems.getBounds(), { maxZoom: 17, padding: [40, 40] });
+      }
       document.getElementById('status').innerText = '✅ 已載入線上既有圖資';
     } catch (e) {
       console.log('尚無既有圖資檔案，將於首次儲存時自動建立');
     }
   }
 
-  // ==========================================
-  // 6. 圖資轉 KML (CoT 圓點 + MGRS 座標紀錄)
-  // ==========================================
+  // ============================================================================
+  // 6. 圖資轉 KML ([新增註記] 改為同源 CoT 小圓球 `cot_dot.png` 與 MGRS 座標紀錄)
+  // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
     drawnItems.eachLayer(layer => {
       if (map.hasLayer(layer) && layer.feature && (layer instanceof L.Marker || layer instanceof L.Path)) {
-        // 匯出前確保座標是最新的
         layer.feature.properties.coord = getLayerCoordString(layer);
         const gj = layer.toGeoJSON();
         gj.properties = layer.feature.properties;
@@ -469,6 +718,10 @@
 
   function generateKML(geojson) {
     let placemarks = '';
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
+    // [關鍵修正] 指向我們自動上傳到同一個 GitHub Pages 下的 `cot_dot.png` 白色立體圓球基底
+    const cotDotUrl = `https://${owner}.github.io/${repo}/cot_dot.png`;
 
     geojson.features.forEach(f => {
       const p = f.properties || {};
@@ -499,9 +752,9 @@
       <Style>
         <IconStyle>
           <color>${cfg.kmlColor}</color>
-          <scale>1.1</scale>
+          <scale>0.85</scale>
           <Icon>
-            <href>${cfg.kmlIcon}</href>
+            <href>${cotDotUrl}</href>
           </Icon>
           <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
         </IconStyle>
@@ -532,10 +785,11 @@
 </kml>`;
   }
 
-  // ==========================================
-  // 7. GitHub API 寫入與連線檔匯出
-  // ==========================================
-  async function putGitHubFile(owner, repo, path, content, token, message) {
+  // ============================================================================
+  // 7. GitHub API 寫入與自動部署 `cot_dot.png` 圓球圖檔
+  // ============================================================================
+  // isRawBase64=true 時代表傳入的已經是圖片的 Base64 字串，不需再做文字轉碼
+  async function putGitHubFile(owner, repo, path, content, token, message, isRawBase64 = false) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
     let sha = null;
     const getRes = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -543,7 +797,7 @@
       const getJson = await getRes.json();
       sha = getJson.sha;
     }
-    const base64Content = btoa(unescape(encodeURIComponent(content)));
+    const base64Content = isRawBase64 ? content : btoa(unescape(encodeURIComponent(content)));
     const body = { message, content: base64Content };
     if (sha) body.sha = sha;
 
@@ -573,7 +827,7 @@
     if (callsign) localStorage.setItem('rescue_callsign', callsign);
 
     const statusEl = document.getElementById('status');
-    statusEl.innerText = '⏳ 正在同步至 GitHub...';
+    statusEl.innerText = '⏳ 正在同步圖資與 CoT 圓球至 GitHub...';
 
     try {
       const collection = collectGeoJSON();
@@ -582,6 +836,9 @@
       const timeStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
       const byWho = callsign ? ` by ${callsign}` : '';
 
+      // 1. 確保儲存庫內有 `cot_dot.png` 立體白色圓球基底圖檔供 ATAK 下載染色
+      await putGitHubFile(owner, repo, 'cot_dot.png', COT_SPHERE_RAW_BASE64, token, `部署 ATAK CoT 小圓球圖示`, true);
+      // 2. 更新 GeoJSON 與 KML
       await putGitHubFile(owner, repo, 'data.geojson', geojsonStr, token, `更新地圖資料 (${timeStr}${byWho})`);
       await putGitHubFile(owner, repo, 'live.kml', kmlStr, token, `更新 ATAK KML (${timeStr}${byWho})`);
 
