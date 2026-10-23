@@ -1,37 +1,4 @@
 {
   "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "牛",
-        "category": "supply",
-        "desc": "",
-        "time": "2026/10/23 18:26:06"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.426567,
-          23.657488
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "羊",
-        "category": "supply",
-        "desc": "",
-        "time": "2026/10/23 18:26:19"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.431602,
-          23.6661
-        ]
-      }
-    }
-  ]
+  "features": []
 }
