@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>救災即時態勢圖</name>
+    
+    <Style id="danger">
+      <IconStyle><color>ff4444ef</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href></Icon></IconStyle>
+      <LineStyle><color>ff4444ef</color><width>4</width></LineStyle>
+      <PolyStyle><color>664444ef</color></PolyStyle>
+    </Style>
+    <Style id="rescue">
+      <IconStyle><color>ff08b3ea</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/ylw-circle.png</href></Icon></IconStyle>
+      <LineStyle><color>ff08b3ea</color><width>4</width></LineStyle>
+      <PolyStyle><color>6608b3ea</color></PolyStyle>
+    </Style>
+    <Style id="supply">
+      <IconStyle><color>ff5ec522</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/grn-circle.png</href></Icon></IconStyle>
+      <LineStyle><color>ff5ec522</color><width>4</width></LineStyle>
+      <PolyStyle><color>665ec522</color></PolyStyle>
+    </Style>
+    
+    <Placemark>
+      <name><![CDATA[邪惡祭壇]]></name>
+      <description><![CDATA[
+[更新時間: 2026/10/23 18:17:10]]]></description>
+      <styleUrl>#danger</styleUrl>
+      <Point><coordinates>121.53239,25.001157,0</coordinates></Point>
+    </Placemark>
+  </Document>
+</kml>
