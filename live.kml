@@ -19,19 +19,5 @@
       <PolyStyle><color>665ec522</color></PolyStyle>
     </Style>
     
-    <Placemark>
-      <name><![CDATA[Stephanie]]></name>
-      <description><![CDATA[UAS Pilot
-[更新時間: 2026/10/23 18:57:12]]]></description>
-      <styleUrl>#friendly</styleUrl>
-      <Point><coordinates>121.532435,25.001123,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
-      <name><![CDATA[UAS Operating Zone]]></name>
-      <description><![CDATA[Follow ATC instructions
-[更新時間: 2026/10/23 18:59:53]]]></description>
-      <styleUrl>#supply</styleUrl>
-      <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.532382,25.001257,0 121.532417,25.001347,0 121.532535,25.001347,0 121.532612,25.001279,0 121.532564,25.001233,0 121.532449,25.001242,0 121.532382,25.001257,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
-    </Placemark>
   </Document>
 </kml>
