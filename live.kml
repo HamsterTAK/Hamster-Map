@@ -19,5 +19,19 @@
       <PolyStyle><color>665ec522</color></PolyStyle>
     </Style>
     
+    <Placemark>
+      <name><![CDATA[牛]]></name>
+      <description><![CDATA[
+[更新時間: 2026/10/23 18:26:06]]]></description>
+      <styleUrl>#supply</styleUrl>
+      <Point><coordinates>121.426567,23.657488,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[羊]]></name>
+      <description><![CDATA[
+[更新時間: 2026/10/23 18:26:19]]]></description>
+      <styleUrl>#supply</styleUrl>
+      <Point><coordinates>121.431602,23.6661,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
