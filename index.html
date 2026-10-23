@@ -19,10 +19,11 @@
     }
     #topbar input, #topbar select { background: #0f172a; color: #fff; }
     .btn { cursor: pointer; font-weight: 600; border: none !important; color: white; transition: opacity 0.2s; }
-    .btn:hover { opacity: 0.9; }
+    .btn:hover:not(:disabled) { opacity: 0.9; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .btn-save { background: #ef4444; }
-    .btn-local { background: #10b981; }
-    .btn-atak { background: #3b82f6; }
+    /* [新增註記] 恢復上一步按鈕樣式 */
+    .btn-undo { background: #f59e0b; color: #0f172a; }
     
     /* 右側狀態與 Callsign 區塊 */
     .right-group { margin-left: auto; display: flex; align-items: center; gap: 10px; }
@@ -87,6 +88,7 @@
     }
     .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px; }
     .btn-cancel { background: #64748b; }
+    .btn-atak { background: #3b82f6; }
 
     /* Popup 內按鈕樣式 */
     .popup-btn-group { display: flex; gap: 6px; margin-top: 10px; }
@@ -108,6 +110,8 @@
   <input type="text" id="gh-repo" placeholder="Repo 名稱" style="width:115px;" />
   
   <button class="btn btn-save" onclick="publishToGitHub()">☁️ 儲存並發布至 GitHub</button>
+  <!-- [新增註記] 恢復上一步按鈕 (最多10步，每步保留5分鐘，亦支援 Ctrl+Z) -->
+  <button class="btn btn-undo" id="btn-undo" onclick="undoLastAction()" disabled title="恢復上一步操作 (最多保留10步，每步時效5分鐘，快捷鍵 Ctrl+Z)">↩️ 恢復上一步 (0)</button>
   
   <div class="right-group">
     <span id="status">準備就緒</span>
@@ -388,35 +392,24 @@
   }
 
   // ============================================================================
-  // 3. [核心修正] 產生給 ATAK 專用的「Google 水滴圖示 (`google_pin.png`)」
+  // 3. 產生 ATAK 專用「Google 水滴圖示 (`google_pin.png`)」
   // ============================================================================
-  // 說明：
-  // 1. 為什麼 ATAK 的字會蓋在圖示正中間？
-  //    因為 ATAK 渲染 KML Placemark 時，固定把 <name> 文字標籤畫在圖片畫布的「正中心 (Center)」。
-  // 2. 怎麼讓字浮在水滴「上方」（像截圖右邊的綠色「因因」一樣）？
-  //    我們建立一個 64x96 的透明畫布，把「Google 水滴」畫在畫布的「下半部 (y=46 ~ 94)」，
-  //    上半部 (y=0 ~ 45) 保持全透明！這樣 ATAK 把文字放在畫布正中心 (y=40) 時，
-  //    文字就會剛好浮在水滴頭頂正上方，完全不會蓋住水滴本體！
   function generateATAKWaterdropBase64() {
     const canvas = document.createElement('canvas');
     canvas.width = 64;
     canvas.height = 96;
     const ctx = canvas.getContext('2d');
 
-    // 在畫布下半部繪製與 ATAK Google Iconset (因因) 完全同款的「黑邊純白水滴」
-    // 水滴圓頭中心在 (32, 62)，水滴尖端在底部正中央 (32, 92)
     ctx.beginPath();
-    ctx.moveTo(32, 92); // 水滴最底端尖針
-    ctx.bezierCurveTo(30, 82, 18, 72, 18, 61); // 左側水滴弧線
-    ctx.arc(32, 61, 14, Math.PI, 0, false);    // 頂部圓弧 (半徑 14)
-    ctx.bezierCurveTo(46, 72, 34, 82, 32, 92); // 右側水滴弧線
+    ctx.moveTo(32, 92);
+    ctx.bezierCurveTo(30, 82, 18, 72, 18, 61);
+    ctx.arc(32, 61, 14, Math.PI, 0, false);
+    ctx.bezierCurveTo(46, 72, 34, 82, 32, 92);
     ctx.closePath();
 
-    // 填充純白色基底 (供 KML <color> ABGR 染色出鮮豔的紅/黃/綠/藍)
     ctx.fillStyle = '#ffffff';
     ctx.fill();
 
-    // 繪製像「因因」一樣的黑色立體外框線
     ctx.lineWidth = 2.8;
     ctx.strokeStyle = '#0f172a';
     ctx.lineJoin = 'round';
@@ -454,7 +447,6 @@
     }
   };
 
-  // Hamster-Map 網頁端：維持 1.5 倍大的 CoT 小圓球 (33x33)
   function createCoTDotIcon(cat) {
     const cfg = categoryConfig[cat] || categoryConfig.danger;
     const svg = `
@@ -473,9 +465,82 @@
   }
 
   // ============================================================================
-  // 4. 啟用 Geoman 繪圖與「新增 / 編輯 / 拖曳更新座標」邏輯
+  // 4. [新增註記] 恢復上一步 (Undo) 歷史堆疊系統 (最多保留 10 步，每步保留 5 分鐘)
   // ============================================================================
   const drawnItems = new L.FeatureGroup().addTo(map);
+  const MAX_UNDO_STEPS = 10;           // 最多恢復 10 步
+  const UNDO_EXPIRE_MS = 5 * 60 * 1000; // 每一步保留 5 分鐘 (300,000 毫秒)
+  let undoStack = [];                  // 儲存結構: { geojsonStr, timestamp }
+
+  // 清除超過 5 分鐘的過期步驟並更新按鈕文字
+  function cleanAndRefreshUndoUI() {
+    const now = Date.now();
+    undoStack = undoStack.filter(item => (now - item.timestamp) < UNDO_EXPIRE_MS);
+    const btn = document.getElementById('btn-undo');
+    if (btn) {
+      btn.innerText = `↩️ 恢復上一步 (${undoStack.length})`;
+      btn.disabled = (undoStack.length === 0);
+    }
+  }
+
+  // 每秒定期檢查是否有超過 5 分鐘的步驟需要自動淘汰
+  setInterval(cleanAndRefreshUndoUI, 1000);
+
+  // 在任何變更發生前呼叫此函式，將當前圖資狀態存入歷史堆疊
+  function recordUndoSnapshot() {
+    cleanAndRefreshUndoUI();
+    const currentGeoJSONStr = JSON.stringify(collectGeoJSON());
+    // 若與上一筆快照完全相同則不重複記錄
+    if (undoStack.length > 0 && undoStack[undoStack.length - 1].geojsonStr === currentGeoJSONStr) {
+      return;
+    }
+    undoStack.push({
+      geojsonStr: currentGeoJSONStr,
+      timestamp: Date.now()
+    });
+    // 若超過 10 步，移除最舊的一步
+    if (undoStack.length > MAX_UNDO_STEPS) {
+      undoStack.shift();
+    }
+    cleanAndRefreshUndoUI();
+  }
+
+  // 執行「恢復上一步」
+  window.undoLastAction = function() {
+    cleanAndRefreshUndoUI();
+    if (undoStack.length === 0) return;
+
+    const lastSnapshot = undoStack.pop();
+    const geojson = JSON.parse(lastSnapshot.geojsonStr);
+
+    // 清空目前畫布並還原快照中的圖資
+    drawnItems.clearLayers();
+    L.geoJSON(geojson, {
+      onEachFeature: (feature, layer) => {
+        drawnItems.addLayer(layer);
+        applyFeatureProperties(layer, feature.properties || {});
+      }
+    });
+
+    cleanAndRefreshUndoUI();
+    document.getElementById('status').innerText = `↩️ 已恢復上一步 (剩餘 ${undoStack.length} 步)`;
+  };
+
+  // 支援鍵盤 Ctrl + Z 快捷鍵恢復上一步
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+      const modalOpen = document.getElementById('modal-overlay').style.display === 'flex';
+      const tag = document.activeElement ? document.activeElement.tagName : '';
+      if (!modalOpen && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+        e.preventDefault();
+        undoLastAction();
+      }
+    }
+  });
+
+  // ============================================================================
+  // 5. 啟用 Geoman 繪圖與「新增 / 編輯 / 拖曳更新座標」邏輯 (整合 Undo 快照)
+  // ============================================================================
   map.pm.addControls({
     position: 'topleft',
     drawMarker: true, drawPolyline: true, drawPolygon: true, drawRectangle: true,
@@ -498,7 +563,11 @@
     document.getElementById('feat-name').focus();
   });
 
+  // 橡皮擦刪除時：先記錄舊狀態快照再移除
   map.on('pm:remove', (e) => {
+    // 暫時把被刪的圖層加回 drawnItems 以擷取完整刪除前快照，再正式移除
+    drawnItems.addLayer(e.layer);
+    recordUndoSnapshot();
     drawnItems.removeLayer(e.layer);
   });
 
@@ -523,7 +592,8 @@
   window.deleteLayerById = function(leafletId) {
     const layer = drawnItems.getLayer(leafletId);
     if (!layer) return;
-    if (confirm('確定要刪除此標記嗎？（刪除後請記得點擊上方「儲存並發布至 GitHub」）')) {
+    if (confirm('確定要刪除此標記嗎？（若誤刪可於 5 分鐘內點「恢復上一步」還原）')) {
+      recordUndoSnapshot(); // 刪除前先記錄快照
       map.removeLayer(layer);
       drawnItems.removeLayer(layer);
     }
@@ -540,6 +610,10 @@
 
   function saveModal() {
     if (!activeLayer) return;
+
+    // [新增註記] 在套用新增或修改屬性前，先記錄變更前的快照供「恢復上一步」使用
+    recordUndoSnapshot();
+
     const name = document.getElementById('feat-name').value.trim() || '未命名標記';
     const cat = document.getElementById('feat-cat').value;
     const desc = document.getElementById('feat-desc').value.trim();
@@ -566,7 +640,6 @@
     localStorage.setItem('rescue_callsign', e.target.value.trim());
   });
 
-  // 套用屬性、座標計算與 [修正] 網頁端名稱顯示在點位「正上方 (direction: 'top')」
   function applyFeatureProperties(layer, props) {
     props.coord = getLayerCoordString(layer);
 
@@ -582,7 +655,6 @@
       layer.setStyle({ color: cfg.webColor, fillColor: cfg.webColor, fillOpacity: 0.35, weight: 4 });
     }
 
-    // [修正註記] 讓點位名稱在網頁上也固定浮在點位的「正上方 (top)」
     if (props.name) {
       layer.unbindTooltip();
       const isMarker = layer instanceof L.Marker;
@@ -594,7 +666,11 @@
       });
     }
 
+    // 綁定拖曳開始與頂點編輯事件，在移動前自動記錄 Undo 快照，移動後更新 MGRS 座標
     if (!layer._hasCoordUpdateListener) {
+      layer.on('pm:dragstart pm:markerdragstart', () => {
+        recordUndoSnapshot();
+      });
       layer.on('pm:dragend pm:edit', () => {
         applyFeatureProperties(layer, layer.feature.properties);
       });
@@ -623,7 +699,7 @@
   }
 
   // ============================================================================
-  // 5. 初始化與既有資料載入
+  // 6. 初始化與既有資料載入
   // ============================================================================
   window.addEventListener('DOMContentLoaded', () => {
     const host = window.location.hostname;
@@ -663,9 +739,9 @@
   }
 
   // ============================================================================
-  // 6. [核心修正] 圖資轉 KML：
-  //    (1) 點位改用「上方留白透明的 Google 水滴圖示 (`google_pin.png`)」，讓文字浮在水滴上方！
-  //    (2) 多邊形 (Polygon) 與線條 (LineString) 徹底移除 <IconStyle>，消除邪教營地中間的大紅圓！
+  // 7. [核心修正] 圖資轉 KML：
+  //    多邊形 (Polygon) 與線條 (LineString) 徹底移除 <IconStyle> 與 <LabelStyle>，
+  //    確保 ATAK 絕對不會在多邊形中心畫出那顆黑白預設圓球或中心點圖示！
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
@@ -684,7 +760,6 @@
     let placemarks = '';
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
     const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
-    // 指向自動部署於同一個 GitHub Pages 下的「Google 水滴圖檔 (含上方文字防重疊透明區)」
     const waterdropPinUrl = `https://${owner}.github.io/${repo}/google_pin.png`;
 
     geojson.features.forEach(f => {
@@ -696,9 +771,7 @@
       const cfg = categoryConfig[cat] || categoryConfig.danger;
       const descText = `[分類: ${cfg.label}]\n${p.desc || ''}\n座標：${p.coord || ''}\n更新：${p.time || ''}`;
 
-      // ------------------------------------------------------------------------
-      // 分流 A：如果是「點位 (Point)」-> 使用 Google 水滴圖示，且文字浮在上方
-      // ------------------------------------------------------------------------
+      // 分流 A：點位 (Point) -> 使用 Google 水滴圖示
       if (g.type === 'Point') {
         placemarks += `
     <Placemark>
@@ -721,10 +794,8 @@
       <Point><coordinates>${g.coordinates[0]},${g.coordinates[1]},0</coordinates></Point>
     </Placemark>`;
       }
-      // ------------------------------------------------------------------------
-      // 分流 B：如果是「多邊形 (Polygon) 或 線條 (LineString)」
-      // [關鍵修正] 絕對不放點位圖示，並將 IconStyle scale 設為 0，徹底消除「邪教營地」中間的大紅圓！
-      // ------------------------------------------------------------------------
+      // 分流 B：多邊形 (Polygon) 與 線條 (LineString)
+      // [關鍵修正] 完全不寫 <IconStyle>，只保留 <LineStyle> 與 <PolyStyle>，讓多邊形 100% 乾淨無中心圓球！
       else if (g.type === 'LineString' || g.type === 'Polygon') {
         let geomKml = '';
         if (g.type === 'LineString') {
@@ -740,13 +811,6 @@
       <name><![CDATA[${p.name || '未命名區域'}]]></name>
       <description><![CDATA[${descText}]]></description>
       <Style>
-        <IconStyle>
-          <scale>0</scale>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
         <LineStyle>
           <color>${cfg.kmlColor}</color>
           <width>4</width>
@@ -772,7 +836,7 @@
   }
 
   // ============================================================================
-  // 7. GitHub API 寫入與自動部署 `google_pin.png` 水滴圖檔
+  // 8. GitHub API 寫入與自動部署 `google_pin.png`
   // ============================================================================
   async function putGitHubFile(owner, repo, path, content, token, message, isRawBase64 = false) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
@@ -812,7 +876,7 @@
     if (callsign) localStorage.setItem('rescue_callsign', callsign);
 
     const statusEl = document.getElementById('status');
-    statusEl.innerText = '⏳ 正在同步圖資與 Google 水滴圖示至 GitHub...';
+    statusEl.innerText = '⏳ 正在同步圖資至 GitHub...';
 
     try {
       const collection = collectGeoJSON();
@@ -821,9 +885,7 @@
       const timeStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
       const byWho = callsign ? ` by ${callsign}` : '';
 
-      // 1. 自動上傳 `google_pin.png` (與「因因」同款的 Google 水滴基底圖檔)
       await putGitHubFile(owner, repo, 'google_pin.png', ATAK_WATERDROP_RAW_BASE64, token, `部署 ATAK Google 水滴圖示`, true);
-      // 2. 更新 GeoJSON 與 KML
       await putGitHubFile(owner, repo, 'data.geojson', geojsonStr, token, `更新地圖資料 (${timeStr}${byWho})`);
       await putGitHubFile(owner, repo, 'live.kml', kmlStr, token, `更新 ATAK KML (${timeStr}${byWho})`);
 
