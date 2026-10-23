@@ -224,10 +224,15 @@
   }
 
   // 4. 圖資轉 KML
+// ✅ 新的（完全不依賴 isTempLayer，乾淨穩定）
+  map.on('pm:remove', (e) => {
+    drawnItems.removeLayer(e.layer);
+  });
+
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
-    map.eachLayer(layer => {
-      if (layer.pm && !layer.pm.isTempLayer() && layer.feature && (layer instanceof L.Marker || layer instanceof L.Path)) {
+    drawnItems.eachLayer(layer => {
+      if ( map.hasLayer(layer) && layer.feature && (layer instanceof L.Marker || layer instanceof L.Path)) {
         const gj = layer.toGeoJSON();
         gj.properties = layer.feature.properties;
         collection.features.push(gj);
