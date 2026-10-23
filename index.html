@@ -2,17 +2,19 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>HamsterTAK-Map (GitHub.io -> ATAK)</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.css" />
   <style>
     * { box-sizing: border-box; }
-    body, html { margin: 0; padding: 0; height: 100%; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; }
+    body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; }
+    
+    /* 頂部導覽列 */
     #topbar {
       display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-      background: #1e293b; color: #f8fafc; padding: 10px 15px; font-size: 14px;
-      border-bottom: 1px solid #334155;
+      background: #1e293b; color: #f8fafc; padding: 8px 12px; font-size: 14px;
+      border-bottom: 1px solid #334155; z-index: 2000; position: relative;
     }
     #topbar input, #topbar select, #topbar button {
       padding: 6px 10px; border-radius: 4px; border: 1px solid #475569; font-size: 13px;
@@ -23,84 +25,109 @@
     .btn-save { background: #ef4444; }
     
     /* 右側狀態與 Callsign 區塊 */
-    .right-group { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-    #status { color: #38bdf8; font-weight: bold; font-size: 13px; }
+    .right-group { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    #status { color: #38bdf8; font-weight: bold; font-size: 13px; white-space: nowrap; }
     #user-callsign { border-color: #38bdf8 !important; width: 135px; }
-    #map { height: calc(100% - 54px); width: 100%; background: #000000; position: relative; }
+    
+    /* 地圖容器 (由 JS ResizeObserver 動態調整高度以完美適配手機與桌面) */
+    #map { height: calc(100% - 50px); width: 100%; background: #000000; position: relative; }
 
-    /* [新增註記] 左側工具列「恢復上一步 (Undo)」圖示按鈕與步數小徽章樣式 */
-    .pm-undo-btn {
-      display: flex !important;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
+    /* 左側工具列自訂按鈕 (Undo 與 全螢幕) 樣式 */
+    .pm-custom-btn {
+      display: flex !important; align-items: center; justify-content: center;
+      position: relative; width: 100%; height: 100%; cursor: pointer;
     }
-    .pm-undo-btn svg {
-      width: 18px;
-      height: 18px;
-      stroke: #333;
-      transition: opacity 0.2s;
-    }
-    .pm-undo-disabled {
-      pointer-events: none;
-      opacity: 0.35;
-    }
+    .pm-custom-btn svg { width: 18px; height: 18px; stroke: #333; transition: opacity 0.2s; }
+    .pm-undo-disabled { pointer-events: none; opacity: 0.35; }
     .pm-undo-badge {
-      position: absolute;
-      bottom: 2px;
-      right: 2px;
-      background: #2563eb;
-      color: #ffffff;
-      font-size: 9px;
-      font-weight: bold;
-      line-height: 12px;
-      min-width: 12px;
-      height: 12px;
-      padding: 0 3px;
-      border-radius: 6px;
-      text-align: center;
-      display: none;
+      position: absolute; bottom: 2px; right: 2px; background: #2563eb; color: #ffffff;
+      font-size: 9px; font-weight: bold; line-height: 12px; min-width: 12px; height: 12px;
+      padding: 0 3px; border-radius: 6px; text-align: center; display: none;
     }
 
-    /* 底部即時 MGRS 戰術座標列 (仿 ATAK 底部 HUD) */
+    /* 底部即時 MGRS 戰術座標列 */
     #coord-bar {
-      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.92); color: #38bdf8; padding: 6px 18px;
-      border-radius: 6px; font-family: 'Courier New', Consolas, monospace; font-size: 14px;
+      position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.92); color: #38bdf8; padding: 6px 14px;
+      border-radius: 6px; font-family: 'Courier New', Consolas, monospace; font-size: 13px;
       font-weight: bold; z-index: 1000; border: 1px solid #334155;
       pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-      white-space: nowrap; letter-spacing: 0.5px;
+      white-space: nowrap; letter-spacing: 0.5px; max-width: 94vw;
+      overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* MGRS 網格座標標籤樣式 (仿 ATAK 邊緣黑底白字標籤) */
+    /* MGRS 網格座標標籤樣式 */
     .mgrs-grid-label {
-      background: rgba(15, 23, 42, 0.85);
-      color: #f8fafc;
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-family: 'Courier New', Consolas, monospace;
-      font-size: 11px;
-      font-weight: bold;
-      border: 1px solid #3b82f6;
-      white-space: nowrap;
-      pointer-events: none;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+      background: rgba(15, 23, 42, 0.85); color: #f8fafc; padding: 1px 5px;
+      border-radius: 4px; font-family: 'Courier New', Consolas, monospace; font-size: 11px;
+      font-weight: bold; border: 1px solid #3b82f6; white-space: nowrap;
+      pointer-events: none; box-shadow: 0 1px 4px rgba(0,0,0,0.5);
     }
 
-    /* 網頁端常駐標籤名稱樣式 (顯示在點位上方) */
+    /* 網頁端常駐標籤名稱樣式 */
     .map-persistent-label {
-      background: rgba(15, 23, 42, 0.88);
-      color: #f8fafc;
-      font-weight: bold;
-      font-size: 12px;
-      padding: 2px 6px;
-      border: 1px solid #475569;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-      white-space: nowrap;
+      background: rgba(15, 23, 42, 0.88); color: #f8fafc; font-weight: bold; font-size: 12px;
+      padding: 2px 6px; border: 1px solid #475569; border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5); white-space: nowrap;
+    }
+
+    /* ==========================================================================
+       [新增註記 需求 3 & 4] 右下角可折疊戰術 Log 留言板樣式 (含權限鎖與紅色垃圾桶)
+       ========================================================================== */
+    #log-panel {
+      position: fixed; right: 12px; bottom: 48px; width: 330px; max-width: calc(100vw - 24px);
+      background: rgba(15, 23, 42, 0.95); color: #f8fafc; border: 1px solid #475569;
+      border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.65); z-index: 1500;
+      display: flex; flex-direction: column; overflow: hidden; transition: height 0.25s ease;
+    }
+    #log-header {
+      background: #1e293b; padding: 8px 12px; display: flex; align-items: center;
+      justify-content: space-between; cursor: pointer; user-select: none;
+      border-bottom: 1px solid #334155; font-size: 13px; font-weight: bold;
+    }
+    #log-header-left { display: flex; align-items: center; gap: 6px; color: #38bdf8; }
+    #log-header-actions { display: flex; align-items: center; gap: 6px; }
+    /* 紅色垃圾桶按鈕 (僅驗證通過之 Token 使用者可見) */
+    #btn-clear-logs {
+      display: none; background: #ef4444; color: #fff; border: none; border-radius: 4px;
+      padding: 3px 7px; font-size: 12px; cursor: pointer; title: "一鍵清空所有留言與紀錄";
+    }
+    #btn-clear-logs:hover { background: #dc2626; }
+    #log-toggle-icon { color: #94a3b8; font-size: 12px; }
+    #log-body {
+      display: flex; flex-direction: column; height: 240px;
+    }
+    #log-panel.collapsed #log-body { display: none; }
+    #log-panel.collapsed #log-header { border-bottom: none; }
+    
+    /* 未授權鎖定提示區 */
+    #log-locked-msg {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 20px; text-align: center; color: #94a3b8; font-size: 12px; line-height: 1.5;
+    }
+    /* 紀錄列表區 */
+    #log-list {
+      flex: 1; overflow-y: auto; padding: 8px 10px; font-size: 12px;
+      display: none; flex-direction: column; gap: 6px;
+    }
+    .log-item {
+      padding: 5px 8px; border-radius: 4px; background: rgba(30, 41, 59, 0.85);
+      border-left: 3px solid #38bdf8; word-break: break-all; line-height: 1.4;
+    }
+    .log-item.log-action { border-left-color: #f59e0b; color: #e2e8f0; }
+    .log-item.log-chat { border-left-color: #10b981; color: #ffffff; }
+    .log-meta { font-size: 10px; color: #94a3b8; margin-bottom: 2px; font-family: monospace; }
+    /* 底部留言輸入區 */
+    #log-input-area {
+      display: none; padding: 6px 8px; background: #1e293b; border-top: 1px solid #334155; gap: 6px;
+    }
+    #log-input {
+      flex: 1; background: #0f172a; color: #fff; border: 1px solid #475569;
+      border-radius: 4px; padding: 5px 8px; font-size: 12px;
+    }
+    #btn-send-log {
+      background: #3b82f6; color: #fff; border: none; border-radius: 4px;
+      padding: 5px 10px; font-size: 12px; font-weight: bold; cursor: pointer;
     }
 
     /* 彈窗樣式 */
@@ -110,7 +137,7 @@
     }
     #modal-box {
       background: #1e293b; color: #fff; padding: 20px; border-radius: 8px;
-      width: 370px; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      width: 370px; max-width: 92%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       border: 1px solid #475569;
     }
     #modal-box h3 { margin: 0 0 15px 0; font-size: 16px; color: #38bdf8; }
@@ -133,15 +160,36 @@
     .popup-btn-edit { background: #3b82f6; }
     .popup-btn-del { background: #ef4444; }
     .custom-cot-icon { background: transparent; border: none; }
+
+    /* ==========================================================================
+       [新增註記 需求 1] 手機與平板觀看時自動適配排版 (RWD 響應式設計)
+       ========================================================================== */
+    @media (max-width: 768px) {
+      #topbar { padding: 6px 8px; gap: 5px; font-size: 12px; }
+      #topbar strong { width: 100%; margin-bottom: 2px; font-size: 14px; display: flex; justify-content: space-between; }
+      #gh-token { flex: 1 1 120px; width: auto !important; }
+      #gh-owner, #gh-repo { flex: 1 1 80px; width: auto !important; }
+      .btn-save { flex: 1 1 100%; padding: 7px !important; text-align: center; }
+      .right-group { width: 100%; margin-left: 0; justify-content: space-between; margin-top: 2px; }
+      #user-callsign { flex: 1; max-width: 160px; }
+      #coord-bar {
+        bottom: 6px; left: 8px; transform: none; max-width: calc(100vw - 16px);
+        font-size: 11px; padding: 4px 8px;
+      }
+      #log-panel {
+        right: 8px; bottom: 38px; width: 280px;
+      }
+      #log-body { height: 190px; }
+    }
   </style>
 </head>
 <body>
 
 <div id="topbar">
   <strong>🐹黃金鼠圖資系統</strong>
-  <input type="password" id="gh-token" placeholder="GitHub Token (寫入密碼)" style="width:175px;" />
-  <input type="text" id="gh-owner" placeholder="GitHub 帳號" style="width:115px;" />
-  <input type="text" id="gh-repo" placeholder="Repo 名稱" style="width:115px;" />
+  <input type="password" id="gh-token" placeholder="GitHub Token (寫入密碼)" style="width:165px;" />
+  <input type="text" id="gh-owner" placeholder="GitHub 帳號" style="width:105px;" />
+  <input type="text" id="gh-repo" placeholder="Repo 名稱" style="width:105px;" />
   
   <button class="btn btn-save" onclick="publishToGitHub()">☁️ 儲存並發布至 GitHub</button>
   
@@ -155,6 +203,31 @@
 
 <!-- 底部游標即時 MGRS 顯示列 -->
 <div id="coord-bar">🎯 移動滑鼠顯示 MGRS 戰術座標...</div>
+
+<!-- [新增註記 需求 3, 4, 5] 右下角可折疊戰術 Log 與留言板 (僅存在於 Hamster-Map，不隨 KML 匯出) -->
+<div id="log-panel" class="collapsed">
+  <div id="log-header" onclick="toggleLogPanel()">
+    <div id="log-header-left">
+      <span id="log-lock-icon">🔒</span>
+      <span id="log-title-text">戰術紀錄與留言板 (0)</span>
+    </div>
+    <div id="log-header-actions">
+      <!-- 紅色垃圾桶：僅在 Token 驗證通過時顯示，點擊跳出確認通知並一鍵刪除所有紀錄 -->
+      <button id="btn-clear-logs" onclick="clearAllLogs(event)" title="一鍵刪除所有留言與 Log 紀錄">🗑️</button>
+      <span id="log-toggle-icon">▲ 展開</span>
+    </div>
+  </div>
+  <div id="log-body">
+    <div id="log-locked-msg">
+      🔒 留言板受保護<br>請在上方輸入具備寫入權限的正確 GitHub Token 以解鎖查看、留言與管理功能。
+    </div>
+    <div id="log-list"></div>
+    <div id="log-input-area">
+      <input type="text" id="log-input" placeholder="輸入戰況留言 (按 Enter 送出)..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
+      <button id="btn-send-log" onclick="sendChatMessage()">發送</button>
+    </div>
+  </div>
+</div>
 
 <!-- 新增 / 編輯標記共用彈窗 -->
 <div id="modal-overlay">
@@ -191,9 +264,24 @@
 
 <script>
   // ============================================================================
-  // 1. 初始化底圖 (7 款 ATAK 圖資 + 2 款國土測繪圖資)
+  // 1. 初始化底圖與 [需求 1] 手機平板動態高度適配
   // ============================================================================
   const map = L.map('map', { maxZoom: 22 }).setView([25.002, 121.533], 16);
+
+  // [新增註記 需求 1] 自動偵測頂部工具列高度，確保手機/平板折行時地圖高度 100% 貼合不裁切
+  function adjustMapHeight() {
+    const topbar = document.getElementById('topbar');
+    const mapEl = document.getElementById('map');
+    if (topbar && mapEl) {
+      const topbarHeight = topbar.offsetHeight;
+      mapEl.style.height = `calc(100% - ${topbarHeight}px)`;
+      map.invalidateSize();
+    }
+  }
+  window.addEventListener('resize', adjustMapHeight);
+  if (window.ResizeObserver) {
+    new ResizeObserver(adjustMapHeight).observe(document.getElementById('topbar'));
+  }
 
   const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
     minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© Google Hybrid'
@@ -281,15 +369,15 @@
 
     if (zoom >= 16) {
       step = 100;
-      currentGridStepText = '100m × 100m';
+      currentGridStepText = '100m';
     } else if (zoom >= 13) {
       step = 1000;
-      currentGridStepText = '1km × 1km';
+      currentGridStepText = '1km';
     } else if (zoom >= 10) {
       step = 10000;
-      currentGridStepText = '10km × 10km';
+      currentGridStepText = '10km';
     } else {
-      currentGridStepText = '縮放過小隱藏網格';
+      currentGridStepText = '隱藏';
       updateCoordBarText();
       return;
     }
@@ -397,18 +485,27 @@
 
   function updateCoordBarText() {
     const bar = document.getElementById('coord-bar');
-    if (!lastMouseLatLng) {
-      bar.innerText = `🎯 移動滑鼠顯示 MGRS 戰術座標 ｜ 🟦 目前網格: ${currentGridStepText}`;
-      return;
+    const pt = lastMouseLatLng || map.getCenter();
+    const mgrsStr = toFormattedMGRS(pt.lat, pt.lng);
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      bar.innerText = `🎯 ${mgrsStr} (${pt.lat.toFixed(4)}, ${pt.lng.toFixed(4)}) [${currentGridStepText}]`;
+    } else {
+      bar.innerText = `🎯 MGRS: ${mgrsStr} ｜ WGS84: ${pt.lat.toFixed(5)}, ${pt.lng.toFixed(5)} ｜ 🟦 網格: ${currentGridStepText}`;
     }
-    const { lat, lng } = lastMouseLatLng;
-    const mgrsStr = toFormattedMGRS(lat, lng);
-    bar.innerText = `🎯 游標 MGRS: ${mgrsStr} ｜ WGS84: ${lat.toFixed(5)}, ${lng.toFixed(5)} ｜ 🟦 網格: ${currentGridStepText}`;
   }
 
   map.on('mousemove', (e) => {
     lastMouseLatLng = e.latlng;
     updateCoordBarText();
+  });
+
+  // 手機觸控移動地圖時，底部座標列同步顯示畫面中心點 MGRS
+  map.on('move', () => {
+    if (window.innerWidth <= 768) {
+      lastMouseLatLng = map.getCenter();
+      updateCoordBarText();
+    }
   });
 
   function getLayerCoordString(layer) {
@@ -453,30 +550,10 @@
   const ATAK_WATERDROP_RAW_BASE64 = generateATAKWaterdropBase64();
 
   const categoryConfig = {
-    danger: {
-      label: '🔴 災情 / 危險管制區',
-      webColor: '#ef4444',
-      kmlColor: 'ff0000ff',
-      kmlPolyColor: '660000ff'
-    },
-    rescue: {
-      label: '🟡 待援點 / 搜索目標區',
-      webColor: '#eab308',
-      kmlColor: 'ff00ffff',
-      kmlPolyColor: '6600ffff'
-    },
-    supply: {
-      label: '🟢 物資站 / 安全集結區',
-      webColor: '#22c55e',
-      kmlColor: 'ff00ff00',
-      kmlPolyColor: '6600ff00'
-    },
-    friendly: {
-      label: '🔵 友軍單位 / 搜救隊',
-      webColor: '#3b82f6',
-      kmlColor: 'ffff0000',
-      kmlPolyColor: '66ff0000'
-    }
+    danger: { label: '🔴 災情 / 危險管制區', webColor: '#ef4444', kmlColor: 'ff0000ff', kmlPolyColor: '660000ff' },
+    rescue: { label: '🟡 待援點 / 搜索目標區', webColor: '#eab308', kmlColor: 'ff00ffff', kmlPolyColor: '6600ffff' },
+    supply: { label: '🟢 物資站 / 安全集結區', webColor: '#22c55e', kmlColor: 'ff00ff00', kmlPolyColor: '6600ff00' },
+    friendly: { label: '🔵 友軍單位 / 搜救隊', webColor: '#3b82f6', kmlColor: 'ffff0000', kmlPolyColor: '66ff0000' }
   };
 
   function createCoTDotIcon(cat) {
@@ -497,16 +574,213 @@
   }
 
   // ============================================================================
-  // 4. [核心修正] 恢復上一步 (Undo) 系統：
-  //    (1) 移至左側 Geoman 工具列 Rotate Layers 下方，採用純圖示 + 步數小徽章
-  //    (2) 徹底修復「橡皮擦刪除」與「彈窗刪除」無法救回的問題！
+  // 4. [新增註記 需求 3, 4, 5] 戰術 Log 與留言板系統 (Token 驗證解鎖 + 一鍵刪除 + 僅存於 Hamster-Map)
+  // ============================================================================
+  let isTokenVerified = false;
+  let tacticalLogs = []; // 結構: { time, user, type: 'action'|'chat', text }
+
+  // 切換右下角留言板展開/折疊
+  window.toggleLogPanel = function() {
+    const panel = document.getElementById('log-panel');
+    const toggleIcon = document.getElementById('log-toggle-icon');
+    panel.classList.toggle('collapsed');
+    const isCollapsed = panel.classList.contains('collapsed');
+    toggleIcon.innerText = isCollapsed ? '▲ 展開' : '▼ 收合';
+    if (!isCollapsed && isTokenVerified) {
+      const listEl = document.getElementById('log-list');
+      listEl.scrollTop = listEl.scrollHeight;
+    }
+  };
+
+  // 取得目前使用者 Callsign (若未填則顯示「未具名情報官」)
+  function getCurrentCallsign() {
+    const val = document.getElementById('user-callsign').value.trim();
+    return val || '未具名情報官';
+  }
+
+  // 驗證使用者輸入的 GitHub Token 是否對該 Repo 具備寫入權限
+  async function verifyGitHubToken() {
+    const token = document.getElementById('gh-token').value.trim();
+    const owner = document.getElementById('gh-owner').value.trim();
+    const repo = document.getElementById('gh-repo').value.trim();
+
+    if (!token || !owner || !repo) {
+      setLogPanelAuthStatus(false);
+      return false;
+    }
+
+    try {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}?t=${Date.now()}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) {
+        setLogPanelAuthStatus(false);
+        return false;
+      }
+      const repoData = await res.json();
+      // 確認該 Token 擁有 push (寫入) 權限
+      const canWrite = Boolean(repoData.permissions && (repoData.permissions.push || repoData.permissions.admin || repoData.permissions.maintain));
+      setLogPanelAuthStatus(canWrite);
+      if (canWrite) {
+        localStorage.setItem('rescue_gh_token', token);
+        await loadExistingLogs();
+      }
+      return canWrite;
+    } catch (e) {
+      setLogPanelAuthStatus(false);
+      return false;
+    }
+  }
+
+  // 根據 Token 驗證結果切換留言板鎖定/解鎖介面與紅色垃圾桶按鈕
+  function setLogPanelAuthStatus(verified) {
+    isTokenVerified = verified;
+    const lockIcon = document.getElementById('log-lock-icon');
+    const lockedMsg = document.getElementById('log-locked-msg');
+    const logList = document.getElementById('log-list');
+    const inputArea = document.getElementById('log-input-area');
+    const clearBtn = document.getElementById('btn-clear-logs');
+
+    if (verified) {
+      lockIcon.innerText = '📋';
+      lockedMsg.style.display = 'none';
+      logList.style.display = 'flex';
+      inputArea.style.display = 'flex';
+      clearBtn.style.display = 'inline-block';
+      renderLogList();
+    } else {
+      lockIcon.innerText = '🔒';
+      lockedMsg.style.display = 'flex';
+      logList.style.display = 'none';
+      inputArea.style.display = 'none';
+      clearBtn.style.display = 'none';
+      document.getElementById('log-title-text').innerText = '戰術紀錄與留言板 (未解鎖)';
+    }
+  }
+
+  // 渲染留言板內容
+  function renderLogList() {
+    const titleEl = document.getElementById('log-title-text');
+    const listEl = document.getElementById('log-list');
+    titleEl.innerText = `戰術紀錄與留言板 (${tacticalLogs.length})`;
+
+    if (!isTokenVerified) return;
+
+    if (tacticalLogs.length === 0) {
+      listEl.innerHTML = `<div style="color:#64748b; text-align:center; padding:20px 0;">目前尚無任何操作紀錄或留言</div>`;
+      return;
+    }
+
+    listEl.innerHTML = tacticalLogs.map(item => {
+      const cls = item.type === 'chat' ? 'log-chat' : 'log-action';
+      const badge = item.type === 'chat' ? '💬 留言' : '🛠️ 動作';
+      return `
+        <div class="log-item ${cls}">
+          <div class="log-meta">[${escapeHTML(item.time)}] ${badge} ｜ 👤 <strong>${escapeHTML(item.user)}</strong></div>
+          <div>${escapeHTML(item.text)}</div>
+        </div>
+      `;
+    }).join('');
+
+    listEl.scrollTop = listEl.scrollHeight;
+  }
+
+  // 新增一筆操作 Log 或留言 (並自動背景同步至 GitHub logs.json，絕不放入 KML)
+  function appendTacticalLog(type, text, autoSync = true) {
+    const time = new Date().toLocaleString('zh-TW', { hour12: false });
+    const user = getCurrentCallsign();
+    tacticalLogs.push({ time, user, type, text });
+    if (tacticalLogs.length > 200) tacticalLogs.shift(); // 最多保留200筆避免過大
+    renderLogList();
+    if (autoSync && isTokenVerified) {
+      syncLogsToGitHubSilent();
+    }
+  }
+
+  // 發送使用者手動輸入的留言
+  window.sendChatMessage = function() {
+    if (!isTokenVerified) return;
+    const inputEl = document.getElementById('log-input');
+    const msg = inputEl.value.trim();
+    if (!msg) return;
+    inputEl.value = '';
+    appendTacticalLog('chat', msg, true);
+  };
+
+  // [新增註記 需求 4] 紅色垃圾桶：一鍵清空所有留言與 Log 紀錄 (附帶確認通知)
+  window.clearAllLogs = async function(e) {
+    e.stopPropagation(); // 避免觸發標題列折疊
+    if (!isTokenVerified) return;
+    if (!confirm('⚠️ 確定要一鍵清空所有堆積的留言與 Log 操作紀錄嗎？\n（此動作將會同步清空雲端紀錄且無法復原）')) {
+      return;
+    }
+    tacticalLogs = [];
+    renderLogList();
+    await syncLogsToGitHubSilent('清空留言板與操作紀錄');
+    document.getElementById('status').innerText = '🗑️ 已清空留言板紀錄';
+  };
+
+  // 讀取線上既有的 logs.json (僅供有正確 Token 的使用者讀取顯示)
+  async function loadExistingLogs() {
+    try {
+      const owner = document.getElementById('gh-owner').value.trim();
+      const repo = document.getElementById('gh-repo').value.trim();
+      const token = document.getElementById('gh-token').value.trim();
+      if (!owner || !repo || !token) return;
+
+      const url = `https://api.github.com/repos/${owner}/${repo}/contents/logs.json?t=${Date.now()}`;
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (!res.ok) return;
+      const json = await res.json();
+      if (json.content) {
+        const decoded = decodeURIComponent(escape(atob(json.content.replace(/\n/g, ''))));
+        const parsed = JSON.parse(decoded);
+        if (Array.isArray(parsed)) {
+          tacticalLogs = parsed;
+          renderLogList();
+        }
+      }
+    } catch (e) {
+      console.log('尚無 logs.json，將於首次操作時自動建立');
+    }
+  }
+
+  // 背景靜默將 tacticalLogs 存入 GitHub 的 logs.json (完全獨立於 live.kml)
+  let isSyncingLogs = false;
+  async function syncLogsToGitHubSilent(customMsg = null) {
+    if (!isTokenVerified || isSyncingLogs) return;
+    const token = document.getElementById('gh-token').value.trim();
+    const owner = document.getElementById('gh-owner').value.trim();
+    const repo = document.getElementById('gh-repo').value.trim();
+    if (!token || !owner || !repo) return;
+
+    isSyncingLogs = true;
+    try {
+      const logsStr = JSON.stringify(tacticalLogs, null, 2);
+      const msg = customMsg || `更新戰術留言板 (${getCurrentCallsign()})`;
+      await putGitHubFile(owner, repo, 'logs.json', logsStr, token, msg);
+    } catch (e) {
+      console.warn('背景同步留言板失敗:', e.message);
+    } finally {
+      isSyncingLogs = false;
+    }
+  }
+
+  // 當 Token、帳號或 Repo 欄位變更時，自動重新驗證權限
+  ['gh-token', 'gh-owner', 'gh-repo'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+      verifyGitHubToken();
+    });
+  });
+
+  // ============================================================================
+  // 5. 恢復上一步 (Undo) 系統 (最多10步 / 保留5分鐘)
   // ============================================================================
   const drawnItems = new L.FeatureGroup().addTo(map);
-  const MAX_UNDO_STEPS = 10;           // 最多恢復 10 步
-  const UNDO_EXPIRE_MS = 5 * 60 * 1000; // 每一步保留 5 分鐘 (300,000 毫秒)
-  let undoStack = [];                  // 儲存結構: { geojsonStr, timestamp }
+  const MAX_UNDO_STEPS = 10;
+  const UNDO_EXPIRE_MS = 5 * 60 * 1000;
+  let undoStack = [];
 
-  // 清除超過 5 分鐘的過期步驟並更新左側工具列圖示狀態
   function cleanAndRefreshUndoUI() {
     const now = Date.now();
     undoStack = undoStack.filter(item => (now - item.timestamp) < UNDO_EXPIRE_MS);
@@ -527,12 +801,10 @@
 
   setInterval(cleanAndRefreshUndoUI, 1000);
 
-  // [關鍵修正] 記錄快照函式：支援傳入 extraRemovedLayer (當 Geoman 橡皮擦已經先把圖層從 map 拔除時，強制將該被刪圖層一併寫入刪除前快照！)
   function recordUndoSnapshot(extraRemovedLayer = null) {
     cleanAndRefreshUndoUI();
     const collection = collectGeoJSON();
 
-    // 如果是橡皮擦刪除觸發，此時 extraRemovedLayer 已經不在 map 上，我們手動把它塞回這張「刪除前快照」中！
     if (extraRemovedLayer && extraRemovedLayer.feature && (extraRemovedLayer instanceof L.Marker || extraRemovedLayer instanceof L.Path)) {
       extraRemovedLayer.feature.properties.coord = getLayerCoordString(extraRemovedLayer);
       const gj = extraRemovedLayer.toGeoJSON();
@@ -556,7 +828,6 @@
     cleanAndRefreshUndoUI();
   }
 
-  // 執行「恢復上一步」
   window.undoLastAction = function() {
     cleanAndRefreshUndoUI();
     if (undoStack.length === 0) return;
@@ -574,9 +845,9 @@
 
     cleanAndRefreshUndoUI();
     document.getElementById('status').innerText = `↩️ 已恢復上一步 (剩餘 ${undoStack.length} 步)`;
+    appendTacticalLog('action', `執行了「恢復上一步」還原圖資狀態`);
   };
 
-  // 支援鍵盤 Ctrl + Z 快捷鍵恢復上一步
   window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
       const modalOpen = document.getElementById('modal-overlay').style.display === 'flex';
@@ -589,7 +860,7 @@
   });
 
   // ============================================================================
-  // 5. 啟用 Geoman 左側工具列，並在 Rotate Layers 下方加入「上一步圖示按鈕」
+  // 6. 啟用 Geoman 左側工具列 + 「上一步圖示」 + [需求 2]「全螢幕圖示按鈕」
   // ============================================================================
   map.pm.addControls({
     position: 'topleft',
@@ -598,25 +869,55 @@
     editMode: true, dragMode: true, cutPolygon: false, removalMode: true, rotateMode: true
   });
 
-  // [新增註記] 在左側工具列的 edit 區塊 (Rotate Layers 正下方) 建立自訂「上一步」圖示按鈕
+  // 左側工具列：恢復上一步按鈕
   map.pm.Toolbar.createCustomControl({
     name: 'UndoAction',
     block: 'edit',
     title: '恢復上一步 (最多10步 / 保留5分鐘 / 快捷鍵 Ctrl+Z)',
     toggle: false,
-    onClick: () => {
-      undoLastAction();
-    },
+    onClick: () => { undoLastAction(); },
     afterClick: () => {},
     className: 'leaflet-pm-icon-undo'
   });
 
-  // 將按鈕內容替換為乾淨的逆時針還原箭頭 SVG 圖示與步數小徽章
+  // [新增註記 需求 2] 左側工具列：全螢幕切換按鈕
+  map.pm.Toolbar.createCustomControl({
+    name: 'FullscreenAction',
+    block: 'edit',
+    title: '切換全螢幕戰術模式',
+    toggle: false,
+    onClick: () => { toggleFullScreenMode(); },
+    afterClick: () => {},
+    className: 'leaflet-pm-icon-fullscreen'
+  });
+
+  window.toggleFullScreenMode = function() {
+    const docEl = document.documentElement;
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      if (docEl.requestFullscreen) {
+        docEl.requestFullscreen();
+      } else if (docEl.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen();
+      } else {
+        // 針對不支援 Fullscreen API 的 iOS Safari：自動收合頂部工具列達成滿版效果
+        const topbar = document.getElementById('topbar');
+        topbar.style.display = topbar.style.display === 'none' ? 'flex' : 'none';
+        adjustMapHeight();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+  };
+
   window.addEventListener('DOMContentLoaded', () => {
     const undoIconEl = document.querySelector('.leaflet-pm-icon-undo');
     if (undoIconEl) {
       undoIconEl.innerHTML = `
-        <div id="pm-undo-container" class="pm-undo-btn pm-undo-disabled">
+        <div id="pm-undo-container" class="pm-custom-btn pm-undo-disabled">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 7v6h6"></path>
             <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
@@ -625,8 +926,22 @@
         </div>
       `;
     }
+
+    const fsIconEl = document.querySelector('.leaflet-pm-icon-fullscreen');
+    if (fsIconEl) {
+      fsIconEl.innerHTML = `
+        <div class="pm-custom-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+          </svg>
+        </div>
+      `;
+    }
   });
 
+  // ============================================================================
+  // 7. 繪圖新增、修改、刪除邏輯 (全面綁定戰術 Log 自動紀錄)
+  // ============================================================================
   let activeLayer = null;
   let isEditingExisting = false;
 
@@ -642,13 +957,14 @@
     document.getElementById('feat-name').focus();
   });
 
-  // [關鍵修正] 當使用左側工具列「橡皮擦 (Removal Mode)」點擊刪除任何物件時：
-  // Geoman 會在觸發 pm:remove 前先把 e.layer 從 map 移除。
-  // 我們先從 drawnItems 移除它，再呼叫 recordUndoSnapshot(e.layer) 把被刪的 e.layer 強制寫入刪除前快照！
+  // 橡皮擦刪除時：記錄 Undo 快照並寫入戰術 Log
   map.on('pm:remove', (e) => {
     drawnItems.removeLayer(e.layer);
     recordUndoSnapshot(e.layer);
-    document.getElementById('status').innerText = '🗑️ 已刪除標記 (可點左側 ↩️ 恢復)';
+    const removedName = (e.layer.feature && e.layer.feature.properties && e.layer.feature.properties.name) || '未命名標記';
+    const removedCoord = getLayerCoordString(e.layer);
+    document.getElementById('status').innerText = `🗑️ 已刪除「${removedName}」(可點左側 ↩️ 恢復)`;
+    appendTacticalLog('action', `刪除了標記「${removedName}」(${removedCoord})`);
   });
 
   window.openEditModal = function(leafletId) {
@@ -669,16 +985,18 @@
     document.getElementById('feat-name').focus();
   };
 
-  // [關鍵修正] 當從彈窗點擊「🗑️ 刪除」按鈕時，在移除前先完整記錄快照
+  // 彈窗內點擊刪除：記錄 Undo 快照並寫入戰術 Log
   window.deleteLayerById = function(leafletId) {
     const layer = drawnItems.getLayer(leafletId);
     if (!layer) return;
     layer.closePopup();
-    // 刪除前先拍下包含此物件的完整快照
+    const removedName = (layer.feature && layer.feature.properties && layer.feature.properties.name) || '未命名標記';
+    const removedCoord = getLayerCoordString(layer);
     recordUndoSnapshot();
     map.removeLayer(layer);
     drawnItems.removeLayer(layer);
-    document.getElementById('status').innerText = '🗑️ 已刪除標記 (可點左側 ↩️ 恢復)';
+    document.getElementById('status').innerText = `🗑️ 已刪除「${removedName}」(可點左側 ↩️ 恢復)`;
+    appendTacticalLog('action', `刪除了標記「${removedName}」(${removedCoord})`);
   };
 
   function cancelModal() {
@@ -693,7 +1011,6 @@
   function saveModal() {
     if (!activeLayer) return;
 
-    // 在新增套用或編輯修改前，先拍下變更前的狀態快照
     recordUndoSnapshot();
 
     const name = document.getElementById('feat-name').value.trim() || '未命名標記';
@@ -706,12 +1023,21 @@
     const rawTime = new Date().toLocaleString('zh-TW', { hour12: false });
     const time = callsign ? `${rawTime} (${callsign})` : rawTime;
     const coord = getLayerCoordString(activeLayer);
+    const catLabel = (categoryConfig[cat] || categoryConfig.danger).label;
 
+    const wasEditing = isEditingExisting;
     if (!drawnItems.hasLayer(activeLayer)) {
       drawnItems.addLayer(activeLayer);
     }
 
     applyFeatureProperties(activeLayer, { name, category: cat, desc, coord, time, updatedBy: callsign });
+
+    // 自動寫入新增或修改動作到右下角戰術 Log 留言板
+    if (wasEditing) {
+      appendTacticalLog('action', `修改了「${name}」[${catLabel}] (${coord})`);
+    } else {
+      appendTacticalLog('action', `新增了「${name}」[${catLabel}] (${coord})`);
+    }
 
     activeLayer = null;
     isEditingExisting = false;
@@ -748,13 +1074,14 @@
       });
     }
 
-    // 綁定拖曳、旋轉與頂點編輯事件，在變更開始前自動記錄快照，結束後重算 MGRS 座標
     if (!layer._hasCoordUpdateListener) {
       layer.on('pm:dragstart pm:markerdragstart pm:rotatestart', () => {
         recordUndoSnapshot();
       });
       layer.on('pm:dragend pm:edit pm:rotateend', () => {
         applyFeatureProperties(layer, layer.feature.properties);
+        const itemName = (layer.feature && layer.feature.properties && layer.feature.properties.name) || '標記';
+        appendTacticalLog('action', `移動/調整了「${itemName}」位置至 ${layer.feature.properties.coord}`);
       });
       layer._hasCoordUpdateListener = true;
     }
@@ -781,15 +1108,20 @@
   }
 
   // ============================================================================
-  // 6. 初始化與既有資料載入
+  // 8. 初始化、載入既有圖資與自動驗證 Token 解鎖留言板
   // ============================================================================
   window.addEventListener('DOMContentLoaded', () => {
+    adjustMapHeight();
     const host = window.location.hostname;
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     if (host.endsWith('github.io')) {
       document.getElementById('gh-owner').value = 'HamsterTAK';
       if (pathParts.length > 0) document.getElementById('gh-repo').value = pathParts[0];
+    } else {
+      document.getElementById('gh-owner').value = 'HamsterTAK';
+      document.getElementById('gh-repo').value = 'Hamster-Map';
     }
+
     const savedToken = localStorage.getItem('rescue_gh_token');
     if (savedToken) document.getElementById('gh-token').value = savedToken;
 
@@ -798,6 +1130,7 @@
 
     updateMGRSGrid();
     loadExistingData();
+    verifyGitHubToken();
   });
 
   async function loadExistingData() {
@@ -821,7 +1154,7 @@
   }
 
   // ============================================================================
-  // 7. 圖資轉 KML (維持點位水滴 + 多邊形無中心圓球)
+  // 9. 圖資轉 KML ([需求 5] 僅轉換地圖標記，絕不包含留言板紀錄)
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
@@ -912,7 +1245,7 @@
   }
 
   // ============================================================================
-  // 8. GitHub API 寫入與發布
+  // 10. GitHub API 寫入與發布
   // ============================================================================
   async function putGitHubFile(owner, repo, path, content, token, message, isRawBase64 = false) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
@@ -948,22 +1281,32 @@
       return;
     }
 
-    localStorage.setItem('rescue_gh_token', token);
-    if (callsign) localStorage.setItem('rescue_callsign', callsign);
-
     const statusEl = document.getElementById('status');
-    statusEl.innerText = '⏳ 正在同步圖資至 GitHub...';
+    statusEl.innerText = '⏳ 正在驗證與同步圖資至 GitHub...';
 
     try {
+      const isValid = await verifyGitHubToken();
+      if (!isValid) {
+        throw new Error('Token 驗證失敗或無此 Repo 寫入權限！');
+      }
+
+      if (callsign) localStorage.setItem('rescue_callsign', callsign);
+
+      const timeStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+      const byWho = callsign ? ` by ${callsign}` : '';
+
+      // 記錄發布動作至戰術留言板
+      appendTacticalLog('action', `手動發布並同步了最新圖資至雲端`, false);
+
       const collection = collectGeoJSON();
       const geojsonStr = JSON.stringify(collection, null, 2);
       const kmlStr = generateKML(collection);
-      const timeStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
-      const byWho = callsign ? ` by ${callsign}` : '';
+      const logsStr = JSON.stringify(tacticalLogs, null, 2);
 
       await putGitHubFile(owner, repo, 'google_pin.png', ATAK_WATERDROP_RAW_BASE64, token, `部署 ATAK Google 水滴圖示`, true);
       await putGitHubFile(owner, repo, 'data.geojson', geojsonStr, token, `更新地圖資料 (${timeStr}${byWho})`);
       await putGitHubFile(owner, repo, 'live.kml', kmlStr, token, `更新 ATAK KML (${timeStr}${byWho})`);
+      await putGitHubFile(owner, repo, 'logs.json', logsStr, token, `更新戰術紀錄 (${timeStr}${byWho})`);
 
       statusEl.innerText = `✅ 發布成功 (${timeStr})`;
       alert(`發布成功！\n\nATAK 訂閱網址：\nhttps://${owner}.github.io/${repo}/live.kml`);
