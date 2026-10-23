@@ -19,19 +19,5 @@
       <PolyStyle><color>665ec522</color></PolyStyle>
     </Style>
     
-    <Placemark>
-      <name><![CDATA[光復花蓮]]></name>
-      <description><![CDATA[
-[更新時間: 2026/10/23 19:59:30]]]></description>
-      <styleUrl>#danger</styleUrl>
-      <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.546211,23.939581,0 121.513252,23.962158,0 121.523895,24.011063,0 121.578827,24.056189,0 121.601486,24.062769,0 121.623802,24.059009,0 121.651268,24.041776,0 121.659851,24.01075,0 121.655731,23.981911,0 121.641655,23.952752,0 121.577797,23.932994,0 121.546211,23.939581,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
-    </Placemark>
-    <Placemark>
-      <name><![CDATA[花蓮王下海處]]></name>
-      <description><![CDATA[
-[更新時間: 2026/10/23 19:59:48]]]></description>
-      <styleUrl>#danger</styleUrl>
-      <Point><coordinates>121.673241,23.959022,0</coordinates></Point>
-    </Placemark>
   </Document>
 </kml>
