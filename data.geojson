@@ -81,6 +81,23 @@
           25.001145
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Team Bravo",
+        "category": "friendly",
+        "desc": "",
+        "time": "2026/10/23 23:48:48 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532097,
+          25.000766
+        ]
+      }
     }
   ]
 }
