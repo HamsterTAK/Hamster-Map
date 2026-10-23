@@ -34,36 +34,6 @@
       <Point><coordinates>121.532347,25.001148,0</coordinates></Point>
     </Placemark>
     <Placemark>
-      <name><![CDATA[Stephanie]]></name>
-      <description><![CDATA[[分類: 🔵 友軍單位 / 搜救隊]
-
-座標：51R UH 51945 65858 (25.00099, 121.53289)
-更新：2026/10/23 23:30:44]]></description>
-      <Style>
-        <IconStyle>
-          <color>ffff0000</color>
-          <scale>0.85</scale>
-          <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/cot_dot.png</href>
-          </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffff0000</color>
-        </LabelStyle>
-        <LineStyle>
-          <color>ffff0000</color>
-          <width>4</width>
-        </LineStyle>
-        <PolyStyle>
-          <color>66ff0000</color>
-          <fill>1</fill>
-          <outline>1</outline>
-        </PolyStyle>
-      </Style>
-      <Point><coordinates>121.532886,25.000985,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
       <name><![CDATA[人質]]></name>
       <description><![CDATA[[分類: 🟡 待援點 / 搜索目標區]
 
