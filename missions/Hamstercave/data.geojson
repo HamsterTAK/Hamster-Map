@@ -18,6 +18,24 @@
           25.001161
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Stephanie",
+        "category": "friendly",
+        "desc": "",
+        "coord": "51R UH 51939 65862 (25.00102, 121.53283)",
+        "time": "2026/10/24 15:24:15 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532828,
+          25.001022
+        ]
+      }
     }
   ]
 }
