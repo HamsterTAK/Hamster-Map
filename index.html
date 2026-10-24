@@ -32,40 +32,77 @@
       background: #1e293b; color: #00ffcc; border-color: #00ffcc;
       box-shadow: 0 0 6px rgba(0, 255, 204, 0.25);
     }
-    .lang-btn img, .map-lang-item img, .map-lang-trigger img {
+    .lang-btn img, .top-lang-item img, .top-lang-trigger img {
       width: 16px; height: 12px; object-fit: cover; border-radius: 2px;
       box-shadow: 0 0 2px rgba(0,0,0,0.6); display: block;
     }
 
     /* ==========================================================================
-       地圖右上角緊湊型小國旗語言下拉選單 (Leaflet Control)
+       頂部導覽列 Callsign 右側：緊湊型小國旗語言下拉選單
        ========================================================================== */
-    .map-lang-control { position: relative; }
-    .map-lang-trigger {
-      height: 32px; min-width: 44px; padding: 0 8px;
-      background: #ffffff; color: #0f172a; border: 2px solid rgba(0,0,0,0.2);
-      border-radius: 5px; cursor: pointer; display: flex; align-items: center;
-      justify-content: center; gap: 5px; font-size: 11px; font-weight: 800;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.4); user-select: none;
-      transition: background 0.15s; white-space: nowrap;
+    .top-lang-dropdown { position: relative; display: inline-block; }
+    .top-lang-trigger {
+      height: 26px; padding: 0 8px; background: #0f172a; color: #f8fafc;
+      border: 1px solid #475569; border-radius: 4px; cursor: pointer;
+      display: flex; align-items: center; gap: 5px; font-size: 12px;
+      font-weight: 700; user-select: none; transition: border-color 0.15s;
+      white-space: nowrap;
     }
-    .map-lang-trigger:hover { background: #f1f5f9; }
-    .map-lang-menu {
-      display: none; position: absolute; top: 36px; right: 0;
-      background: rgba(15, 23, 42, 0.96); border: 1px solid #475569;
-      border-radius: 6px; padding: 4px; box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-      flex-direction: column; gap: 2px; z-index: 2100; min-width: 96px;
+    .top-lang-trigger:hover { border-color: #38bdf8; }
+    .top-lang-menu {
+      display: none; position: absolute; top: 31px; right: 0;
+      background: rgba(15, 23, 42, 0.98); border: 1px solid #475569;
+      border-radius: 6px; padding: 4px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+      flex-direction: column; gap: 2px; z-index: 3000; min-width: 105px;
     }
-    .map-lang-menu.open { display: flex; }
-    .map-lang-item {
+    .top-lang-menu.open { display: flex; }
+    .top-lang-item {
       display: flex; align-items: center; gap: 7px; padding: 5px 8px;
       color: #cbd5e1; font-size: 12px; font-weight: 600; border-radius: 4px;
       cursor: pointer; white-space: nowrap; transition: all 0.12s;
       border: 1px solid transparent; background: transparent; text-align: left;
     }
-    .map-lang-item:hover { background: #1e293b; color: #fff; }
-    .map-lang-item.active {
+    .top-lang-item:hover { background: #1e293b; color: #fff; }
+    .top-lang-item.active {
       background: #1e293b; color: #00ffcc; border-color: #00ffcc;
+    }
+
+    /* ==========================================================================
+       Callsign 左側：緩慢閃爍的戰術呼吸燈號 (Status Breathing LED)
+       ========================================================================== */
+    .status-container {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(15, 23, 42, 0.75); padding: 3px 9px;
+      border-radius: 4px; border: 1px solid #334155;
+    }
+    .status-led {
+      width: 9px; height: 9px; border-radius: 50%;
+      background-color: #10b981;
+      box-shadow: 0 0 8px #10b981, 0 0 14px #10b981;
+      animation: breathe-green 2.4s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+    .status-led.busy {
+      background-color: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b, 0 0 14px #f59e0b;
+      animation: breathe-amber 0.9s infinite ease-in-out;
+    }
+    .status-led.error {
+      background-color: #ef4444;
+      box-shadow: 0 0 8px #ef4444, 0 0 14px #ef4444;
+      animation: breathe-red 1.2s infinite ease-in-out;
+    }
+    @keyframes breathe-green {
+      0%, 100% { opacity: 0.3; transform: scale(0.88); box-shadow: 0 0 3px #10b981; }
+      50% { opacity: 1; transform: scale(1.12); box-shadow: 0 0 10px #10b981, 0 0 18px rgba(16, 185, 129, 0.7); }
+    }
+    @keyframes breathe-amber {
+      0%, 100% { opacity: 0.35; transform: scale(0.9); box-shadow: 0 0 3px #f59e0b; }
+      50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 10px #f59e0b, 0 0 18px rgba(245, 158, 11, 0.8); }
+    }
+    @keyframes breathe-red {
+      0%, 100% { opacity: 0.35; transform: scale(0.9); box-shadow: 0 0 3px #ef4444; }
+      50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 10px #ef4444, 0 0 18px rgba(239, 68, 68, 0.8); }
     }
 
     /* ==========================================================================
@@ -153,7 +190,7 @@
     .btn-del-mission:hover { background: #dc2626; color: #fff; }
 
     .right-group { margin-left: auto; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-    #status { color: #38bdf8; font-weight: bold; font-size: 12px; white-space: nowrap; }
+    #status { color: #38bdf8; font-weight: bold; font-size: 12px; white-space: nowrap; font-family: monospace; }
     #user-callsign { border-color: #38bdf8 !important; width: 105px; }
 
     #map { height: calc(100% - 44px); width: 100%; background: #000000; position: relative; }
@@ -419,8 +456,30 @@
   <button class="btn btn-del-mission" id="btn-delete-mission" onclick="deleteMissionByCode(currentMissionCode)">💣 刪除此任務</button>
   
   <div class="right-group">
-    <span id="status">準備就緒</span>
+    <!-- 緩慢閃爍的戰術呼吸燈號 + 任務狀態顯示 -->
+    <div class="status-container" title="Tactical System Telemetry Status">
+      <span id="status-led" class="status-led"></span>
+      <span id="status">準備就緒</span>
+    </div>
+
     <input type="text" id="user-callsign" placeholder="👤 Callsign" />
+
+    <!-- 移至 Callsign 右側的緊湊型小國旗語言下拉選單 -->
+    <div class="top-lang-dropdown" id="top-lang-dropdown">
+      <div class="top-lang-trigger" onclick="toggleTopLangMenu(event)" title="Language / 語言切換">
+        <img id="top-lang-trigger-flag" src="https://flagcdn.com/w40/tw.png" alt="flag">
+        <span id="top-lang-trigger-text">繁中</span>
+        <span style="font-size:9px; color:#94a3b8;">▾</span>
+      </div>
+      <div class="top-lang-menu" id="top-lang-menu">
+        <button class="top-lang-item" data-lang="zh" onclick="setLanguage('zh')"><img src="https://flagcdn.com/w40/tw.png" alt="TW"> 繁中</button>
+        <button class="top-lang-item" data-lang="en" onclick="setLanguage('en')"><img src="https://flagcdn.com/w40/gb.png" alt="UK"> EN (UK)</button>
+        <button class="top-lang-item" data-lang="de" onclick="setLanguage('de')"><img src="https://flagcdn.com/w40/de.png" alt="DE"> Deutsch</button>
+        <button class="top-lang-item" data-lang="fr" onclick="setLanguage('fr')"><img src="https://flagcdn.com/w40/fr.png" alt="FR"> Français</button>
+        <button class="top-lang-item" data-lang="ja" onclick="setLanguage('ja')"><img src="https://flagcdn.com/w40/jp.png" alt="JP"> 日本語</button>
+        <button class="top-lang-item" data-lang="ru" onclick="setLanguage('ru')"><img src="https://flagcdn.com/w40/ru.png" alt="RU"> Русский</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -509,6 +568,18 @@
     ja: { flag: 'https://flagcdn.com/w40/jp.png', short: '日本語' },
     ru: { flag: 'https://flagcdn.com/w40/ru.png', short: 'RU' }
   };
+
+  // 統一控制呼吸燈顏色與狀態文字的輔助函式 ('ok' | 'busy' | 'error')
+  function setSystemStatus(text, ledState = 'ok') {
+    const statusEl = document.getElementById('status');
+    const ledEl = document.getElementById('status-led');
+    if (statusEl) statusEl.innerText = text;
+    if (ledEl) {
+      ledEl.classList.remove('busy', 'error');
+      if (ledState === 'busy') ledEl.classList.add('busy');
+      else if (ledState === 'error') ledEl.classList.add('error');
+    }
+  }
 
   const I18N = {
     zh: {
@@ -1140,24 +1211,35 @@
     return mapCfg[cat] || mapCfg.danger;
   }
 
-  // 一鍵切換全站語系與右上角小國旗選單狀態
+  window.toggleTopLangMenu = function(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('top-lang-menu');
+    if (menu) menu.classList.toggle('open');
+  };
+
+  document.addEventListener('click', () => {
+    const menu = document.getElementById('top-lang-menu');
+    if (menu) menu.classList.remove('open');
+  });
+
+  // 一鍵切換全站語系與頂部小國旗選單狀態
   window.setLanguage = function(lang) {
     if (!I18N[lang]) lang = 'zh';
     currentLang = lang;
     localStorage.setItem('hamster_lang', lang);
     document.documentElement.lang = I18N[lang].locale;
 
-    document.querySelectorAll('.lang-btn, .map-lang-item').forEach(btn => {
+    document.querySelectorAll('.lang-btn, .top-lang-item').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
 
     const meta = LANG_META[lang] || LANG_META.zh;
-    const triggerFlag = document.getElementById('map-lang-trigger-flag');
-    const triggerText = document.getElementById('map-lang-trigger-text');
+    const triggerFlag = document.getElementById('top-lang-trigger-flag');
+    const triggerText = document.getElementById('top-lang-trigger-text');
     if (triggerFlag) triggerFlag.src = meta.flag;
     if (triggerText) triggerText.innerText = meta.short;
 
-    const menuEl = document.getElementById('map-lang-menu');
+    const menuEl = document.getElementById('top-lang-menu');
     if (menuEl) menuEl.classList.remove('open');
 
     const t = T();
@@ -1187,7 +1269,7 @@
     document.getElementById('btn-delete-mission').innerText = t.btnDelMission;
     document.getElementById('user-callsign').placeholder = t.phTopCallsign;
     if (!currentMissionCode) {
-      document.getElementById('status').innerText = t.statusReady;
+      setSystemStatus(t.statusReady, 'ok');
     }
 
     const panel = document.getElementById('log-panel');
@@ -1273,7 +1355,7 @@
   };
 
   // ============================================================================
-  // 1. 初始化底圖與圖資切換器 + 右上角緊湊語言下拉選單
+  // 1. 初始化底圖與圖資切換器
   // ============================================================================
   const map = L.map('map', { maxZoom: 22 }).setView([25.002, 121.533], 16);
 
@@ -1371,45 +1453,6 @@
     }
   });
   map.addControl(new FeatureSummaryControl());
-
-  // 右上角獨立緊湊小國旗語言下拉選單控制項
-  const LanguageDropdownControl = L.Control.extend({
-    options: { position: 'topright' },
-    onAdd: function() {
-      const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control map-lang-control');
-      L.DomEvent.disableClickPropagation(container);
-      L.DomEvent.disableScrollPropagation(container);
-
-      const meta = LANG_META[currentLang] || LANG_META.zh;
-      container.innerHTML = `
-        <div class="map-lang-trigger" onclick="toggleMapLangMenu()" title="Language / 語言切換">
-          <img id="map-lang-trigger-flag" src="${meta.flag}" alt="flag">
-          <span id="map-lang-trigger-text">${meta.short}</span>
-          <span style="font-size:9px; color:#64748b;">▾</span>
-        </div>
-        <div class="map-lang-menu" id="map-lang-menu">
-          <button class="map-lang-item" data-lang="zh" onclick="setLanguage('zh')"><img src="https://flagcdn.com/w40/tw.png" alt="TW"> 繁中</button>
-          <button class="map-lang-item" data-lang="en" onclick="setLanguage('en')"><img src="https://flagcdn.com/w40/gb.png" alt="UK"> EN (UK)</button>
-          <button class="map-lang-item" data-lang="de" onclick="setLanguage('de')"><img src="https://flagcdn.com/w40/de.png" alt="DE"> Deutsch</button>
-          <button class="map-lang-item" data-lang="fr" onclick="setLanguage('fr')"><img src="https://flagcdn.com/w40/fr.png" alt="FR"> Français</button>
-          <button class="map-lang-item" data-lang="ja" onclick="setLanguage('ja')"><img src="https://flagcdn.com/w40/jp.png" alt="JP"> 日本語</button>
-          <button class="map-lang-item" data-lang="ru" onclick="setLanguage('ru')"><img src="https://flagcdn.com/w40/ru.png" alt="RU"> Русский</button>
-        </div>
-      `;
-      return container;
-    }
-  });
-  map.addControl(new LanguageDropdownControl());
-
-  window.toggleMapLangMenu = function() {
-    const menu = document.getElementById('map-lang-menu');
-    if (menu) menu.classList.toggle('open');
-  };
-
-  map.on('click', () => {
-    const menu = document.getElementById('map-lang-menu');
-    if (menu) menu.classList.remove('open');
-  });
 
   window.toggleFeatureSummaryPanel = function() {
     const panel = document.getElementById('feature-summary-panel');
@@ -1892,7 +1935,7 @@
     cleanAndRefreshUndoUI();
     renderFeatureSummaryList();
 
-    document.getElementById('status').innerText = `⏳ [${currentMissionCode}]...`;
+    setSystemStatus(`[${currentMissionCode}]...`, 'busy');
 
     await loadExistingData();
     await verifyGitHubToken();
@@ -1922,8 +1965,7 @@
     const token = document.getElementById('gh-token').value.trim();
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
     const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
-    const statusEl = document.getElementById('status');
-    statusEl.innerText = `⏳ [${targetCode}]...`;
+    setSystemStatus(`[${targetCode}]...`, 'busy');
 
     try {
       const dirUrl = `https://api.github.com/repos/${owner}/${repo}/contents/missions/${targetCode}?t=${Date.now()}`;
@@ -1943,12 +1985,13 @@
         currentMissionCode = '';
         document.getElementById('login-mission-code').value = '';
         document.getElementById('mission-login-overlay').style.display = 'flex';
+        setSystemStatus(t.statusReady, 'ok');
       }
       if (document.getElementById('mission-manager-box').style.display === 'block') {
         loadMissionDirectoryList();
       }
     } catch (err) {
-      statusEl.innerText = '❌ Error';
+      setSystemStatus('Error', 'error');
       alert(err.message);
     }
   };
@@ -2098,7 +2141,7 @@
     tacticalLogs = [];
     renderLogList();
     await syncLogsToGitHubSilent(`Clear logs ${currentMissionCode}`);
-    document.getElementById('status').innerText = '🗑️ Logs cleared';
+    setSystemStatus(`[${currentMissionCode}]`, 'ok');
   };
 
   async function loadExistingLogs() {
@@ -2203,7 +2246,7 @@
     });
     cleanAndRefreshUndoUI();
     renderFeatureSummaryList();
-    document.getElementById('status').innerText = `↩️ Undo (${undoStack.length})`;
+    setSystemStatus(`Undo (${undoStack.length})`, 'ok');
     appendTacticalLog('action', `Undo last action`);
   };
 
@@ -2285,7 +2328,7 @@
     renderFeatureSummaryList();
     const removedName = (e.layer.feature && e.layer.feature.properties && e.layer.feature.properties.name) || T().unnamed;
     const removedCoord = getLayerCoordString(e.layer);
-    document.getElementById('status').innerText = `🗑️ ${removedName}`;
+    setSystemStatus(`Del: ${removedName}`, 'ok');
     appendTacticalLog('action', `Deleted "${removedName}" (${removedCoord})`);
   });
 
@@ -2322,7 +2365,7 @@
     map.removeLayer(layer);
     drawnItems.removeLayer(layer);
     renderFeatureSummaryList();
-    document.getElementById('status').innerText = `🗑️ ${removedName}`;
+    setSystemStatus(`Del: ${removedName}`, 'ok');
     appendTacticalLog('action', `Deleted "${removedName}" (${removedCoord})`);
   };
 
@@ -2536,7 +2579,7 @@
 
       if (!geojson) {
         renderFeatureSummaryList();
-        document.getElementById('status').innerText = `✅ [${currentMissionCode}]`;
+        setSystemStatus(`[${currentMissionCode}]`, 'ok');
         return;
       }
 
@@ -2550,10 +2593,10 @@
       if (drawnItems.getLayers().length > 0) {
         map.fitBounds(drawnItems.getBounds(), { maxZoom: 17, padding: [40, 40] });
       }
-      document.getElementById('status').innerText = `✅ [${currentMissionCode}]`;
+      setSystemStatus(`[${currentMissionCode}]`, 'ok');
     } catch (e) {
       renderFeatureSummaryList();
-      document.getElementById('status').innerText = `✅ [${currentMissionCode}]`;
+      setSystemStatus(`[${currentMissionCode}]`, 'ok');
     }
   }
 
@@ -2716,8 +2759,7 @@
       return;
     }
 
-    const statusEl = document.getElementById('status');
-    statusEl.innerText = `⏳ Publishing [${currentMissionCode}]...`;
+    setSystemStatus(`Publishing [${currentMissionCode}]...`, 'busy');
 
     try {
       const isValid = await verifyGitHubToken();
@@ -2741,10 +2783,10 @@
       await putGitHubFile(owner, repo, getMissionFilePath('logs.json'), logsStr, token, `[${currentMissionCode}] Update Logs (${timeStr}${byWho})`);
 
       const missionKmlUrl = `https://${owner}.github.io/${repo}/${getMissionFilePath('live.kml')}`;
-      statusEl.innerText = `✅ [${currentMissionCode}] (${timeStr})`;
+      setSystemStatus(`[${currentMissionCode}] (${timeStr})`, 'ok');
       alert(t.alertPubSuccess(currentMissionCode, missionKmlUrl));
     } catch (err) {
-      statusEl.innerText = '❌ Failed';
+      setSystemStatus('Failed', 'error');
       alert(err.message);
     }
   }
