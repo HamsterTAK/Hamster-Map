@@ -46,5 +46,11 @@
     "user": "Neoyang",
     "type": "action",
     "text": "手動發布並同步了任務 [Hamstercave] 最新圖資至雲端"
+  },
+  {
+    "time": "2026/10/25 03:37:42",
+    "user": "Neoyang",
+    "type": "action",
+    "text": "Published mission [Hamstercave] to cloud"
   }
 ]
