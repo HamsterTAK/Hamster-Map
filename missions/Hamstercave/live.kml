@@ -27,5 +27,28 @@
       </Style>
       <Point><coordinates>121.532417,25.001169,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[CC]]></name>
+      <description><![CDATA[[任務: Hamstercave]
+[分類: 🟢 物資站 / 安全集結區]
+
+座標：51R UH 51961 65853 (25.00095, 121.53305)
+更新：2026/10/24 20:58:41 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff00ff00</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.533052,25.000945,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
