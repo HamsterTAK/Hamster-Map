@@ -36,6 +36,24 @@
           25.001022
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "CC",
+        "category": "supply",
+        "desc": "",
+        "coord": "51R UH 51952 65800 (25.00047, 121.53297)",
+        "time": "2026/10/24 15:28:33 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.53297,
+          25.000466
+        ]
+      }
     }
   ]
 }
