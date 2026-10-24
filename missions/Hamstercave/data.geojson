@@ -7,8 +7,9 @@
         "name": "微笑狗",
         "category": "friendly",
         "desc": "",
+        "stream": "http://129.225.167.253:8889/wanlong",
         "coord": "51R UH 51898 65879 (25.00117, 121.53242)",
-        "time": "2026/10/24 15:32:13 (Neoyang)",
+        "time": "2026/10/24 18:22:39 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
