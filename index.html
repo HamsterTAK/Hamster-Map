@@ -45,7 +45,6 @@
     }
     .login-btn-secondary:hover { background: #475569; }
 
-    /* 擁有者專屬「雲端任務管理清單」區塊 */
     #mission-manager-box {
       display: none; margin-top: 14px; background: #0f172a; border: 1px solid #334155;
       border-radius: 8px; padding: 10px; text-align: left; max-height: 190px; overflow-y: auto;
@@ -88,22 +87,19 @@
     .btn:hover:not(:disabled) { opacity: 0.9; }
     .btn-save { background: #ef4444; }
     .btn-atak { background: #3b82f6; }
+    .btn-video { background: #059669; }
     .btn-manage { background: #0284c7; display: none; }
     .btn-del-mission { background: #7f1d1d; color: #fecaca; display: none; }
     .btn-del-mission:hover { background: #dc2626; color: #fff; }
 
-    /* 右側狀態與 Callsign 區塊 */
     .right-group { margin-left: auto; display: flex; align-items: center; gap: 8px; }
     #status { color: #38bdf8; font-weight: bold; font-size: 12px; white-space: nowrap; }
     #user-callsign { border-color: #38bdf8 !important; width: 125px; }
 
-    /* 地圖容器 */
     #map { height: calc(100% - 50px); width: 100%; background: #000000; position: relative; }
 
-    /* 未驗證 Token 時隱藏左側 Geoman 繪圖與編輯工具列 (唯讀模式) */
     body.readonly-mode .leaflet-pm-toolbar { display: none !important; }
 
-    /* 左側工具列自訂按鈕 (Undo 與 全螢幕) */
     .pm-custom-btn {
       display: flex !important; align-items: center; justify-content: center;
       position: relative; width: 100%; height: 100%; cursor: pointer;
@@ -116,7 +112,6 @@
       padding: 0 3px; border-radius: 6px; text-align: center; display: none;
     }
 
-    /* 底部即時 MGRS 戰術座標列 */
     #coord-bar {
       position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
       background: rgba(15, 23, 42, 0.92); color: #38bdf8; padding: 6px 14px;
@@ -127,7 +122,6 @@
       overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* MGRS 網格標籤與點位常駐名稱標籤 */
     .mgrs-grid-label {
       background: rgba(15, 23, 42, 0.85); color: #f8fafc; padding: 1px 5px;
       border-radius: 4px; font-family: 'Courier New', Consolas, monospace; font-size: 11px;
@@ -140,9 +134,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.5); white-space: nowrap;
     }
 
-    /* ==========================================================================
-       右下角可折疊戰術 Log 與留言板樣式 (已移除 Video 視窗，恢復獨立右下角配置)
-       ========================================================================== */
+    /* 右下角可折疊戰術紀錄與留言板 */
     #log-panel {
       position: fixed; right: 12px; bottom: 48px; width: 340px; max-width: calc(100vw - 24px);
       background: rgba(15, 23, 42, 0.96); color: #f8fafc; border: 1px solid #475569;
@@ -198,7 +190,7 @@
     }
     #modal-box {
       background: #1e293b; color: #fff; padding: 20px; border-radius: 8px;
-      width: 370px; max-width: 92%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      width: 380px; max-width: 92%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       border: 1px solid #475569;
     }
     #modal-box h3 { margin: 0 0 15px 0; font-size: 16px; color: #38bdf8; }
@@ -212,16 +204,16 @@
     .btn-cancel { background: #64748b; }
 
     /* Popup 內按鈕樣式 */
-    .popup-btn-group { display: flex; gap: 6px; margin-top: 10px; }
+    .popup-btn-group { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
     .popup-btn {
-      flex: 1; padding: 5px 8px; border: none; border-radius: 4px;
-      color: #fff; font-size: 12px; font-weight: bold; cursor: pointer;
+      flex: 1 1 auto; padding: 5px 8px; border: none; border-radius: 4px;
+      color: #fff; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center;
     }
     .popup-btn-edit { background: #3b82f6; }
     .popup-btn-del { background: #ef4444; }
+    .popup-btn-video { background: #059669; }
     .custom-cot-icon { background: transparent; border: none; }
 
-    /* 📱 響應式手機與平板自動適配 */
     @media (max-width: 768px) {
       #topbar { padding: 6px 8px; gap: 4px; font-size: 12px; }
       #gh-token { flex: 1 1 110px; width: auto !important; }
@@ -231,18 +223,13 @@
         bottom: 6px; left: 8px; transform: none; max-width: calc(100vw - 16px);
         font-size: 11px; padding: 4px 8px;
       }
-      #log-panel {
-        right: 8px; bottom: 38px; width: 290px;
-      }
+      #log-panel { right: 8px; bottom: 38px; width: 290px; }
       #log-body { height: 180px; }
     }
   </style>
 </head>
 <body class="readonly-mode">
 
-<!-- ==========================================================================
-     起始頁面：Mission Code 登入閘門 + 擁有者專屬「雲端任務管理中心」
-     ========================================================================== -->
 <div id="mission-login-overlay">
   <div class="login-card">
     <h2>🐹 HamsterTAK 戰術指揮系統</h2>
@@ -266,7 +253,6 @@
     <button class="login-btn" id="btn-login-submit" onclick="enterMissionFromLogin()">🚀 驗證並進入任務 (Enter Mission)</button>
     <button class="login-btn-secondary" onclick="loadMissionDirectoryList()">🗂️ 掃描並管理雲端現有任務 (需 Token)</button>
 
-    <!-- 擁有者專屬：掃描 missions/ 資料夾下所有任務並提供進入與一鍵刪除 -->
     <div id="mission-manager-box">
       <div class="mm-title">
         <span>📂 雲端現有任務資料夾 (`missions/`)</span>
@@ -281,7 +267,6 @@
   </div>
 </div>
 
-<!-- 頂部工具列 -->
 <div id="topbar">
   <strong>🐹黃金鼠圖資</strong>
   <div class="mission-badge" onclick="switchMissionPrompt()" title="點擊切換或管理所有 Mission">
@@ -296,6 +281,7 @@
   
   <button class="btn btn-save" id="btn-publish" onclick="publishToGitHub()" style="display:none;">☁️ 儲存並發布</button>
   <button class="btn btn-atak" onclick="downloadBootstrapKML()" title="下載此任務專屬的 ATAK 自動更新連線檔">📲 ATAK 連線檔</button>
+  <button class="btn btn-video" onclick="promptOpenTacticalPopout()" title="自行輸入串流連結以開啟獨立戰術懸浮視窗">📺 視訊監控</button>
   <button class="btn btn-manage" id="btn-top-manage" onclick="openMissionManagerModal()" title="開啟雲端任務管理清單">🗂️ 管理任務</button>
   <button class="btn btn-del-mission" id="btn-delete-mission" onclick="deleteMissionByCode(currentMissionCode)" title="從 GitHub 雲端徹底刪除此 Mission 的所有檔案">💣 刪除此任務</button>
   
@@ -307,10 +293,8 @@
 
 <div id="map"></div>
 
-<!-- 底部游標即時 MGRS 顯示列 -->
 <div id="coord-bar">🎯 移動滑鼠顯示 MGRS 戰術座標...</div>
 
-<!-- 右下角：可收放戰術紀錄與留言板 -->
 <div id="log-panel" class="collapsed">
   <div id="log-header" onclick="toggleLogPanel()">
     <div id="log-header-left">
@@ -334,7 +318,7 @@
   </div>
 </div>
 
-<!-- 新增 / 編輯標記共用彈窗 -->
+<!-- 新增 / 編輯標記共用彈窗 (由情報官自由填寫串流連結) -->
 <div id="modal-overlay">
   <div id="modal-box">
     <h3 id="modal-title">📍 設定救災圖資屬性</h3>
@@ -353,7 +337,12 @@
     </div>
     <div class="form-group">
       <label>現場狀況 / 聯絡人 / 需求備註</label>
-      <textarea id="feat-desc" rows="3" placeholder="輸入詳細資訊，匯入 ATAK 後點擊圖標即可查看..."></textarea>
+      <textarea id="feat-desc" rows="2" placeholder="輸入詳細資訊，匯入 ATAK 後點擊圖標即可查看..."></textarea>
+    </div>
+    <!-- [修正註記] 完全由情報官自行填寫串流網址，不綁定任何預設 IP -->
+    <div class="form-group">
+      <label>🎥 現場影像串流連結 (選填，點擊可開啟懸浮窗並寫入 KML)</label>
+      <input type="text" id="feat-stream" placeholder="請輸入完整串流連結 (如 http://... 或 https://...)" />
     </div>
     <div class="modal-actions">
       <button class="btn btn-cancel" id="modal-cancel-btn" style="padding:7px 14px; border-radius:4px;" onclick="cancelModal()">取消</button>
@@ -362,14 +351,13 @@
   </div>
 </div>
 
-<!-- 引入 Leaflet, Geoman 與 MGRS 軍用格網座標轉換庫 -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.min.js"></script>
 <script src="https://unpkg.com/mgrs@1.0.0/dist/mgrs.js"></script>
 
 <script>
   // ============================================================================
-  // 0. 全域任務狀態 (Mission State) 與路徑產生器
+  // 0. 全域任務狀態與純自訂串流連結處理 (無任何寫死 IP)
   // ============================================================================
   let currentMissionCode = '';
   let isTokenVerified = false;
@@ -383,8 +371,41 @@
     return `missions/${code}/${fileName}`;
   }
 
+  // [修正註記] 直接使用情報官填寫的連結，不再綁定任何預設伺服器 IP
+  // 若情報官輸入 IP:Port 忘記加協定頭，自動補上 http:// 確保彈出視窗正常運作
+  function formatCustomStreamUrl(val) {
+    const v = String(val || '').trim();
+    if (!v) return '';
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(v)) {
+      return v;
+    }
+    return 'http://' + v;
+  }
+
+  // 開啟戰術獨立懸浮小視窗 (避開 HTTPS Mixed Content 限制)
+  window.openTacticalStreamWindow = function(rawStreamUrl) {
+    const fullUrl = formatCustomStreamUrl(rawStreamUrl);
+    if (!fullUrl) return;
+    const winName = 'HamsterTAK_Monitor_' + Math.random().toString(36).substring(2, 7);
+    window.open(
+      fullUrl,
+      winName,
+      'width=520,height=320,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=no'
+    );
+  };
+
+  // 頂部「📺 視訊監控」按鈕觸發：完全由情報官自行填寫連結
+  window.promptOpenTacticalPopout = function() {
+    const lastUrl = localStorage.getItem('hamster_custom_stream_url') || '';
+    const input = prompt('請輸入要開啟的即時影像串流完整連結 (URL)：', lastUrl);
+    if (input !== null && input.trim() !== '') {
+      localStorage.setItem('hamster_custom_stream_url', input.trim());
+      openTacticalStreamWindow(input.trim());
+    }
+  };
+
   // ============================================================================
-  // 1. 初始化底圖與響應式高度調整 (圖資切換器恢復至地圖右上角 topright)
+  // 1. 初始化底圖與圖資切換器 (固定於右上角 topright)
   // ============================================================================
   const map = L.map('map', { maxZoom: 22 }).setView([25.002, 121.533], 16);
 
@@ -455,7 +476,6 @@
     "🟦 MGRS 戰術座標網格 (自動縮放)": mgrsGridGroup
   };
 
-  // [修正註記 2] 將圖資切換方塊放回原本的位置 (地圖右上角 topright)
   L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
 
   // ============================================================================
@@ -647,7 +667,7 @@
   }
 
   // ============================================================================
-  // 4. 嚴格 Mission 創立守門機制 + 擁有者專屬「雲端任務管理中心」
+  // 4. 嚴格 Mission 創立守門機制 + 任務管理中心
   // ============================================================================
   async function checkMissionExistsOnCloud(code) {
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
@@ -1198,7 +1218,7 @@
   };
 
   // ============================================================================
-  // 7. 繪圖新增、修改、刪除邏輯
+  // 7. 繪圖新增、修改、刪除邏輯 (包含自訂串流連結欄位與 Popup 按鈕)
   // ============================================================================
   let activeLayer = null;
   let isEditingExisting = false;
@@ -1216,6 +1236,7 @@
     document.getElementById('feat-name').value = '';
     document.getElementById('feat-cat').value = 'danger';
     document.getElementById('feat-desc').value = '';
+    document.getElementById('feat-stream').value = '';
     document.getElementById('modal-overlay').style.display = 'flex';
     document.getElementById('feat-name').focus();
   });
@@ -1244,6 +1265,7 @@
     document.getElementById('feat-name').value = props.name || '';
     document.getElementById('feat-cat').value = props.category || 'danger';
     document.getElementById('feat-desc').value = props.desc || '';
+    document.getElementById('feat-stream').value = props.stream || '';
     document.getElementById('modal-overlay').style.display = 'flex';
     document.getElementById('feat-name').focus();
   };
@@ -1276,6 +1298,7 @@
     const name = document.getElementById('feat-name').value.trim() || '未命名標記';
     const cat = document.getElementById('feat-cat').value;
     const desc = document.getElementById('feat-desc').value.trim();
+    const stream = document.getElementById('feat-stream').value.trim();
     const callsign = document.getElementById('user-callsign').value.trim();
     localStorage.setItem('rescue_callsign', callsign);
 
@@ -1287,7 +1310,7 @@
     const wasEditing = isEditingExisting;
     if (!drawnItems.hasLayer(activeLayer)) drawnItems.addLayer(activeLayer);
 
-    applyFeatureProperties(activeLayer, { name, category: cat, desc, coord, time, updatedBy: callsign });
+    applyFeatureProperties(activeLayer, { name, category: cat, desc, stream, coord, time, updatedBy: callsign });
 
     if (wasEditing) appendTacticalLog('action', `修改了「${name}」[${catLabel}] (${coord})`);
     else appendTacticalLog('action', `新增了「${name}」[${catLabel}] (${coord})`);
@@ -1334,10 +1357,13 @@
 
     const layerId = L.stamp(layer);
     const editButtonsHtml = isTokenVerified ? `
-      <div class="popup-btn-group">
-        <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">✏️ 編輯內容 / 改色</button>
-        <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">🗑️ 刪除</button>
-      </div>` : `<div style="margin-top:6px; font-size:11px; color:#94a3b8;">🔒 唯讀模式 (輸入情報官 Token 可編輯)</div>`;
+      <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">✏️ 編輯內容 / 改色</button>
+      <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">🗑️ 刪除</button>
+    ` : `<div style="margin-top:6px; font-size:11px; color:#94a3b8;">🔒 唯讀模式 (輸入情報官 Token 可編輯)</div>`;
+
+    const streamBtnHtml = props.stream ? `
+      <button class="popup-btn popup-btn-video" onclick="openTacticalStreamWindow('${escapeHTML(props.stream)}')">🎥 開啟現場影像</button>
+    ` : '';
 
     layer.bindPopup(`
       <div style="font-size:14px; min-width:230px;">
@@ -1345,9 +1371,13 @@
         <span style="color:#475569; font-size:12px; font-weight:600;">${cfg.label}</span>
         <hr style="border:0; border-top:1px solid #e2e8f0; margin:6px 0;">
         <div style="white-space:pre-wrap; color:#1e293b;">${escapeHTML(props.desc || '無備註')}</div>
+        ${props.stream ? `<div style="margin-top:4px; font-size:11px; color:#059669; font-weight:bold; word-break:break-all;">🎥 串流: ${escapeHTML(props.stream)}</div>` : ''}
         <div style="margin-top:8px; font-size:11px; color:#0284c7; font-family:monospace; font-weight:bold;">座標：${escapeHTML(props.coord || '')}</div>
         <div style="margin-top:2px; font-size:11px; color:#64748b;">更新：${escapeHTML(props.time || '')}</div>
-        ${editButtonsHtml}
+        <div class="popup-btn-group">
+          ${streamBtnHtml}
+          ${editButtonsHtml}
+        </div>
       </div>
     `);
   }
@@ -1446,7 +1476,7 @@
   }
 
   // ============================================================================
-  // 9. 圖資轉 KML 與包含 Mission Code 的 ATAK 自動更新連線檔
+  // 9. 圖資轉 KML (直接將情報官填寫的自訂串流連結寫入 KML 超連結)
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
@@ -1474,7 +1504,14 @@
 
       const cat = p.category || 'danger';
       const cfg = categoryConfig[cat] || categoryConfig.danger;
-      const descText = `[任務: ${currentMissionCode}]\n[分類: ${cfg.label}]\n${p.desc || ''}\n座標：${p.coord || ''}\n更新：${p.time || ''}`;
+      
+      let streamHtmlLine = '';
+      if (p.stream) {
+        const customUrl = formatCustomStreamUrl(p.stream);
+        streamHtmlLine = `\n🎥 現場即時影像: <a href="${customUrl}">${customUrl}</a>`;
+      }
+
+      const descText = `[任務: ${currentMissionCode}]\n[分類: ${cfg.label}]\n${p.desc || ''}${streamHtmlLine}\n座標：${p.coord || ''}\n更新：${p.time || ''}`;
 
       if (g.type === 'Point') {
         placemarks += `
