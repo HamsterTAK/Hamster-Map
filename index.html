@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>HamsterTAK-Map (Multi-Mission & Video TOC)</title>
+  <title>HamsterTAK-Map (Multi-Mission TOC)</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.css" />
   <style>
@@ -45,7 +45,7 @@
     }
     .login-btn-secondary:hover { background: #475569; }
 
-    /* [新增註記] 擁有者專屬「雲端任務管理清單」區塊 */
+    /* 擁有者專屬「雲端任務管理清單」區塊 */
     #mission-manager-box {
       display: none; margin-top: 14px; background: #0f172a; border: 1px solid #334155;
       border-radius: 8px; padding: 10px; text-align: left; max-height: 190px; overflow-y: auto;
@@ -140,65 +140,20 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.5); white-space: nowrap;
     }
 
-    /* 右側智慧型垂直停靠容器 (#right-dock) - 確保 Video 與留言板絕不重疊 */
-    #right-dock {
-      position: fixed; right: 12px; bottom: 46px; top: 62px;
-      width: 350px; max-width: calc(100vw - 24px);
-      display: flex; flex-direction: column; justify-content: flex-end;
-      gap: 10px; z-index: 1500; pointer-events: none;
-    }
-    .dock-panel {
-      pointer-events: auto; background: rgba(15, 23, 42, 0.96); color: #f8fafc;
-      border: 1px solid #475569; border-radius: 8px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+    /* ==========================================================================
+       右下角可折疊戰術 Log 與留言板樣式 (已移除 Video 視窗，恢復獨立右下角配置)
+       ========================================================================== */
+    #log-panel {
+      position: fixed; right: 12px; bottom: 48px; width: 340px; max-width: calc(100vw - 24px);
+      background: rgba(15, 23, 42, 0.96); color: #f8fafc; border: 1px solid #475569;
+      border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.7); z-index: 1500;
       display: flex; flex-direction: column; overflow: hidden;
-      flex-shrink: 0; max-height: 100%;
     }
-    .dock-header {
+    #log-header {
       background: #1e293b; padding: 8px 12px; display: flex; align-items: center;
       justify-content: space-between; cursor: pointer; user-select: none;
       border-bottom: 1px solid #334155; font-size: 13px; font-weight: bold;
     }
-    .dock-panel.collapsed .dock-body { display: none !important; }
-    .dock-panel.collapsed .dock-header { border-bottom: none; }
-
-    /* Video 監控面板樣式 */
-    #video-header-left { display: flex; align-items: center; gap: 6px; color: #00ffcc; }
-    #video-body { display: flex; flex-direction: column; }
-    .video-control-bar {
-      display: flex; align-items: center; gap: 4px; background: #21252d;
-      padding: 6px 8px; border-bottom: 1px solid #2a2e39; flex-wrap: wrap;
-    }
-    .video-tag {
-      background: rgba(0, 0, 0, 0.75); color: #fff; padding: 3px 6px;
-      font-size: 11px; border-radius: 3px; border-left: 3px solid #00ffcc; white-space: nowrap;
-    }
-    .video-url-input {
-      flex: 1; min-width: 110px; background: #0f1115; border: 1px solid #3a3f4d;
-      color: #00ffcc; padding: 5px 7px; font-size: 11px; border-radius: 3px; outline: none; font-family: monospace;
-    }
-    .video-url-input:focus { border-color: #00ffcc; }
-    .v-btn {
-      background: #2a2e39; color: #fff; border: none; padding: 5px 7px;
-      font-size: 11px; border-radius: 3px; cursor: pointer; transition: 0.2s; white-space: nowrap;
-    }
-    .v-btn:hover { background: #00ffcc; color: #000; }
-    .v-btn-clear { background: #3a2a2e; color: #ff8888; }
-    .v-btn-clear:hover { background: #ff4444; color: #fff; }
-    .video-action-toolbar {
-      display: flex; align-items: center; justify-content: space-between;
-      background: #181b22; padding: 4px 8px; border-bottom: 1px solid #2a2e39; gap: 4px;
-    }
-    .video-server-info { font-size: 10px; color: #94a3b8; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .video-stage {
-      width: 100%; height: 205px; background: #000; position: relative;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .video-stage iframe, .video-stage video {
-      width: 100%; height: 100%; border: none; background: #000;
-    }
-
-    /* 戰術紀錄留言板樣式 */
     #log-header-left { display: flex; align-items: center; gap: 6px; color: #38bdf8; }
     #log-header-actions { display: flex; align-items: center; gap: 6px; }
     #btn-clear-logs {
@@ -206,7 +161,9 @@
       padding: 2px 7px; font-size: 12px; cursor: pointer;
     }
     #btn-clear-logs:hover { background: #dc2626; }
-    #log-body { display: flex; flex-direction: column; height: 210px; }
+    #log-body { display: flex; flex-direction: column; height: 240px; }
+    #log-panel.collapsed #log-body { display: none !important; }
+    #log-panel.collapsed #log-header { border-bottom: none; }
     #log-locked-msg {
       flex: 1; display: flex; align-items: center; justify-content: center;
       padding: 16px; text-align: center; color: #94a3b8; font-size: 12px; line-height: 1.5;
@@ -274,11 +231,10 @@
         bottom: 6px; left: 8px; transform: none; max-width: calc(100vw - 16px);
         font-size: 11px; padding: 4px 8px;
       }
-      #right-dock {
-        right: 6px; bottom: 36px; top: 95px; width: 300px; gap: 6px;
+      #log-panel {
+        right: 8px; bottom: 38px; width: 290px;
       }
-      .video-stage { height: 165px; }
-      #log-body { height: 160px; }
+      #log-body { height: 180px; }
     }
   </style>
 </head>
@@ -310,7 +266,7 @@
     <button class="login-btn" id="btn-login-submit" onclick="enterMissionFromLogin()">🚀 驗證並進入任務 (Enter Mission)</button>
     <button class="login-btn-secondary" onclick="loadMissionDirectoryList()">🗂️ 掃描並管理雲端現有任務 (需 Token)</button>
 
-    <!-- [新增註記] 擁有者專屬：掃描 missions/ 資料夾下所有任務並提供進入與一鍵刪除 -->
+    <!-- 擁有者專屬：掃描 missions/ 資料夾下所有任務並提供進入與一鍵刪除 -->
     <div id="mission-manager-box">
       <div class="mm-title">
         <span>📂 雲端現有任務資料夾 (`missions/`)</span>
@@ -354,64 +310,28 @@
 <!-- 底部游標即時 MGRS 顯示列 -->
 <div id="coord-bar">🎯 移動滑鼠顯示 MGRS 戰術座標...</div>
 
-<!-- 右側智慧型雙面板停靠區 (#right-dock) - 上下堆疊絕不重疊 -->
-<div id="right-dock">
-
-  <!-- 1. 右上：可收放即時影音視窗 -->
-  <div id="video-panel" class="dock-panel collapsed">
-    <div class="dock-header" onclick="toggleDockPanel('video-panel', 'video-toggle-icon')">
-      <div id="video-header-left">
-        <span>📺</span>
-        <span>戰術即時影音監控 (RTSP/WebRTC)</span>
-      </div>
-      <span id="video-toggle-icon" style="color:#94a3b8; font-size:12px;">▲ 展開</span>
+<!-- 右下角：可收放戰術紀錄與留言板 -->
+<div id="log-panel" class="collapsed">
+  <div id="log-header" onclick="toggleLogPanel()">
+    <div id="log-header-left">
+      <span id="log-lock-icon">🔒</span>
+      <span id="log-title-text">戰術紀錄與留言板 (0)</span>
     </div>
-    <div id="video-body" class="dock-body">
-      <div class="video-control-bar">
-        <div class="video-tag">CAM</div>
-        <input type="text" class="video-url-input" id="video-url-input" placeholder="rtsp://, udp://, Path 或網址" onkeydown="if(event.key==='Enter') loadVideoStream()" />
-        <button class="v-btn" onclick="loadVideoStream()" title="載入並播放串流">▶️ 播放</button>
-        <button class="v-btn v-btn-clear" onclick="clearVideoStream()" title="中斷連線並清除畫面">✖ 清除</button>
-      </div>
-      <div class="video-action-toolbar">
-        <span class="video-server-info" id="video-server-label" title="點擊齒輪可修改預設 MediaMTX 轉發伺服器">Proxy: http://129.225.167.253:8889/</span>
-        <div style="display:flex; gap:4px;">
-          <button class="v-btn" id="btn-video-mute" onclick="toggleVideoMute()" title="靜音 / 取消靜音">🔊 音訊</button>
-          <button class="v-btn" onclick="popoutVideoPiP()" title="子母畫面 / 彈出獨立置頂小視窗">🖼️ 子母畫面</button>
-          <button class="v-btn" onclick="fullscreenVideoStage()" title="放大此影音畫面至全螢幕">⛶ 全螢幕</button>
-          <button class="v-btn" onclick="configStreamServer()" title="設定預設串流代理伺服器網址">⚙️</button>
-        </div>
-      </div>
-      <div class="video-stage" id="video-stage">
-        <iframe src="about:blank" allow="autoplay; fullscreen; picture-in-picture"></iframe>
-      </div>
+    <div id="log-header-actions">
+      <button id="btn-clear-logs" onclick="clearAllLogs(event)" title="一鍵刪除所有留言與 Log 紀錄">🗑️</button>
+      <span id="log-toggle-icon" style="color:#94a3b8; font-size:12px;">▲ 展開</span>
     </div>
   </div>
-
-  <!-- 2. 右下：可收放戰術紀錄與留言板 -->
-  <div id="log-panel" class="dock-panel collapsed">
-    <div class="dock-header" onclick="toggleDockPanel('log-panel', 'log-toggle-icon')">
-      <div id="log-header-left">
-        <span id="log-lock-icon">🔒</span>
-        <span id="log-title-text">戰術紀錄與留言板 (0)</span>
-      </div>
-      <div id="log-header-actions">
-        <button id="btn-clear-logs" onclick="clearAllLogs(event)" title="一鍵刪除所有留言與 Log 紀錄">🗑️</button>
-        <span id="log-toggle-icon" style="color:#94a3b8; font-size:12px;">▲ 展開</span>
-      </div>
+  <div id="log-body">
+    <div id="log-locked-msg">
+      🔒 留言板與編輯功能受保護<br>請在上方輸入具備寫入權限的正確 GitHub Token 以解鎖情報官權限。
     </div>
-    <div id="log-body" class="dock-body">
-      <div id="log-locked-msg">
-        🔒 留言板與編輯功能受保護<br>請在上方輸入具備寫入權限的正確 GitHub Token 以解鎖情報官權限。
-      </div>
-      <div id="log-list"></div>
-      <div id="log-input-area">
-        <input type="text" id="log-input" placeholder="輸入戰況留言 (按 Enter 送出)..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
-        <button id="btn-send-log" onclick="sendChatMessage()">發送</button>
-      </div>
+    <div id="log-list"></div>
+    <div id="log-input-area">
+      <input type="text" id="log-input" placeholder="輸入戰況留言 (按 Enter 送出)..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
+      <button id="btn-send-log" onclick="sendChatMessage()">發送</button>
     </div>
   </div>
-
 </div>
 
 <!-- 新增 / 編輯標記共用彈窗 -->
@@ -464,18 +384,16 @@
   }
 
   // ============================================================================
-  // 1. 初始化底圖與響應式高度調整
+  // 1. 初始化底圖與響應式高度調整 (圖資切換器恢復至地圖右上角 topright)
   // ============================================================================
   const map = L.map('map', { maxZoom: 22 }).setView([25.002, 121.533], 16);
 
   function adjustMapHeight() {
     const topbar = document.getElementById('topbar');
     const mapEl = document.getElementById('map');
-    const dockEl = document.getElementById('right-dock');
     if (topbar && mapEl) {
       const topbarHeight = topbar.offsetHeight;
       mapEl.style.height = `calc(100% - ${topbarHeight}px)`;
-      if (dockEl) dockEl.style.top = `${topbarHeight + 10}px`;
       map.invalidateSize();
     }
   }
@@ -537,7 +455,8 @@
     "🟦 MGRS 戰術座標網格 (自動縮放)": mgrsGridGroup
   };
 
-  L.control.layers(baseMaps, overlayMaps, { position: 'topleft' }).addTo(map);
+  // [修正註記 2] 將圖資切換方塊放回原本的位置 (地圖右上角 topright)
+  L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
 
   // ============================================================================
   // 2. MGRS 座標換算與動態縮放網格引擎
@@ -728,128 +647,13 @@
   }
 
   // ============================================================================
-  // 4. 右側面板切換與 Video 串流播放器邏輯
+  // 4. 嚴格 Mission 創立守門機制 + 擁有者專屬「雲端任務管理中心」
   // ============================================================================
-  let streamBaseServer = localStorage.getItem('hamster_stream_base') || "http://129.225.167.253:8889/";
-  let isVideoMuted = false;
-  let currentResolvedStreamUrl = "about:blank";
-
-  window.toggleDockPanel = function(panelId, iconId) {
-    const panel = document.getElementById(panelId);
-    const icon = document.getElementById(iconId);
-    panel.classList.toggle('collapsed');
-    const isCollapsed = panel.classList.contains('collapsed');
-    icon.innerText = isCollapsed ? '▲ 展開' : '▼ 收合';
-    if (panelId === 'log-panel' && !isCollapsed && isTokenVerified) {
-      const listEl = document.getElementById('log-list');
-      listEl.scrollTop = listEl.scrollHeight;
-    }
-  };
-
-  window.configStreamServer = function() {
-    const input = prompt('請輸入預設 WebRTC / MediaMTX 串流轉發伺服器根網址：', streamBaseServer);
-    if (input !== null && input.trim() !== '') {
-      streamBaseServer = input.trim().endsWith('/') ? input.trim() : input.trim() + '/';
-      localStorage.setItem('hamster_stream_base', streamBaseServer);
-      document.getElementById('video-server-label').innerText = `Proxy: ${streamBaseServer}`;
-    }
-  };
-
-  window.loadVideoStream = function() {
-    const inputEl = document.getElementById('video-url-input');
-    const stage = document.getElementById('video-stage');
-    const val = inputEl.value.trim();
-    localStorage.setItem('hamster_last_video_url', val);
-
-    if (!val) {
-      currentResolvedStreamUrl = "about:blank";
-      stage.innerHTML = `<iframe src="about:blank" allow="autoplay; fullscreen; picture-in-picture"></iframe>`;
-      return;
-    }
-
-    const isDirectVideoFile = /\.(mp4|webm|ogg)(\?.*)?$/i.test(val);
-
-    if (val.startsWith('http://') || val.startsWith('https://')) {
-      currentResolvedStreamUrl = val;
-    } else if (val.startsWith('udp://') || val.startsWith('rtsp://') || val.startsWith('rtmp://')) {
-      currentResolvedStreamUrl = streamBaseServer + encodeURIComponent(val);
-    } else {
-      const cleanPath = val.replace(/^\/+/, '');
-      currentResolvedStreamUrl = streamBaseServer + cleanPath;
-    }
-
-    stage.innerHTML = '';
-    setTimeout(() => {
-      if (isDirectVideoFile) {
-        stage.innerHTML = `<video id="native-video-el" src="${currentResolvedStreamUrl}" controls autoplay playsinline ${isVideoMuted ? 'muted' : ''}></video>`;
-      } else {
-        const sep = currentResolvedStreamUrl.includes('?') ? '&' : '?';
-        const finalUrl = isVideoMuted ? `${currentResolvedStreamUrl}${sep}muted=1` : currentResolvedStreamUrl;
-        stage.innerHTML = `<iframe id="stream-iframe-el" src="${finalUrl}" allow="autoplay; fullscreen; picture-in-picture"></iframe>`;
-      }
-    }, 100);
-  };
-
-  window.clearVideoStream = function() {
-    document.getElementById('video-url-input').value = '';
-    localStorage.removeItem('hamster_last_video_url');
-    loadVideoStream();
-  };
-
-  window.toggleVideoMute = function() {
-    isVideoMuted = !isVideoMuted;
-    const btn = document.getElementById('btn-video-mute');
-    btn.innerText = isVideoMuted ? '🔇 靜音' : '🔊 音訊';
-    btn.style.background = isVideoMuted ? '#ef4444' : '#2a2e39';
-
-    const videoEl = document.getElementById('native-video-el');
-    if (videoEl) {
-      videoEl.muted = isVideoMuted;
-    } else if (currentResolvedStreamUrl !== "about:blank") {
-      loadVideoStream();
-    }
-  };
-
-  window.fullscreenVideoStage = function() {
-    const stage = document.getElementById('video-stage');
-    if (!document.fullscreenElement) {
-      if (stage.requestFullscreen) stage.requestFullscreen();
-      else if (stage.webkitRequestFullscreen) stage.webkitRequestFullscreen();
-    } else {
-      if (document.exitFullscreen) document.exitFullscreen();
-    }
-  };
-
-  window.popoutVideoPiP = async function() {
-    const videoEl = document.getElementById('native-video-el');
-    if (videoEl && document.pictureInPictureEnabled) {
-      try {
-        if (document.pictureInPictureElement) await document.exitPictureInPicture();
-        else await videoEl.requestPictureInPicture();
-        return;
-      } catch (e) {}
-    }
-    if (!currentResolvedStreamUrl || currentResolvedStreamUrl === 'about:blank') {
-      alert('請先輸入串流網址並按下「▶️ 播放」後再開啟子母畫面！');
-      return;
-    }
-    window.open(
-      currentResolvedStreamUrl,
-      'HamsterTAK_PiP_Monitor',
-      'width=480,height=270,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=no'
-    );
-  };
-
-  // ============================================================================
-  // 5. [核心強化] 嚴格 Mission 創立守門機制 + 擁有者專屬「雲端任務管理中心」
-  // ============================================================================
-  // 檢查某個 Mission 是否已經存在於雲端
   async function checkMissionExistsOnCloud(code) {
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
     const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const token = document.getElementById('gh-token').value.trim();
 
-    // 優先使用 GitHub API 檢查 (無 CDN 快取延遲)
     try {
       const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
       const apiRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/missions/${code}/data.geojson?t=${Date.now()}`, { headers });
@@ -857,7 +661,6 @@
       if (apiRes.status === 404) return false;
     } catch (e) {}
 
-    // 備援使用 GitHub Pages 相對路徑檢查
     try {
       const pageRes = await fetch(`./missions/${code}/data.geojson?t=${Date.now()}`);
       return pageRes.ok;
@@ -866,7 +669,6 @@
     }
   }
 
-  // [嚴格守門] 登入或創立 Mission
   window.enterMissionFromLogin = async function() {
     const rawCode = document.getElementById('login-mission-code').value;
     const code = sanitizeMissionCode(rawCode);
@@ -891,24 +693,19 @@
     submitBtn.disabled = true;
 
     try {
-      // 1. 先驗證 Token 有效性與寫入權限
       const hasValidToken = await verifyGitHubToken();
-      // 2. 檢查該 Mission 是否已經存在於雲端
       const missionExists = await checkMissionExistsOnCloud(code);
 
       if (!missionExists) {
-        // [關鍵防呆與安全限制] 若任務不存在，必須擁有正確 Token 才能創立！
         if (!hasValidToken) {
           alert(`❌ 找不到任務【${code}】！\n\n為了防止隨意建立空白資料夾，只有具備正確 GitHub Token 的情報官才能創立新任務。\n若您是觀看人員，請確認任務代號是否拼寫正確。`);
           return;
         }
 
-        // 擁有正確 Token 的情報官，詢問是否立即在雲端創立此新任務資料夾
         if (!confirm(`🆕 雲端尚無任務【${code}】的資料庫。\n\n您已通過情報官 Token 驗證，是否立即在雲端創立新任務【${code}】？`)) {
           return;
         }
 
-        // 立即在雲端初始化建立該任務的空檔案，正式完成創立
         await initializeNewMissionOnCloud(code);
       }
 
@@ -919,7 +716,6 @@
     }
   };
 
-  // 為擁有正確 Token 的情報官在雲端正式初始化新任務資料夾
   async function initializeNewMissionOnCloud(code) {
     const token = document.getElementById('gh-token').value.trim();
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
@@ -943,7 +739,6 @@
     await putGitHubFile(owner, repo, getMissionFilePath('logs.json', code), initLogs, token, `[${code}] 創立新任務紀錄`);
   }
 
-  // [擁有者管理功能] 掃描並列出 GitHub `missions/` 資料夾下的所有任務
   window.loadMissionDirectoryList = async function() {
     const tokenInput = document.getElementById('login-token').value.trim() || document.getElementById('gh-token').value.trim();
     if (tokenInput) {
@@ -1024,7 +819,6 @@
     loadMissionDirectoryList();
   };
 
-  // 切換或進入指定 Mission Code
   async function activateMission(code) {
     currentMissionCode = sanitizeMissionCode(code);
     localStorage.setItem('hamster_last_mission', currentMissionCode);
@@ -1055,7 +849,6 @@
     document.getElementById('login-mission-code').select();
   };
 
-  // 一鍵從 GitHub 雲端刪除指定 Mission 資料夾下的所有檔案
   window.deleteMissionByCode = async function(targetCode) {
     if (!isTokenVerified || !targetCode) {
       alert('您必須具備正確的情報官 GitHub Token 才能刪除任務！');
@@ -1077,7 +870,6 @@
     statusEl.innerText = `⏳ 正在銷毀任務 [${targetCode}]...`;
 
     try {
-      // 自動掃描該任務資料夾內所有檔案並逐一刪除 (GitHub 會在檔案清空後自動移除空資料夾)
       const dirUrl = `https://api.github.com/repos/${owner}/${repo}/contents/missions/${targetCode}?t=${Date.now()}`;
       const dirRes = await fetch(dirUrl, { headers: { 'Authorization': `Bearer ${token}` } });
       if (dirRes.ok) {
@@ -1106,9 +898,21 @@
   };
 
   // ============================================================================
-  // 6. 戰術 Log 留言板與 Token 權限驗證系統
+  // 5. 戰術 Log 留言板與 Token 權限驗證系統
   // ============================================================================
   let tacticalLogs = [];
+
+  window.toggleLogPanel = function() {
+    const panel = document.getElementById('log-panel');
+    const icon = document.getElementById('log-toggle-icon');
+    panel.classList.toggle('collapsed');
+    const isCollapsed = panel.classList.contains('collapsed');
+    icon.innerText = isCollapsed ? '▲ 展開' : '▼ 收合';
+    if (!isCollapsed && isTokenVerified) {
+      const listEl = document.getElementById('log-list');
+      listEl.scrollTop = listEl.scrollHeight;
+    }
+  };
 
   function getCurrentCallsign() {
     return document.getElementById('user-callsign').value.trim() || '未具名情報官';
@@ -1285,7 +1089,7 @@
   });
 
   // ============================================================================
-  // 7. 恢復上一步 (Undo) 系統與 Geoman 工具列
+  // 6. 恢復上一步 (Undo) 系統與 Geoman 工具列
   // ============================================================================
   const drawnItems = new L.FeatureGroup().addTo(map);
   const MAX_UNDO_STEPS = 10;
@@ -1394,7 +1198,7 @@
   };
 
   // ============================================================================
-  // 8. 繪圖新增、修改、刪除邏輯
+  // 7. 繪圖新增、修改、刪除邏輯
   // ============================================================================
   let activeLayer = null;
   let isEditingExisting = false;
@@ -1553,7 +1357,7 @@
   }
 
   // ============================================================================
-  // 9. 系統啟動初始化與載入任務資料
+  // 8. 系統啟動初始化與載入任務資料
   // ============================================================================
   window.addEventListener('DOMContentLoaded', () => {
     const undoIconEl = document.querySelector('.leaflet-pm-icon-undo');
@@ -1585,14 +1389,11 @@
     const savedToken = localStorage.getItem('rescue_gh_token') || '';
     const savedCallsign = localStorage.getItem('rescue_callsign') || '';
     const savedMission = localStorage.getItem('hamster_last_mission') || '';
-    const savedVideoUrl = localStorage.getItem('hamster_last_video_url') || '';
 
     document.getElementById('gh-token').value = savedToken;
     document.getElementById('login-token').value = savedToken;
     document.getElementById('user-callsign').value = savedCallsign;
     document.getElementById('login-callsign').value = savedCallsign;
-    document.getElementById('video-server-label').innerText = `Proxy: ${streamBaseServer}`;
-    if (savedVideoUrl) document.getElementById('video-url-input').value = savedVideoUrl;
 
     const urlParams = new URLSearchParams(window.location.search);
     const queryMission = sanitizeMissionCode(urlParams.get('mission') || '');
@@ -1603,7 +1404,6 @@
     setTimeout(() => document.getElementById('login-mission-code').focus(), 150);
   });
 
-  // 載入當前 Mission 的線上圖資 (優先透過 GitHub API 讀取最新無快取版本)
   async function loadExistingData() {
     if (!currentMissionCode) return;
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
@@ -1612,7 +1412,6 @@
 
     try {
       let geojson = null;
-      // 1. 優先從 GitHub API 抓取即時資料
       const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
       const apiRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${getMissionFilePath('data.geojson')}?t=${Date.now()}`, { headers });
       if (apiRes.ok) {
@@ -1622,7 +1421,6 @@
           geojson = JSON.parse(decoded);
         }
       } else {
-        // 2. 備援從 GitHub Pages 抓取
         const pageRes = await fetch(`./${getMissionFilePath('data.geojson')}?t=${Date.now()}`);
         if (pageRes.ok) geojson = await pageRes.json();
       }
@@ -1648,7 +1446,7 @@
   }
 
   // ============================================================================
-  // 10. 圖資轉 KML 與包含 Mission Code 的 ATAK 自動更新連線檔
+  // 9. 圖資轉 KML 與包含 Mission Code 的 ATAK 自動更新連線檔
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
@@ -1769,7 +1567,7 @@
   };
 
   // ============================================================================
-  // 11. GitHub API 寫入、發布與刪除函式
+  // 10. GitHub API 寫入、發布與刪除函式
   // ============================================================================
   async function putGitHubFile(owner, repo, path, content, token, message, isRawBase64 = false) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
