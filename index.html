@@ -112,6 +112,61 @@
       padding: 0 3px; border-radius: 6px; text-align: center; display: none;
     }
 
+    /* ==========================================================================
+       [新增註記 需求 1] 右上角圖資下方「點位及圖形彙整」小方塊按鈕與展開面板樣式
+       ========================================================================== */
+    .feature-summary-control {
+      position: relative;
+    }
+    .feature-summary-btn {
+      width: 44px; height: 44px; background: #ffffff; border: 2px solid rgba(0,0,0,0.2);
+      border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; box-shadow: 0 1px 5px rgba(0,0,0,0.4); position: relative;
+      transition: background 0.15s; user-select: none;
+    }
+    .feature-summary-btn:hover { background: #f1f5f9; }
+    .feature-summary-badge {
+      position: absolute; top: -5px; right: -5px; background: #2563eb; color: #fff;
+      font-size: 10px; font-weight: bold; min-width: 18px; height: 18px; line-height: 18px;
+      border-radius: 9px; text-align: center; padding: 0 4px; border: 1.5px solid #fff;
+      font-family: system-ui, sans-serif;
+    }
+    #feature-summary-panel {
+      display: none; position: absolute; top: 0; right: 54px; width: 350px;
+      max-width: calc(100vw - 80px); max-height: 68vh;
+      background: rgba(15, 23, 42, 0.96); color: #f8fafc; border: 1px solid #475569;
+      border-radius: 8px; box-shadow: 0 10px 28px rgba(0,0,0,0.75);
+      flex-direction: column; overflow: hidden; z-index: 2000;
+    }
+    #feature-summary-panel.open { display: flex; }
+    .fsp-header {
+      background: #1e293b; padding: 9px 12px; display: flex; align-items: center;
+      justify-content: space-between; border-bottom: 1px solid #334155; font-size: 13px; font-weight: bold;
+      color: #38bdf8;
+    }
+    .fsp-close {
+      background: transparent; border: none; color: #94a3b8; font-size: 15px;
+      cursor: pointer; font-weight: bold; padding: 0 4px;
+    }
+    .fsp-close:hover { color: #fff; }
+    #fsp-list {
+      flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .fsp-card {
+      background: #1e293b; border: 1px solid #334155; border-left: 4px solid #ef4444;
+      border-radius: 6px; padding: 10px 12px; font-size: 13px; transition: border-color 0.2s;
+    }
+    .fsp-card:hover { border-color: #38bdf8; }
+    .fsp-card-title {
+      font-size: 15px; font-weight: bold; color: #f8fafc; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .fsp-card-title:hover { color: #38bdf8; }
+    .fsp-type-tag {
+      font-size: 10px; background: #0f172a; color: #94a3b8; padding: 2px 6px;
+      border-radius: 4px; border: 1px solid #334155; font-weight: normal;
+    }
+
     #coord-bar {
       position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
       background: rgba(15, 23, 42, 0.92); color: #38bdf8; padding: 6px 14px;
@@ -190,17 +245,17 @@
     }
     #modal-box {
       background: #1e293b; color: #fff; padding: 20px; border-radius: 8px;
-      width: 380px; max-width: 92%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      border: 1px solid #475569;
+      width: 390px; max-width: 92%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      border: 1px solid #475569; max-height: 92vh; overflow-y: auto;
     }
     #modal-box h3 { margin: 0 0 15px 0; font-size: 16px; color: #38bdf8; }
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; margin-bottom: 4px; font-size: 13px; color: #cbd5e1; }
+    .form-group { margin-bottom: 11px; }
+    .form-group label { display: block; margin-bottom: 4px; font-size: 12px; color: #cbd5e1; }
     .form-group input, .form-group select, .form-group textarea {
       width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #475569;
-      background: #0f172a; color: #fff; font-size: 14px;
+      background: #0f172a; color: #fff; font-size: 13px;
     }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
     .btn-cancel { background: #64748b; }
 
     /* Popup 內按鈕樣式 */
@@ -209,6 +264,7 @@
       flex: 1 1 auto; padding: 5px 8px; border: none; border-radius: 4px;
       color: #fff; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center;
     }
+    .popup-btn-focus { background: #0284c7; }
     .popup-btn-edit { background: #3b82f6; }
     .popup-btn-del { background: #ef4444; }
     .popup-btn-video { background: #059669; }
@@ -225,6 +281,7 @@
       }
       #log-panel { right: 8px; bottom: 38px; width: 290px; }
       #log-body { height: 180px; }
+      #feature-summary-panel { width: 290px; max-height: 55vh; }
     }
   </style>
 </head>
@@ -318,7 +375,7 @@
   </div>
 </div>
 
-<!-- 新增 / 編輯標記共用彈窗 (由情報官自由填寫串流連結) -->
+<!-- 新增 / 編輯標記共用彈窗 (新增 MGRS 精確座標微調輸入欄) -->
 <div id="modal-overlay">
   <div id="modal-box">
     <h3 id="modal-title">📍 設定救災圖資屬性</h3>
@@ -335,11 +392,15 @@
         <option value="friendly">🔵 友軍單位 / 指揮所 / 搜救隊 (Friendly Blue)</option>
       </select>
     </div>
+    <!-- [新增註記 需求 2] MGRS 座標精確修正輸入欄 -->
+    <div class="form-group">
+      <label>🎯 MGRS 精確座標 (可直接修改以精準移位)</label>
+      <input type="text" id="feat-mgrs" style="font-family:monospace; color:#38bdf8; font-weight:bold;" placeholder="例如: 51R UH 51909 65861" />
+    </div>
     <div class="form-group">
       <label>現場狀況 / 聯絡人 / 需求備註</label>
       <textarea id="feat-desc" rows="2" placeholder="輸入詳細資訊，匯入 ATAK 後點擊圖標即可查看..."></textarea>
     </div>
-    <!-- [修正註記] 完全由情報官自行填寫串流網址，不綁定任何預設 IP -->
     <div class="form-group">
       <label>🎥 現場影像串流連結 (選填，點擊可開啟懸浮窗並寫入 KML)</label>
       <input type="text" id="feat-stream" placeholder="請輸入完整串流連結 (如 http://... 或 https://...)" />
@@ -371,8 +432,6 @@
     return `missions/${code}/${fileName}`;
   }
 
-  // [修正註記] 直接使用情報官填寫的連結，不再綁定任何預設伺服器 IP
-  // 若情報官輸入 IP:Port 忘記加協定頭，自動補上 http:// 確保彈出視窗正常運作
   function formatCustomStreamUrl(val) {
     const v = String(val || '').trim();
     if (!v) return '';
@@ -382,7 +441,6 @@
     return 'http://' + v;
   }
 
-  // 開啟戰術獨立懸浮小視窗 (避開 HTTPS Mixed Content 限制)
   window.openTacticalStreamWindow = function(rawStreamUrl) {
     const fullUrl = formatCustomStreamUrl(rawStreamUrl);
     if (!fullUrl) return;
@@ -394,7 +452,6 @@
     );
   };
 
-  // 頂部「📺 視訊監控」按鈕觸發：完全由情報官自行填寫連結
   window.promptOpenTacticalPopout = function() {
     const lastUrl = localStorage.getItem('hamster_custom_stream_url') || '';
     const input = prompt('請輸入要開啟的即時影像串流完整連結 (URL)：', lastUrl);
@@ -477,6 +534,120 @@
   };
 
   L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
+
+  // ============================================================================
+  // [新增註記 需求 1] 在右上角圖資切換器正下方新增「📋 點位及圖形彙整」小方塊控制項
+  // ============================================================================
+  const FeatureSummaryControl = L.Control.extend({
+    options: { position: 'topright' },
+    onAdd: function() {
+      const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control feature-summary-control');
+      L.DomEvent.disableClickPropagation(container);
+      L.DomEvent.disableScrollPropagation(container);
+
+      container.innerHTML = `
+        <div class="feature-summary-btn" onclick="toggleFeatureSummaryPanel()" title="點位及圖形彙整清單">
+          📋
+          <span class="feature-summary-badge" id="feature-summary-count">0</span>
+        </div>
+        <div id="feature-summary-panel">
+          <div class="fsp-header">
+            <span id="fsp-header-title">📋 點位及圖形彙整 (0)</span>
+            <button class="fsp-close" onclick="toggleFeatureSummaryPanel()" title="關閉清單">✕</button>
+          </div>
+          <div id="fsp-list"></div>
+        </div>
+      `;
+      return container;
+    }
+  });
+  map.addControl(new FeatureSummaryControl());
+
+  window.toggleFeatureSummaryPanel = function() {
+    const panel = document.getElementById('feature-summary-panel');
+    if (!panel) return;
+    panel.classList.toggle('open');
+    if (panel.classList.contains('open')) {
+      renderFeatureSummaryList();
+    }
+  };
+
+  // 點擊彙整清單中的項目時，自動飛往該點位/圖形並彈出 Popup
+  window.focusFeatureFromSummary = function(leafletId) {
+    const layer = drawnItems.getLayer(leafletId);
+    if (!layer) return;
+    if (typeof layer.getLatLng === 'function') {
+      map.setView(layer.getLatLng(), Math.max(map.getZoom(), 17), { animate: true });
+    } else if (typeof layer.getBounds === 'function' && layer.getBounds().isValid()) {
+      map.fitBounds(layer.getBounds(), { maxZoom: 17, padding: [50, 50], animate: true });
+    }
+    setTimeout(() => {
+      layer.openPopup();
+    }, 250);
+  };
+
+  // 即時渲染右上角「點位及圖形彙整」清單與詳細資訊 (同滑鼠點選點位時的完整資訊)
+  function renderFeatureSummaryList() {
+    const countBadge = document.getElementById('feature-summary-count');
+    const headerTitle = document.getElementById('fsp-header-title');
+    const listEl = document.getElementById('fsp-list');
+    if (!countBadge || !listEl) return;
+
+    const layers = [];
+    drawnItems.eachLayer(layer => {
+      if (map.hasLayer(layer) && layer.feature && (layer instanceof L.Marker || layer instanceof L.Path)) {
+        layers.push(layer);
+      }
+    });
+
+    countBadge.innerText = layers.length;
+    headerTitle.innerText = `📋 點位及圖形彙整 (${layers.length})`;
+
+    if (layers.length === 0) {
+      listEl.innerHTML = `<div style="color:#94a3b8; text-align:center; padding:24px 10px; font-size:12px;">目前地圖上尚無標定的點位或圖形</div>`;
+      return;
+    }
+
+    listEl.innerHTML = layers.map(layer => {
+      const props = (layer.feature && layer.feature.properties) ? layer.feature.properties : {};
+      const cat = props.category || 'danger';
+      const cfg = categoryConfig[cat] || categoryConfig.danger;
+      const layerId = L.stamp(layer);
+
+      let shapeType = '📍 點位';
+      if (layer instanceof L.Polygon) shapeType = '⬠ 多邊形區域';
+      else if (layer instanceof L.Polyline) shapeType = '📏 線段/路線';
+
+      const streamBtnHtml = props.stream ? `
+        <button class="popup-btn popup-btn-video" onclick="openTacticalStreamWindow('${escapeHTML(props.stream)}')">🎥 開啟現場影像</button>
+      ` : '';
+
+      const editButtonsHtml = isTokenVerified ? `
+        <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">✏️ 編輯 / 改座標</button>
+        <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">🗑️ 刪除</button>
+      ` : '';
+
+      return `
+        <div class="fsp-card" style="border-left-color: ${cfg.webColor};">
+          <div class="fsp-card-title" onclick="focusFeatureFromSummary(${layerId})" title="點擊飛往此標記並開啟地圖彈窗">
+            <span>${escapeHTML(props.name || '未命名標記')}</span>
+            <span class="fsp-type-tag">${shapeType}</span>
+          </div>
+          <div style="color:#cbd5e1; font-size:12px; font-weight:600; margin-top:3px;">${cfg.label}</div>
+          <hr style="border:0; border-top:1px solid #334155; margin:6px 0;">
+          <div style="white-space:pre-wrap; color:#e2e8f0; font-size:12px; line-height:1.4;">${escapeHTML(props.desc || '無備註')}</div>
+          ${props.stream ? `<div style="margin-top:4px; font-size:11px; color:#34d399; font-weight:bold; word-break:break-all;">🎥 串流: ${escapeHTML(props.stream)}</div>` : ''}
+          <div style="margin-top:6px; font-size:11px; color:#38bdf8; font-family:monospace; font-weight:bold;">座標：${escapeHTML(props.coord || '')}</div>
+          <div style="margin-top:2px; font-size:11px; color:#94a3b8;">更新：${escapeHTML(props.time || '')}</div>
+          <div class="popup-btn-group">
+            <button class="popup-btn popup-btn-focus" onclick="focusFeatureFromSummary(${layerId})">🎯 定位查看</button>
+            ${streamBtnHtml}
+            ${editButtonsHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
 
   // ============================================================================
   // 2. MGRS 座標換算與動態縮放網格引擎
@@ -617,12 +788,36 @@
   map.on('mousemove', (e) => { lastMouseLatLng = e.latlng; updateCoordBarText(); });
   map.on('move', () => { if (window.innerWidth <= 768) { lastMouseLatLng = map.getCenter(); updateCoordBarText(); } });
 
+  // 取得圖層的代表中心點 LatLng
+  function getLayerRepresentativeLatLng(layer) {
+    if (typeof layer.getLatLng === 'function') return layer.getLatLng();
+    if (typeof layer.getBounds === 'function' && layer.getBounds().isValid()) return layer.getBounds().getCenter();
+    return null;
+  }
+
+  // 取得圖層的純 MGRS 字串 (供編輯彈窗預填)
+  function getLayerMGRSOnly(layer) {
+    const latlng = getLayerRepresentativeLatLng(layer);
+    if (!latlng) return '';
+    return toFormattedMGRS(latlng.lat, latlng.lng);
+  }
+
   function getLayerCoordString(layer) {
-    let latlng = null;
-    if (typeof layer.getLatLng === 'function') latlng = layer.getLatLng();
-    else if (typeof layer.getBounds === 'function' && layer.getBounds().isValid()) latlng = layer.getBounds().getCenter();
+    const latlng = getLayerRepresentativeLatLng(layer);
     if (!latlng) return '未知座標';
     return `${toFormattedMGRS(latlng.lat, latlng.lng)} (${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)})`;
+  }
+
+  // [新增註記 需求 2] 遞迴平移多邊形或折線的所有頂點座標
+  function offsetLatLngsRecursive(latlngs, dLat, dLng) {
+    if (!Array.isArray(latlngs)) return latlngs;
+    return latlngs.map(item => {
+      if (Array.isArray(item)) return offsetLatLngsRecursive(item, dLat, dLng);
+      if (item && typeof item.lat === 'number' && typeof item.lng === 'number') {
+        return L.latLng(item.lat + dLat, item.lng + dLng);
+      }
+      return item;
+    });
   }
 
   // ============================================================================
@@ -854,6 +1049,7 @@
     undoStack = [];
     tacticalLogs = [];
     cleanAndRefreshUndoUI();
+    renderFeatureSummaryList();
 
     document.getElementById('status').innerText = `⏳ 正在載入任務 [${currentMissionCode}]...`;
 
@@ -1008,6 +1204,7 @@
     drawnItems.eachLayer(layer => {
       if (layer.feature) applyFeatureProperties(layer, layer.feature.properties || {});
     });
+    renderFeatureSummaryList();
   }
 
   function renderLogList() {
@@ -1164,6 +1361,7 @@
       }
     });
     cleanAndRefreshUndoUI();
+    renderFeatureSummaryList();
     document.getElementById('status').innerText = `↩️ 已恢復上一步 (剩餘 ${undoStack.length} 步)`;
     appendTacticalLog('action', `執行了「恢復上一步」還原圖資狀態`);
   };
@@ -1218,7 +1416,7 @@
   };
 
   // ============================================================================
-  // 7. 繪圖新增、修改、刪除邏輯 (包含自訂串流連結欄位與 Popup 按鈕)
+  // 7. 繪圖新增、修改、刪除邏輯 (整合 MGRS 座標精確微調與彙整清單連動)
   // ============================================================================
   let activeLayer = null;
   let isEditingExisting = false;
@@ -1235,6 +1433,7 @@
     document.getElementById('modal-cancel-btn').innerText = '取消刪除';
     document.getElementById('feat-name').value = '';
     document.getElementById('feat-cat').value = 'danger';
+    document.getElementById('feat-mgrs').value = getLayerMGRSOnly(activeLayer);
     document.getElementById('feat-desc').value = '';
     document.getElementById('feat-stream').value = '';
     document.getElementById('modal-overlay').style.display = 'flex';
@@ -1244,6 +1443,7 @@
   map.on('pm:remove', (e) => {
     drawnItems.removeLayer(e.layer);
     recordUndoSnapshot(e.layer);
+    renderFeatureSummaryList();
     const removedName = (e.layer.feature && e.layer.feature.properties && e.layer.feature.properties.name) || '未命名標記';
     const removedCoord = getLayerCoordString(e.layer);
     document.getElementById('status').innerText = `🗑️ 已刪除「${removedName}」(可點左側 ↩️ 恢復)`;
@@ -1260,10 +1460,12 @@
     isEditingExisting = true;
     const props = (layer.feature && layer.feature.properties) ? layer.feature.properties : {};
 
-    document.getElementById('modal-title').innerText = '✏️ 修改圖資內容與顏色';
+    document.getElementById('modal-title').innerText = '✏️ 修改圖資內容、顏色與精確座標';
     document.getElementById('modal-cancel-btn').innerText = '關閉取消';
     document.getElementById('feat-name').value = props.name || '';
     document.getElementById('feat-cat').value = props.category || 'danger';
+    // [新增註記 需求 2] 自動填入該點位目前的 MGRS 座標供精確修改
+    document.getElementById('feat-mgrs').value = getLayerMGRSOnly(layer);
     document.getElementById('feat-desc').value = props.desc || '';
     document.getElementById('feat-stream').value = props.stream || '';
     document.getElementById('modal-overlay').style.display = 'flex';
@@ -1280,6 +1482,7 @@
     recordUndoSnapshot();
     map.removeLayer(layer);
     drawnItems.removeLayer(layer);
+    renderFeatureSummaryList();
     document.getElementById('status').innerText = `🗑️ 已刪除「${removedName}」(可點左側 ↩️ 恢復)`;
     appendTacticalLog('action', `刪除了標記「${removedName}」(${removedCoord})`);
   };
@@ -1293,7 +1496,42 @@
 
   function saveModal() {
     if (!activeLayer) return;
-    recordUndoSnapshot();
+
+    // [新增註記 需求 2] 檢查並套用使用者輸入的 MGRS 精確座標
+    const mgrsInputRaw = document.getElementById('feat-mgrs').value.trim();
+    const originalMGRS = getLayerMGRSOnly(activeLayer);
+
+    if (mgrsInputRaw && mgrsInputRaw.replace(/\s+/g, '').toUpperCase() !== originalMGRS.replace(/\s+/g, '').toUpperCase()) {
+      const cleanMGRS = mgrsInputRaw.replace(/\s+/g, '').toUpperCase();
+      try {
+        const pt = mgrs.toPoint(cleanMGRS); // 回傳 [lng, lat]
+        const newLat = pt[1];
+        const newLng = pt[0];
+        if (isNaN(newLat) || isNaN(newLng)) throw new Error('Invalid coordinates');
+
+        recordUndoSnapshot();
+
+        if (typeof activeLayer.setLatLng === 'function') {
+          // 點位 (Marker)：直接設定至新經緯度
+          activeLayer.setLatLng([newLat, newLng]);
+        } else if (typeof activeLayer.getLatLngs === 'function' && typeof activeLayer.setLatLngs === 'function') {
+          // 多邊形或折線：計算中心位移量並平移所有頂點
+          const oldCenter = getLayerRepresentativeLatLng(activeLayer);
+          if (oldCenter) {
+            const dLat = newLat - oldCenter.lat;
+            const dLng = newLng - oldCenter.lng;
+            activeLayer.setLatLngs(offsetLatLngsRecursive(activeLayer.getLatLngs(), dLat, dLng));
+          }
+        }
+        map.panTo([newLat, newLng]);
+      } catch (err) {
+        alert('❌ MGRS 座標格式不正確！\n請輸入標準 MGRS 格式，例如：51R UH 51909 65861');
+        document.getElementById('feat-mgrs').focus();
+        return;
+      }
+    } else {
+      recordUndoSnapshot();
+    }
 
     const name = document.getElementById('feat-name').value.trim() || '未命名標記';
     const cat = document.getElementById('feat-cat').value;
@@ -1380,6 +1618,9 @@
         </div>
       </div>
     `);
+
+    // 每次屬性更新時，同步刷新右上角「點位及圖形彙整」清單與數量徽章
+    renderFeatureSummaryList();
   }
 
   function escapeHTML(str) {
@@ -1456,6 +1697,7 @@
       }
 
       if (!geojson) {
+        renderFeatureSummaryList();
         document.getElementById('status').innerText = `✅ 已進入任務 [${currentMissionCode}]`;
         return;
       }
@@ -1466,11 +1708,13 @@
           applyFeatureProperties(layer, feature.properties || {});
         }
       });
+      renderFeatureSummaryList();
       if (drawnItems.getLayers().length > 0) {
         map.fitBounds(drawnItems.getBounds(), { maxZoom: 17, padding: [40, 40] });
       }
       document.getElementById('status').innerText = `✅ 已載入任務 [${currentMissionCode}]`;
     } catch (e) {
+      renderFeatureSummaryList();
       document.getElementById('status').innerText = `✅ 準備就緒 [${currentMissionCode}]`;
     }
   }
