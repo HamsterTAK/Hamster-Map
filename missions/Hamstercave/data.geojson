@@ -4,54 +4,18 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "邪惡祭壇",
-        "category": "danger",
-        "desc": "",
-        "coord": "51R UH 51898 65878 (25.00116, 121.53242)",
-        "time": "2026/10/24 15:22:07 (Neoyang)",
-        "updatedBy": "Neoyang"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.532419,
-          25.001161
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Stephanie",
+        "name": "微笑狗",
         "category": "friendly",
         "desc": "",
-        "coord": "51R UH 51939 65862 (25.00102, 121.53283)",
-        "time": "2026/10/24 15:24:15 (Neoyang)",
+        "coord": "51R UH 51898 65879 (25.00117, 121.53242)",
+        "time": "2026/10/24 15:32:13 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          121.532828,
-          25.001022
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "CC",
-        "category": "supply",
-        "desc": "",
-        "coord": "51R UH 51952 65800 (25.00047, 121.53297)",
-        "time": "2026/10/24 15:28:33 (Neoyang)",
-        "updatedBy": "Neoyang"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.53297,
-          25.000466
+          121.532417,
+          25.001169
         ]
       }
     }
