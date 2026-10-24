@@ -11,34 +11,61 @@
     body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; }
 
     /* ==========================================================================
-       [新增註記 A-1] 起始頁面 Mission Code 登入閘門樣式
+       起始頁面 Mission Code 登入閘門與「任務管理清單」樣式
        ========================================================================== */
     #mission-login-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
       z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 15px;
+      overflow-y: auto;
     }
     .login-card {
-      background: #1e293b; color: #f8fafc; width: 420px; max-width: 100%;
-      padding: 28px 24px; border-radius: 12px; border: 1px solid #334155;
+      background: #1e293b; color: #f8fafc; width: 450px; max-width: 100%;
+      padding: 26px 22px; border-radius: 12px; border: 1px solid #334155;
       box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center;
     }
-    .login-card h2 { margin: 0 0 8px 0; color: #00ffcc; font-size: 22px; letter-spacing: 0.5px; }
-    .login-card p { margin: 0 0 20px 0; color: #94a3b8; font-size: 13px; line-height: 1.5; }
-    .login-field { text-align: left; margin-bottom: 14px; }
-    .login-field label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 5px; font-weight: 600; }
+    .login-card h2 { margin: 0 0 6px 0; color: #00ffcc; font-size: 21px; letter-spacing: 0.5px; }
+    .login-card p { margin: 0 0 18px 0; color: #94a3b8; font-size: 12px; line-height: 1.5; }
+    .login-field { text-align: left; margin-bottom: 12px; }
+    .login-field label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 4px; font-weight: 600; }
     .login-field input {
-      width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid #475569;
-      background: #0f172a; color: #00ffcc; font-size: 15px; font-family: monospace; outline: none;
+      width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid #475569;
+      background: #0f172a; color: #00ffcc; font-size: 14px; font-family: monospace; outline: none;
     }
     .login-field input:focus { border-color: #00ffcc; }
     .login-btn {
       width: 100%; padding: 11px; background: #00ffcc; color: #0f172a; border: none;
-      border-radius: 6px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 8px;
-      transition: transform 0.1s, opacity 0.2s;
+      border-radius: 6px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 6px;
+      transition: opacity 0.2s;
     }
-    .login-btn:hover { opacity: 0.92; }
-    .login-hint { margin-top: 14px; font-size: 11px; color: #64748b; text-align: left; background: #0f172a; padding: 10px; border-radius: 6px; line-height: 1.5; }
+    .login-btn:hover { opacity: 0.9; }
+    .login-btn-secondary {
+      width: 100%; padding: 9px; background: #334155; color: #f8fafc; border: 1px solid #475569;
+      border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px;
+    }
+    .login-btn-secondary:hover { background: #475569; }
+
+    /* [新增註記] 擁有者專屬「雲端任務管理清單」區塊 */
+    #mission-manager-box {
+      display: none; margin-top: 14px; background: #0f172a; border: 1px solid #334155;
+      border-radius: 8px; padding: 10px; text-align: left; max-height: 190px; overflow-y: auto;
+    }
+    .mm-title { font-size: 12px; color: #38bdf8; font-weight: bold; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .mm-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 8px; background: #1e293b; border-radius: 4px; margin-bottom: 5px;
+      border-left: 3px solid #00ffcc; font-family: monospace; font-size: 13px;
+    }
+    .mm-actions { display: flex; gap: 5px; }
+    .mm-btn {
+      padding: 3px 7px; font-size: 11px; border: none; border-radius: 3px;
+      cursor: pointer; font-weight: bold; color: #fff;
+    }
+    .mm-btn-go { background: #3b82f6; }
+    .mm-btn-kml { background: #10b981; }
+    .mm-btn-del { background: #ef4444; }
+
+    .login-hint { margin-top: 12px; font-size: 11px; color: #64748b; text-align: left; background: #0f172a; padding: 10px; border-radius: 6px; line-height: 1.5; }
 
     /* ==========================================================================
        頂部導覽列
@@ -61,6 +88,7 @@
     .btn:hover:not(:disabled) { opacity: 0.9; }
     .btn-save { background: #ef4444; }
     .btn-atak { background: #3b82f6; }
+    .btn-manage { background: #0284c7; display: none; }
     .btn-del-mission { background: #7f1d1d; color: #fecaca; display: none; }
     .btn-del-mission:hover { background: #dc2626; color: #fff; }
 
@@ -72,7 +100,7 @@
     /* 地圖容器 */
     #map { height: calc(100% - 50px); width: 100%; background: #000000; position: relative; }
 
-    /* [新增註記 A-2] 未驗證 Token 時隱藏左側 Geoman 繪圖與編輯工具列 (唯讀模式) */
+    /* 未驗證 Token 時隱藏左側 Geoman 繪圖與編輯工具列 (唯讀模式) */
     body.readonly-mode .leaflet-pm-toolbar { display: none !important; }
 
     /* 左側工具列自訂按鈕 (Undo 與 全螢幕) */
@@ -112,10 +140,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.5); white-space: nowrap;
     }
 
-    /* ==========================================================================
-       [新增註記 B-1 & B-2] 右側智慧型垂直停靠容器 (#right-dock)
-       確保「Video 視窗」與「戰術紀錄留言板」同時展開時自動上下排列，100% 絕不重疊！
-       ========================================================================== */
+    /* 右側智慧型垂直停靠容器 (#right-dock) - 確保 Video 與留言板絕不重疊 */
     #right-dock {
       position: fixed; right: 12px; bottom: 46px; top: 62px;
       width: 350px; max-width: calc(100vw - 24px);
@@ -137,9 +162,7 @@
     .dock-panel.collapsed .dock-body { display: none !important; }
     .dock-panel.collapsed .dock-header { border-bottom: none; }
 
-    /* ==========================================================================
-       [新增註記 B-3] Video 監控面板樣式 (移植自 HamsterTAK Video Wall)
-       ========================================================================== */
+    /* Video 監控面板樣式 */
     #video-header-left { display: flex; align-items: center; gap: 6px; color: #00ffcc; }
     #video-body { display: flex; flex-direction: column; }
     .video-control-bar {
@@ -262,21 +285,21 @@
 <body class="readonly-mode">
 
 <!-- ==========================================================================
-     [新增註記 A-1] 起始頁面：Mission Code 登入視窗
+     起始頁面：Mission Code 登入閘門 + 擁有者專屬「雲端任務管理中心」
      ========================================================================== -->
 <div id="mission-login-overlay">
   <div class="login-card">
     <h2>🐹 HamsterTAK 戰術指揮系統</h2>
-    <p>請輸入任務代號 (Mission Code) 以載入或創立專屬任務資料庫</p>
+    <p>請輸入現有任務代號進入，或輸入情報官 Token 以創立/管理任務</p>
     
     <div class="login-field">
       <label>🎯 任務代號 (Mission Code) *</label>
-      <input type="text" id="login-mission-code" placeholder="例如: rescue-01 或 taipei-op" autocomplete="off" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
+      <input type="text" id="login-mission-code" placeholder="例如: rescue-01" autocomplete="off" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
     </div>
     
     <div class="login-field">
-      <label>🔑 情報官 GitHub Token (選填，有正確 Token 才可編輯)</label>
-      <input type="password" id="login-token" placeholder="ghp_... (未填則以唯讀模式進入)" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
+      <label>🔑 情報官 GitHub Token (創立新任務、編輯與管理必填)</label>
+      <input type="password" id="login-token" placeholder="ghp_... (無 Token 僅可進入既有任務唯讀觀看)" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
     </div>
 
     <div class="login-field">
@@ -284,11 +307,20 @@
       <input type="text" id="login-callsign" placeholder="例如: Stephanie" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
     </div>
 
-    <button class="login-btn" onclick="enterMissionFromLogin()">🚀 進入 / 創立任務 (Enter Mission)</button>
+    <button class="login-btn" id="btn-login-submit" onclick="enterMissionFromLogin()">🚀 驗證並進入任務 (Enter Mission)</button>
+    <button class="login-btn-secondary" onclick="loadMissionDirectoryList()">🗂️ 掃描並管理雲端現有任務 (需 Token)</button>
+
+    <!-- [新增註記] 擁有者專屬：掃描 missions/ 資料夾下所有任務並提供進入與一鍵刪除 -->
+    <div id="mission-manager-box">
+      <div class="mm-title">
+        <span>📂 雲端現有任務資料夾 (`missions/`)</span>
+        <span id="mm-count" style="color:#00ffcc;"></span>
+      </div>
+      <div id="mission-manager-list"></div>
+    </div>
 
     <div class="login-hint">
-      💡 <strong>如何創立新任務？</strong>直接輸入新的代號進入並按下「儲存並發布」，系統就會自動在雲端創立該任務專屬資料夾與 KML！<br>
-      🗑️ <strong>如何刪除任務？</strong>進入任務並驗證 Token 後，點擊頂部「💣 刪除此任務」即可一鍵從雲端銷毀。
+      🛡️ <strong>安全防亂創機制：</strong>路人若無正確 Token，只能進入「已經存在」的任務唯讀觀看，<strong>絕對無法創立新任務或產生垃圾資料夾</strong>！只有驗證通過的 Token 才能創立或刪除任務。
     </div>
   </div>
 </div>
@@ -296,19 +328,20 @@
 <!-- 頂部工具列 -->
 <div id="topbar">
   <strong>🐹黃金鼠圖資</strong>
-  <div class="mission-badge" onclick="switchMissionPrompt()" title="點擊切換其他 Mission Code">
+  <div class="mission-badge" onclick="switchMissionPrompt()" title="點擊切換或管理所有 Mission">
     <span>🎯 任務:</span>
     <span id="current-mission-label">未登入</span>
     <span style="font-size:10px; color:#94a3b8;">🔄</span>
   </div>
 
-  <input type="password" id="gh-token" placeholder="GitHub Token (寫入密碼)" style="width:140px;" />
-  <input type="text" id="gh-owner" placeholder="帳號" style="width:90px;" />
-  <input type="text" id="gh-repo" placeholder="Repo" style="width:95px;" />
+  <input type="password" id="gh-token" placeholder="GitHub Token (寫入密碼)" style="width:135px;" />
+  <input type="text" id="gh-owner" placeholder="帳號" style="width:85px;" />
+  <input type="text" id="gh-repo" placeholder="Repo" style="width:90px;" />
   
   <button class="btn btn-save" id="btn-publish" onclick="publishToGitHub()" style="display:none;">☁️ 儲存並發布</button>
   <button class="btn btn-atak" onclick="downloadBootstrapKML()" title="下載此任務專屬的 ATAK 自動更新連線檔">📲 ATAK 連線檔</button>
-  <button class="btn btn-del-mission" id="btn-delete-mission" onclick="deleteCurrentMission()" title="從 GitHub 雲端徹底刪除此 Mission 的所有檔案">💣 刪除此任務</button>
+  <button class="btn btn-manage" id="btn-top-manage" onclick="openMissionManagerModal()" title="開啟雲端任務管理清單">🗂️ 管理任務</button>
+  <button class="btn btn-del-mission" id="btn-delete-mission" onclick="deleteMissionByCode(currentMissionCode)" title="從 GitHub 雲端徹底刪除此 Mission 的所有檔案">💣 刪除此任務</button>
   
   <div class="right-group">
     <span id="status">準備就緒</span>
@@ -321,13 +354,10 @@
 <!-- 底部游標即時 MGRS 顯示列 -->
 <div id="coord-bar">🎯 移動滑鼠顯示 MGRS 戰術座標...</div>
 
-<!-- ==========================================================================
-     [新增註記 B-1, B-2, B-3] 右側智慧型雙面板停靠區 (#right-dock)
-     上方為 Video 播放器，下方為戰術留言板，採用 Flex 垂直堆疊，展開時絕不互相重疊！
-     ========================================================================== -->
+<!-- 右側智慧型雙面板停靠區 (#right-dock) - 上下堆疊絕不重疊 -->
 <div id="right-dock">
 
-  <!-- 1. 右上：可收放即時影音視窗 (整合 HamsterTAK Video Wall 功能) -->
+  <!-- 1. 右上：可收放即時影音視窗 -->
   <div id="video-panel" class="dock-panel collapsed">
     <div class="dock-header" onclick="toggleDockPanel('video-panel', 'video-toggle-icon')">
       <div id="video-header-left">
@@ -358,7 +388,7 @@
     </div>
   </div>
 
-  <!-- 2. 右下：可收放戰術紀錄與留言板 (與 Video 面板自動互斥推移不重疊) -->
+  <!-- 2. 右下：可收放戰術紀錄與留言板 -->
   <div id="log-panel" class="dock-panel collapsed">
     <div class="dock-header" onclick="toggleDockPanel('log-panel', 'log-toggle-icon')">
       <div id="log-header-left">
@@ -424,14 +454,13 @@
   let currentMissionCode = '';
   let isTokenVerified = false;
 
-  // 正規化 Mission Code (僅允許英數、連字號與底線，確保 URL 與 GitHub 路徑安全)
   function sanitizeMissionCode(raw) {
     return String(raw || '').trim().replace(/[^a-zA-Z0-9_-]/g, '-');
   }
 
-  // 取得當前 Mission 在 GitHub 儲存庫內的檔案路徑 (例如: missions/alpha/data.geojson)
-  function getMissionFilePath(fileName) {
-    return `missions/${currentMissionCode}/${fileName}`;
+  function getMissionFilePath(fileName, customCode = null) {
+    const code = customCode || currentMissionCode;
+    return `missions/${code}/${fileName}`;
   }
 
   // ============================================================================
@@ -699,13 +728,12 @@
   }
 
   // ============================================================================
-  // 4. [新增註記 B-1, B-2, B-3] 右側面板切換與 Video 串流播放器邏輯
+  // 4. 右側面板切換與 Video 串流播放器邏輯
   // ============================================================================
   let streamBaseServer = localStorage.getItem('hamster_stream_base') || "http://129.225.167.253:8889/";
   let isVideoMuted = false;
   let currentResolvedStreamUrl = "about:blank";
 
-  // 通用折疊切換器 (因為都放在 #right-dock Flex 容器內，同時展開時會自動上下堆疊，絕不重疊)
   window.toggleDockPanel = function(panelId, iconId) {
     const panel = document.getElementById(panelId);
     const icon = document.getElementById(iconId);
@@ -718,7 +746,6 @@
     }
   };
 
-  // 設定 MediaMTX 預設代理伺服器
   window.configStreamServer = function() {
     const input = prompt('請輸入預設 WebRTC / MediaMTX 串流轉發伺服器根網址：', streamBaseServer);
     if (input !== null && input.trim() !== '') {
@@ -728,7 +755,6 @@
     }
   };
 
-  // [核心移植自 HamsterTAK Video Wall] 解析 RTSP / UDP / Path 並載入畫面
   window.loadVideoStream = function() {
     const inputEl = document.getElementById('video-url-input');
     const stage = document.getElementById('video-stage');
@@ -741,21 +767,17 @@
       return;
     }
 
-    // 判斷是否為直接可播放的 .mp4 / .webm 檔案
     const isDirectVideoFile = /\.(mp4|webm|ogg)(\?.*)?$/i.test(val);
 
     if (val.startsWith('http://') || val.startsWith('https://')) {
       currentResolvedStreamUrl = val;
     } else if (val.startsWith('udp://') || val.startsWith('rtsp://') || val.startsWith('rtmp://')) {
-      // 自動轉碼帶入 MediaMTX 動態代理
       currentResolvedStreamUrl = streamBaseServer + encodeURIComponent(val);
     } else {
-      // 輸入簡易 Path (如 neoyangminidrone) 時自動拼上伺服器根目錄
       const cleanPath = val.replace(/^\/+/, '');
       currentResolvedStreamUrl = streamBaseServer + cleanPath;
     }
 
-    // 先清空 DOM 確保舊串流徹底中斷連線
     stage.innerHTML = '';
     setTimeout(() => {
       if (isDirectVideoFile) {
@@ -768,14 +790,12 @@
     }, 100);
   };
 
-  // 清除串流並重置待機黑畫面
   window.clearVideoStream = function() {
     document.getElementById('video-url-input').value = '';
     localStorage.removeItem('hamster_last_video_url');
     loadVideoStream();
   };
 
-  // 靜音切換
   window.toggleVideoMute = function() {
     isVideoMuted = !isVideoMuted;
     const btn = document.getElementById('btn-video-mute');
@@ -790,7 +810,6 @@
     }
   };
 
-  // 影音視窗獨立全螢幕
   window.fullscreenVideoStage = function() {
     const stage = document.getElementById('video-stage');
     if (!document.fullscreenElement) {
@@ -801,7 +820,6 @@
     }
   };
 
-  // 子母畫面 (PiP)：原生 video 呼叫 requestPictureInPicture，WebRTC iframe 則彈出獨立置頂懸浮小視窗
   window.popoutVideoPiP = async function() {
     const videoEl = document.getElementById('native-video-el');
     if (videoEl && document.pictureInPictureEnabled) {
@@ -823,8 +841,32 @@
   };
 
   // ============================================================================
-  // 5. [新增註記 A-1, A-2, A-3] 多任務 (Mission) 登入、刪除與權限控管系統
+  // 5. [核心強化] 嚴格 Mission 創立守門機制 + 擁有者專屬「雲端任務管理中心」
   // ============================================================================
+  // 檢查某個 Mission 是否已經存在於雲端
+  async function checkMissionExistsOnCloud(code) {
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
+    const token = document.getElementById('gh-token').value.trim();
+
+    // 優先使用 GitHub API 檢查 (無 CDN 快取延遲)
+    try {
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      const apiRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/missions/${code}/data.geojson?t=${Date.now()}`, { headers });
+      if (apiRes.ok) return true;
+      if (apiRes.status === 404) return false;
+    } catch (e) {}
+
+    // 備援使用 GitHub Pages 相對路徑檢查
+    try {
+      const pageRes = await fetch(`./missions/${code}/data.geojson?t=${Date.now()}`);
+      return pageRes.ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // [嚴格守門] 登入或創立 Mission
   window.enterMissionFromLogin = async function() {
     const rawCode = document.getElementById('login-mission-code').value;
     const code = sanitizeMissionCode(rawCode);
@@ -837,16 +879,149 @@
     const tokenInput = document.getElementById('login-token').value.trim();
     const callsignInput = document.getElementById('login-callsign').value.trim();
 
-    if (tokenInput) {
-      document.getElementById('gh-token').value = tokenInput;
-      localStorage.setItem('rescue_gh_token', tokenInput);
-    }
+    document.getElementById('gh-token').value = tokenInput;
+    if (tokenInput) localStorage.setItem('rescue_gh_token', tokenInput);
     if (callsignInput) {
       document.getElementById('user-callsign').value = callsignInput;
       localStorage.setItem('rescue_callsign', callsignInput);
     }
 
-    await activateMission(code);
+    const submitBtn = document.getElementById('btn-login-submit');
+    submitBtn.innerText = '⏳ 正在檢查任務與權限...';
+    submitBtn.disabled = true;
+
+    try {
+      // 1. 先驗證 Token 有效性與寫入權限
+      const hasValidToken = await verifyGitHubToken();
+      // 2. 檢查該 Mission 是否已經存在於雲端
+      const missionExists = await checkMissionExistsOnCloud(code);
+
+      if (!missionExists) {
+        // [關鍵防呆與安全限制] 若任務不存在，必須擁有正確 Token 才能創立！
+        if (!hasValidToken) {
+          alert(`❌ 找不到任務【${code}】！\n\n為了防止隨意建立空白資料夾，只有具備正確 GitHub Token 的情報官才能創立新任務。\n若您是觀看人員，請確認任務代號是否拼寫正確。`);
+          return;
+        }
+
+        // 擁有正確 Token 的情報官，詢問是否立即在雲端創立此新任務資料夾
+        if (!confirm(`🆕 雲端尚無任務【${code}】的資料庫。\n\n您已通過情報官 Token 驗證，是否立即在雲端創立新任務【${code}】？`)) {
+          return;
+        }
+
+        // 立即在雲端初始化建立該任務的空檔案，正式完成創立
+        await initializeNewMissionOnCloud(code);
+      }
+
+      await activateMission(code);
+    } finally {
+      submitBtn.innerText = '🚀 驗證並進入任務 (Enter Mission)';
+      submitBtn.disabled = false;
+    }
+  };
+
+  // 為擁有正確 Token 的情報官在雲端正式初始化新任務資料夾
+  async function initializeNewMissionOnCloud(code) {
+    const token = document.getElementById('gh-token').value.trim();
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
+    const callsign = getCurrentCallsign();
+    const timeStr = new Date().toLocaleString('zh-TW', { hour12: false });
+
+    const emptyGeoJSON = JSON.stringify({ type: 'FeatureCollection', features: [] }, null, 2);
+    const initLogs = JSON.stringify([{
+      time: timeStr,
+      user: callsign,
+      type: 'action',
+      text: `創立了新任務【${code}】資料庫`
+    }], null, 2);
+
+    currentMissionCode = code;
+    const emptyKML = generateKML({ type: 'FeatureCollection', features: [] });
+
+    await putGitHubFile(owner, repo, getMissionFilePath('data.geojson', code), emptyGeoJSON, token, `[${code}] 創立新任務地圖資料庫`);
+    await putGitHubFile(owner, repo, getMissionFilePath('live.kml', code), emptyKML, token, `[${code}] 創立新任務 KML`);
+    await putGitHubFile(owner, repo, getMissionFilePath('logs.json', code), initLogs, token, `[${code}] 創立新任務紀錄`);
+  }
+
+  // [擁有者管理功能] 掃描並列出 GitHub `missions/` 資料夾下的所有任務
+  window.loadMissionDirectoryList = async function() {
+    const tokenInput = document.getElementById('login-token').value.trim() || document.getElementById('gh-token').value.trim();
+    if (tokenInput) {
+      document.getElementById('gh-token').value = tokenInput;
+      localStorage.setItem('rescue_gh_token', tokenInput);
+    }
+
+    const hasValidToken = await verifyGitHubToken();
+    if (!hasValidToken) {
+      alert('🔒 請先在上方「情報官 GitHub Token」欄位輸入正確的 Token，才能掃描與管理雲端任務資料夾！');
+      return;
+    }
+
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
+    const token = document.getElementById('gh-token').value.trim();
+    const box = document.getElementById('mission-manager-box');
+    const listEl = document.getElementById('mission-manager-list');
+    const countEl = document.getElementById('mm-count');
+
+    box.style.display = 'block';
+    listEl.innerHTML = `<div style="color:#94a3b8; font-size:12px; padding:8px;">⏳ 正在從 GitHub 掃描 missions/ 資料夾...</div>`;
+
+    try {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/missions?t=${Date.now()}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (res.status === 404) {
+        countEl.innerText = '0 個任務';
+        listEl.innerHTML = `<div style="color:#94a3b8; font-size:12px; padding:8px;">目前雲端尚無任何任務資料夾</div>`;
+        return;
+      }
+
+      const items = await res.json();
+      const dirs = Array.isArray(items) ? items.filter(i => i.type === 'dir') : [];
+      countEl.innerText = `共 ${dirs.length} 個任務`;
+
+      if (dirs.length === 0) {
+        listEl.innerHTML = `<div style="color:#94a3b8; font-size:12px; padding:8px;">目前雲端尚無任何任務資料夾</div>`;
+        return;
+      }
+
+      listEl.innerHTML = dirs.map(d => {
+        const mCode = escapeHTML(d.name);
+        return `
+          <div class="mm-item">
+            <strong>🎯 ${mCode}</strong>
+            <div class="mm-actions">
+              <button class="mm-btn mm-btn-go" onclick="quickEnterMission('${mCode}')">🚀 進入</button>
+              <button class="mm-btn mm-btn-kml" onclick="copyMissionKmlUrl('${mCode}')" title="複製此任務的 ATAK KML 網址">📋 KML網址</button>
+              <button class="mm-btn mm-btn-del" onclick="deleteMissionByCode('${mCode}')" title="徹底刪除此任務資料夾">🗑️ 刪除</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      listEl.innerHTML = `<div style="color:#ef4444; font-size:12px;">掃描失敗：${escapeHTML(err.message)}</div>`;
+    }
+  };
+
+  window.quickEnterMission = function(code) {
+    document.getElementById('login-mission-code').value = code;
+    enterMissionFromLogin();
+  };
+
+  window.copyMissionKmlUrl = function(code) {
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
+    const url = `https://${owner}.github.io/${repo}/missions/${code}/live.kml`;
+    navigator.clipboard.writeText(url).then(() => {
+      alert(`✅ 已複製任務【${code}】的 ATAK 訂閱網址：\n${url}`);
+    });
+  };
+
+  window.openMissionManagerModal = function() {
+    switchMissionPrompt();
+    loadMissionDirectoryList();
   };
 
   // 切換或進入指定 Mission Code
@@ -854,7 +1029,6 @@
     currentMissionCode = sanitizeMissionCode(code);
     localStorage.setItem('hamster_last_mission', currentMissionCode);
 
-    // 同步更新網址列參數 ?mission=xxx 方便分享連結
     const newUrl = `${window.location.pathname}?mission=${encodeURIComponent(currentMissionCode)}`;
     window.history.replaceState({}, '', newUrl);
 
@@ -862,7 +1036,6 @@
     document.getElementById('mission-login-overlay').style.display = 'none';
     adjustMapHeight();
 
-    // 清空上一任務的畫布、Undo 堆疊與留言板
     drawnItems.clearLayers();
     undoStack = [];
     tacticalLogs = [];
@@ -870,14 +1043,10 @@
 
     document.getElementById('status').innerText = `⏳ 正在載入任務 [${currentMissionCode}]...`;
 
-    // 1. 載入該任務的地圖資料 (missions/<code/data.geojson)
     await loadExistingData();
-
-    // 2. 驗證 Token 決定是「唯讀模式」還是「情報官編輯模式」
     await verifyGitHubToken();
   }
 
-  // 點擊頂部任務徽章可快速切換其他 Mission
   window.switchMissionPrompt = function() {
     document.getElementById('login-mission-code').value = currentMissionCode;
     document.getElementById('login-token').value = document.getElementById('gh-token').value;
@@ -886,37 +1055,50 @@
     document.getElementById('login-mission-code').select();
   };
 
-  // [新增註記 A-問題解答] 一鍵從 GitHub 雲端刪除整個 Mission 資料夾下的所有檔案
-  window.deleteCurrentMission = async function() {
-    if (!isTokenVerified || !currentMissionCode) {
+  // 一鍵從 GitHub 雲端刪除指定 Mission 資料夾下的所有檔案
+  window.deleteMissionByCode = async function(targetCode) {
+    if (!isTokenVerified || !targetCode) {
       alert('您必須具備正確的情報官 GitHub Token 才能刪除任務！');
       return;
     }
 
     const confirmCode = prompt(
-      `⚠️ 危險操作確認！\n您即將從 GitHub 雲端永久刪除任務【${currentMissionCode}】的所有標記圖資、KML 與留言紀錄！\n\n請輸入任務代號「${currentMissionCode}」以確認刪除：`
+      `⚠️ 危險操作確認！\n您即將從 GitHub 雲端永久刪除任務【${targetCode}】資料夾內的所有標記圖資、KML 與留言紀錄！\n\n請輸入任務代號「${targetCode}」以確認徹底銷毀：`
     );
-    if (confirmCode !== currentMissionCode) {
+    if (confirmCode !== targetCode) {
       if (confirmCode !== null) alert('輸入的任務代號不相符，已取消刪除。');
       return;
     }
 
     const token = document.getElementById('gh-token').value.trim();
-    const owner = document.getElementById('gh-owner').value.trim();
-    const repo = document.getElementById('gh-repo').value.trim();
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const statusEl = document.getElementById('status');
-    statusEl.innerText = `⏳ 正在銷毀任務 [${currentMissionCode}]...`;
+    statusEl.innerText = `⏳ 正在銷毀任務 [${targetCode}]...`;
 
     try {
-      const filesToDelete = ['data.geojson', 'live.kml', 'logs.json'];
-      for (const f of filesToDelete) {
-        await deleteGitHubFileIfExist(owner, repo, getMissionFilePath(f), token, `刪除任務 ${currentMissionCode} 檔案 (${f})`);
+      // 自動掃描該任務資料夾內所有檔案並逐一刪除 (GitHub 會在檔案清空後自動移除空資料夾)
+      const dirUrl = `https://api.github.com/repos/${owner}/${repo}/contents/missions/${targetCode}?t=${Date.now()}`;
+      const dirRes = await fetch(dirUrl, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (dirRes.ok) {
+        const files = await dirRes.json();
+        if (Array.isArray(files)) {
+          for (const fileObj of files) {
+            await deleteGitHubFileIfExist(owner, repo, fileObj.path, token, `刪除任務 ${targetCode} 檔案 (${fileObj.name})`);
+          }
+        }
       }
-      alert(`✅ 任務【${currentMissionCode}】已從 GitHub 雲端徹底刪除！`);
-      localStorage.removeItem('hamster_last_mission');
-      currentMissionCode = '';
-      document.getElementById('login-mission-code').value = '';
-      document.getElementById('mission-login-overlay').style.display = 'flex';
+
+      alert(`✅ 任務【${targetCode}】資料夾已從 GitHub 雲端徹底刪除！`);
+      if (currentMissionCode === targetCode) {
+        localStorage.removeItem('hamster_last_mission');
+        currentMissionCode = '';
+        document.getElementById('login-mission-code').value = '';
+        document.getElementById('mission-login-overlay').style.display = 'flex';
+      }
+      if (document.getElementById('mission-manager-box').style.display === 'block') {
+        loadMissionDirectoryList();
+      }
     } catch (err) {
       statusEl.innerText = '❌ 刪除任務失敗';
       alert('刪除任務時發生錯誤：' + err.message);
@@ -934,8 +1116,8 @@
 
   async function verifyGitHubToken() {
     const token = document.getElementById('gh-token').value.trim();
-    const owner = document.getElementById('gh-owner').value.trim();
-    const repo = document.getElementById('gh-repo').value.trim();
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
 
     if (!token || !owner || !repo) {
       setEditorAndLogAuthStatus(false);
@@ -964,7 +1146,6 @@
     }
   }
 
-  // [核心權限控管] 根據 Token 正確與否，同時控制「地圖編輯工具列」與「留言板」的解鎖狀態
   function setEditorAndLogAuthStatus(verified) {
     isTokenVerified = verified;
     const lockIcon = document.getElementById('log-lock-icon');
@@ -973,11 +1154,13 @@
     const inputArea = document.getElementById('log-input-area');
     const clearBtn = document.getElementById('btn-clear-logs');
     const publishBtn = document.getElementById('btn-publish');
+    const topManageBtn = document.getElementById('btn-top-manage');
     const delMissionBtn = document.getElementById('btn-delete-mission');
 
     if (verified) {
       document.body.classList.remove('readonly-mode');
       publishBtn.style.display = 'inline-block';
+      topManageBtn.style.display = 'inline-block';
       delMissionBtn.style.display = 'inline-block';
       lockIcon.innerText = '📋';
       lockedMsg.style.display = 'none';
@@ -988,6 +1171,7 @@
     } else {
       document.body.classList.add('readonly-mode');
       publishBtn.style.display = 'none';
+      topManageBtn.style.display = 'none';
       delMissionBtn.style.display = 'none';
       lockIcon.innerText = '🔒';
       lockedMsg.style.display = 'flex';
@@ -997,7 +1181,6 @@
       document.getElementById('log-title-text').innerText = '戰術紀錄與留言板 (唯讀未解鎖)';
     }
     adjustMapHeight();
-    // 重新渲染既有圖層的 Popup (決定是否顯示編輯/刪除按鈕)
     drawnItems.eachLayer(layer => {
       if (layer.feature) applyFeatureProperties(layer, layer.feature.properties || {});
     });
@@ -1373,7 +1556,6 @@
   // 9. 系統啟動初始化與載入任務資料
   // ============================================================================
   window.addEventListener('DOMContentLoaded', () => {
-    // 渲染左側自訂工具列圖示
     const undoIconEl = document.querySelector('.leaflet-pm-icon-undo');
     if (undoIconEl) {
       undoIconEl.innerHTML = `
@@ -1412,7 +1594,6 @@
     document.getElementById('video-server-label').innerText = `Proxy: ${streamBaseServer}`;
     if (savedVideoUrl) document.getElementById('video-url-input').value = savedVideoUrl;
 
-    // 檢查網址是否帶有 ?mission=xxx 參數，若有則預填於登入框
     const urlParams = new URLSearchParams(window.location.search);
     const queryMission = sanitizeMissionCode(urlParams.get('mission') || '');
     document.getElementById('login-mission-code').value = queryMission || savedMission;
@@ -1422,16 +1603,35 @@
     setTimeout(() => document.getElementById('login-mission-code').focus(), 150);
   });
 
-  // 載入當前 Mission 的線上圖資 (missions/<MissionCode>/data.geojson)
+  // 載入當前 Mission 的線上圖資 (優先透過 GitHub API 讀取最新無快取版本)
   async function loadExistingData() {
     if (!currentMissionCode) return;
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
+    const token = document.getElementById('gh-token').value.trim();
+
     try {
-      const res = await fetch(`./${getMissionFilePath('data.geojson')}?t=${Date.now()}`);
-      if (!res.ok) {
-        document.getElementById('status').innerText = `🆕 新任務 [${currentMissionCode}] (發布後自動創立)`;
+      let geojson = null;
+      // 1. 優先從 GitHub API 抓取即時資料
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      const apiRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${getMissionFilePath('data.geojson')}?t=${Date.now()}`, { headers });
+      if (apiRes.ok) {
+        const apiJson = await apiRes.json();
+        if (apiJson.content) {
+          const decoded = decodeURIComponent(escape(atob(apiJson.content.replace(/\n/g, ''))));
+          geojson = JSON.parse(decoded);
+        }
+      } else {
+        // 2. 備援從 GitHub Pages 抓取
+        const pageRes = await fetch(`./${getMissionFilePath('data.geojson')}?t=${Date.now()}`);
+        if (pageRes.ok) geojson = await pageRes.json();
+      }
+
+      if (!geojson) {
+        document.getElementById('status').innerText = `✅ 已進入任務 [${currentMissionCode}]`;
         return;
       }
-      const geojson = await res.json();
+
       L.geoJSON(geojson, {
         onEachFeature: (feature, layer) => {
           drawnItems.addLayer(layer);
@@ -1443,12 +1643,12 @@
       }
       document.getElementById('status').innerText = `✅ 已載入任務 [${currentMissionCode}]`;
     } catch (e) {
-      document.getElementById('status').innerText = `🆕 新任務 [${currentMissionCode}] (準備就緒)`;
+      document.getElementById('status').innerText = `✅ 準備就緒 [${currentMissionCode}]`;
     }
   }
 
   // ============================================================================
-  // 10. [新增註記 A-3] 圖資轉 KML 與包含 Mission Code 的 ATAK 自動更新連線檔
+  // 10. 圖資轉 KML 與包含 Mission Code 的 ATAK 自動更新連線檔
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
@@ -1538,7 +1738,6 @@
 </kml>`;
   }
 
-  // 下載包含當前 Mission Code 專屬路徑的 ATAK NetworkLink 自動更新檔
   window.downloadBootstrapKML = function() {
     if (!currentMissionCode) {
       alert('請先登入 Mission Code！');
@@ -1595,11 +1794,10 @@
     }
   }
 
-  // 從 GitHub 刪除指定檔案 (用於銷毀不需要的 Mission)
   async function deleteGitHubFileIfExist(owner, repo, path, token, message) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
     const getRes = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-    if (!getRes.ok) return; // 檔案本來就不存在則略過
+    if (!getRes.ok) return;
     const getJson = await getRes.json();
     if (!getJson.sha) return;
 
@@ -1648,9 +1846,7 @@
       const kmlStr = generateKML(collection);
       const logsStr = JSON.stringify(tacticalLogs, null, 2);
 
-      // 1. 確保根目錄有共用 Google 水滴圖示
       await putGitHubFile(owner, repo, 'google_pin.png', ATAK_WATERDROP_RAW_BASE64, token, `部署 ATAK Google 水滴圖示`, true);
-      // 2. 寫入該 Mission 專屬資料夾下的三個檔案
       await putGitHubFile(owner, repo, getMissionFilePath('data.geojson'), geojsonStr, token, `[${currentMissionCode}] 更新地圖資料 (${timeStr}${byWho})`);
       await putGitHubFile(owner, repo, getMissionFilePath('live.kml'), kmlStr, token, `[${currentMissionCode}] 更新 ATAK KML (${timeStr}${byWho})`);
       await putGitHubFile(owner, repo, getMissionFilePath('logs.json'), logsStr, token, `[${currentMissionCode}] 更新戰術紀錄 (${timeStr}${byWho})`);
