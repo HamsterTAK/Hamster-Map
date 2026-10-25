@@ -68,7 +68,7 @@
     }
 
     /* ==========================================================================
-       Callsign 左側：緩慢閃爍的戰術呼吸燈號 (Status Breathing LED)
+       Callsign 左側：1.9秒頻率呼吸燈號 (Status Breathing LED)
        ========================================================================== */
     .status-container {
       display: inline-flex; align-items: center; gap: 7px;
@@ -79,7 +79,7 @@
       width: 9px; height: 9px; border-radius: 50%;
       background-color: #10b981;
       box-shadow: 0 0 8px #10b981, 0 0 14px #10b981;
-      animation: breathe-green 2.4s infinite ease-in-out;
+      animation: breathe-green 1.9s infinite ease-in-out;
       flex-shrink: 0;
     }
     .status-led.busy {
@@ -93,8 +93,8 @@
       animation: breathe-red 1.2s infinite ease-in-out;
     }
     @keyframes breathe-green {
-      0%, 100% { opacity: 0.3; transform: scale(0.88); box-shadow: 0 0 3px #10b981; }
-      50% { opacity: 1; transform: scale(1.12); box-shadow: 0 0 10px #10b981, 0 0 18px rgba(16, 185, 129, 0.7); }
+      0%, 100% { opacity: 0.28; transform: scale(0.88); box-shadow: 0 0 3px #10b981; }
+      50% { opacity: 1; transform: scale(1.12); box-shadow: 0 0 10px #10b981, 0 0 18px rgba(16, 185, 129, 0.75); }
     }
     @keyframes breathe-amber {
       0%, 100% { opacity: 0.35; transform: scale(0.9); box-shadow: 0 0 3px #f59e0b; }
@@ -456,7 +456,7 @@
   <button class="btn btn-del-mission" id="btn-delete-mission" onclick="deleteMissionByCode(currentMissionCode)">💣 刪除此任務</button>
   
   <div class="right-group">
-    <!-- 緩慢閃爍的戰術呼吸燈號 + 任務狀態顯示 -->
+    <!-- 1.9秒呼吸燈號 + 任務狀態顯示 -->
     <div class="status-container" title="Tactical System Telemetry Status">
       <span id="status-led" class="status-led"></span>
       <span id="status">準備就緒</span>
@@ -464,7 +464,7 @@
 
     <input type="text" id="user-callsign" placeholder="👤 Callsign" />
 
-    <!-- 移至 Callsign 右側的緊湊型小國旗語言下拉選單 -->
+    <!-- Callsign 右側的緊湊型小國旗語言下拉選單 -->
     <div class="top-lang-dropdown" id="top-lang-dropdown">
       <div class="top-lang-trigger" onclick="toggleTopLangMenu(event)" title="Language / 語言切換">
         <img id="top-lang-trigger-flag" src="https://flagcdn.com/w40/tw.png" alt="flag">
@@ -569,7 +569,6 @@
     ru: { flag: 'https://flagcdn.com/w40/ru.png', short: 'RU' }
   };
 
-  // 統一控制呼吸燈顏色與狀態文字的輔助函式 ('ok' | 'busy' | 'error')
   function setSystemStatus(text, ledState = 'ok') {
     const statusEl = document.getElementById('status');
     const ledEl = document.getElementById('status-led');
@@ -578,6 +577,33 @@
       ledEl.classList.remove('busy', 'error');
       if (ledState === 'busy') ledEl.classList.add('busy');
       else if (ledState === 'error') ledEl.classList.add('error');
+    }
+  }
+
+  // 確保每次 map.pm.setLang 重新渲染工具列後，自動把 Undo 與 Fullscreen 的 SVG 圖示補回來！
+  function injectCustomToolbarIcons() {
+    const undoIconEl = document.querySelector('.leaflet-pm-icon-undo');
+    if (undoIconEl) {
+      undoIconEl.innerHTML = `
+        <div id="pm-undo-container" class="pm-custom-btn pm-undo-disabled">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7v6h6"></path>
+            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+          </svg>
+          <span id="pm-undo-badge" class="pm-undo-badge">0</span>
+        </div>`;
+    }
+    const fsIconEl = document.querySelector('.leaflet-pm-icon-fullscreen');
+    if (fsIconEl) {
+      fsIconEl.innerHTML = `
+        <div class="pm-custom-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+          </svg>
+        </div>`;
+    }
+    if (typeof cleanAndRefreshUndoUI === 'function') {
+      cleanAndRefreshUndoUI();
     }
   }
 
@@ -682,7 +708,7 @@
       alertBadMgrs: '❌ MGRS 座標格式不正確！\n請輸入標準 MGRS 格式，例如：51R UH 51909 65861',
       alertLoginFirst: '請先登入 Mission Code！',
       alertFillGhInfo: '請先在上方輸入 GitHub Token、GitHub 帳號與 Repo 名稱！',
-      alertPubSuccess: (c, u) => `🟢 任務【${c}】發布成功！\n\n此任務專屬 ATAK 訂閱網址：\n${u}`
+      alertPubSuccess: (c, u) => `任務【${c}】發布成功！\n\n此任務專屬 ATAK 訂閱網址：\n${u}`
     },
     en: {
       locale: 'en-GB', pmLang: 'en',
@@ -1298,6 +1324,8 @@
 
     if (typeof map !== 'undefined' && map.pm) {
       try { map.pm.setLang(t.pmLang); } catch (e) {}
+      // setLang 會重建左側 Geoman 工具列，這裡立刻把 Undo 與 Fullscreen 圖示補回去！
+      injectCustomToolbarIcons();
     }
 
     updateCoordBarText();
@@ -2511,26 +2539,7 @@
   // 8. 系統啟動初始化與載入任務資料
   // ============================================================================
   window.addEventListener('DOMContentLoaded', () => {
-    const undoIconEl = document.querySelector('.leaflet-pm-icon-undo');
-    if (undoIconEl) {
-      undoIconEl.innerHTML = `
-        <div id="pm-undo-container" class="pm-custom-btn pm-undo-disabled">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 7v6h6"></path>
-            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
-          </svg>
-          <span id="pm-undo-badge" class="pm-undo-badge">0</span>
-        </div>`;
-    }
-    const fsIconEl = document.querySelector('.leaflet-pm-icon-fullscreen');
-    if (fsIconEl) {
-      fsIconEl.innerHTML = `
-        <div class="pm-custom-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-          </svg>
-        </div>`;
-    }
+    injectCustomToolbarIcons();
 
     const host = window.location.hostname;
     const pathParts = window.location.pathname.split('/').filter(Boolean);
