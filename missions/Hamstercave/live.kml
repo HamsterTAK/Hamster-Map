@@ -9,8 +9,8 @@
 [🔵 友軍單位 / 搜救隊]
 
 🎥 Live Feed: <a href="https://jtmctrafficcctv2.gov.taipei:443/NVR/8076bdaf-ccbd-4c29-8f0c-7b2f166f15b8/live.m3u8">https://jtmctrafficcctv2.gov.taipei:443/NVR/8076bdaf-ccbd-4c29-8f0c-7b2f166f15b8/live.m3u8</a>
-座標：51R UH 51898 65879 (25.00117, 121.53242)
-更新：2026/10/25 18:33:09 (Neoyang)]]></description>
+座標：51R UH 51890 65889 (25.00126, 121.53235)
+更新：2026/10/25 21:52:11 (Stephanie)]]></description>
       <Style>
         <IconStyle>
           <color>ffff0000</color>
@@ -25,7 +25,7 @@
           <scale>1.0</scale>
         </LabelStyle>
       </Style>
-      <Point><coordinates>121.532417,25.001169,0</coordinates></Point>
+      <Point><coordinates>121.532346,25.001264,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name><![CDATA[CC]]></name>
