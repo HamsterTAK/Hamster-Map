@@ -6,11 +6,11 @@
     <Placemark>
       <name><![CDATA[微笑狗]]></name>
       <description><![CDATA[[Mission: Hamstercave]
-[🔵 友軍單位 / 搜救隊]
+[🔵 Friendly Forces / Command Post]
 
 🎥 Live Feed: <a href="https://jtmctrafficcctv2.gov.taipei:443/NVR/8076bdaf-ccbd-4c29-8f0c-7b2f166f15b8/live.m3u8">https://jtmctrafficcctv2.gov.taipei:443/NVR/8076bdaf-ccbd-4c29-8f0c-7b2f166f15b8/live.m3u8</a>
-座標：51R UH 51890 65889 (25.00126, 121.53235)
-更新：2026/10/25 21:52:11 (Stephanie)]]></description>
+Grid/Coord: 51R UH 51890 65889 (25.00126, 121.53235)
+Updated: 2026/10/25 21:52:11 (Stephanie)]]></description>
       <Style>
         <IconStyle>
           <color>ffff0000</color>
@@ -30,10 +30,10 @@
     <Placemark>
       <name><![CDATA[CC]]></name>
       <description><![CDATA[[Mission: Hamstercave]
-[🟢 物資站 / 安全集結區]
+[🟢 Logistics / Aid / Safe Harbour]
 
-座標：51R UH 51961 65853 (25.00095, 121.53305)
-更新：2026/10/24 20:58:41 (Neoyang)]]></description>
+Grid/Coord: 51R UH 51961 65853 (25.00095, 121.53305)
+Updated: 2026/10/24 20:58:41 (Neoyang)]]></description>
       <Style>
         <IconStyle>
           <color>ff00ff00</color>
@@ -53,10 +53,10 @@
     <Placemark>
       <name><![CDATA[邪教教徒]]></name>
       <description><![CDATA[[Mission: Hamstercave]
-[🔴 災情 / 危險管制區]
+[🔴 Hazard / Restricted Sector]
 
-座標：51R UH 51862 65862 (25.00101, 121.53207)
-更新：2026/10/25 18:30:59 (Neoyang)]]></description>
+Grid/Coord: 51R UH 51862 65862 (25.00101, 121.53207)
+Updated: 2026/10/25 18:30:59 (Neoyang)]]></description>
       <Style>
         <IconStyle>
           <color>ff0000ff</color>
