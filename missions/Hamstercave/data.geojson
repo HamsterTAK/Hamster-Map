@@ -7,9 +7,9 @@
         "name": "微笑狗",
         "category": "friendly",
         "desc": "",
-        "stream": "http://129.225.167.253:8889/wanlong",
+        "stream": "https://jtmctrafficcctv2.gov.taipei:443/NVR/8076bdaf-ccbd-4c29-8f0c-7b2f166f15b8/live.m3u8",
         "coord": "51R UH 51898 65879 (25.00117, 121.53242)",
-        "time": "2026/10/24 18:22:39 (Neoyang)",
+        "time": "2026/10/25 18:33:09 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
@@ -46,7 +46,7 @@
         "category": "danger",
         "desc": "",
         "stream": "",
-        "coord": "51R UH 51862 65861 (25.00101, 121.53207)",
+        "coord": "51R UH 51862 65862 (25.00101, 121.53207)",
         "time": "2026/10/25 18:30:59 (Neoyang)",
         "updatedBy": "Neoyang"
       },
