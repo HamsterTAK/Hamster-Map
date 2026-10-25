@@ -195,7 +195,11 @@
 
     #map { height: calc(100% - 44px); width: 100%; background: #000000; position: relative; }
 
-    body.readonly-mode .leaflet-pm-toolbar { display: none !important; }
+    /* [修正] 唯讀模式下僅隱藏「繪圖 (draw)」與「編輯 (edit)」工具列，保留獨立的 Fullscreen 按鈕供觀看者使用！ */
+    body.readonly-mode .leaflet-pm-toolbar.leaflet-pm-draw,
+    body.readonly-mode .leaflet-pm-toolbar.leaflet-pm-edit {
+      display: none !important;
+    }
 
     .pm-custom-btn {
       display: flex !important; align-items: center; justify-content: center;
@@ -2304,8 +2308,9 @@
     className: 'leaflet-pm-icon-undo'
   });
 
+  // [修正] 將 Fullscreen 獨立放在 custom 區塊，唯讀模式下依然保留給一般觀看人員使用！
   map.pm.Toolbar.createCustomControl({
-    name: 'FullscreenAction', block: 'edit',
+    name: 'FullscreenAction', block: 'custom',
     title: 'Fullscreen',
     toggle: false, onClick: () => toggleFullScreenMode(), afterClick: () => {},
     className: 'leaflet-pm-icon-fullscreen'
