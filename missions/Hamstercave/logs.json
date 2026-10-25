@@ -16,5 +16,11 @@
     "user": "Neoyang",
     "type": "chat",
     "text": "Fritz roger"
+  },
+  {
+    "time": "2026/10/25 09:33:38",
+    "user": "Neoyang",
+    "type": "action",
+    "text": "Published mission [Hamstercave] to cloud"
   }
 ]
