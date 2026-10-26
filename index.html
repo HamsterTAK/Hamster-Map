@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title Hamster-Map - Taktischer Gefechtsstand (TOC)</title>
+  <title>HamsterTAK-Map (Multi-Mission TOC)</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.css" />
   <style>
@@ -11,7 +11,64 @@
     body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; }
 
     /* ==========================================================================
-       1.9秒頻率戰術呼吸燈號 (Status Breathing LED)
+       登入頁面頂部小國旗切換器樣式
+       ========================================================================== */
+    .lang-switcher {
+      display: inline-flex; align-items: center; gap: 4px; background: #0f172a;
+      padding: 3px 5px; border-radius: 6px; border: 1px solid #334155;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .login-lang-bar {
+      display: flex; justify-content: center; margin-bottom: 14px;
+    }
+    .lang-btn {
+      display: inline-flex; align-items: center; gap: 4px; background: transparent;
+      color: #94a3b8; border: 1px solid transparent; border-radius: 4px;
+      padding: 3px 6px; font-size: 11px; font-weight: 700; cursor: pointer;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .lang-btn:hover { background: #1e293b; color: #f8fafc; }
+    .lang-btn.active {
+      background: #1e293b; color: #00ffcc; border-color: #00ffcc;
+      box-shadow: 0 0 6px rgba(0, 255, 204, 0.25);
+    }
+    .lang-btn img, .top-lang-item img, .top-lang-trigger img {
+      width: 16px; height: 12px; object-fit: cover; border-radius: 2px;
+      box-shadow: 0 0 2px rgba(0,0,0,0.6); display: block;
+    }
+
+    /* ==========================================================================
+       頂部導覽列 Callsign 右側：緊湊型小國旗語言下拉選單
+       ========================================================================== */
+    .top-lang-dropdown { position: relative; display: inline-block; }
+    .top-lang-trigger {
+      height: 26px; padding: 0 8px; background: #0f172a; color: #f8fafc;
+      border: 1px solid #475569; border-radius: 4px; cursor: pointer;
+      display: flex; align-items: center; gap: 5px; font-size: 12px;
+      font-weight: 700; user-select: none; transition: border-color 0.15s;
+      white-space: nowrap;
+    }
+    .top-lang-trigger:hover { border-color: #38bdf8; }
+    .top-lang-menu {
+      display: none; position: absolute; top: 31px; right: 0;
+      background: rgba(15, 23, 42, 0.98); border: 1px solid #475569;
+      border-radius: 6px; padding: 4px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+      flex-direction: column; gap: 2px; z-index: 3000; min-width: 105px;
+    }
+    .top-lang-menu.open { display: flex; }
+    .top-lang-item {
+      display: flex; align-items: center; gap: 7px; padding: 5px 8px;
+      color: #cbd5e1; font-size: 12px; font-weight: 600; border-radius: 4px;
+      cursor: pointer; white-space: nowrap; transition: all 0.12s;
+      border: 1px solid transparent; background: transparent; text-align: left;
+    }
+    .top-lang-item:hover { background: #1e293b; color: #fff; }
+    .top-lang-item.active {
+      background: #1e293b; color: #00ffcc; border-color: #00ffcc;
+    }
+
+    /* ==========================================================================
+       Callsign 左側：1.9秒頻率呼吸燈號 (Status Breathing LED)
        ========================================================================== */
     .status-container {
       display: inline-flex; align-items: center; gap: 7px;
@@ -49,7 +106,7 @@
     }
 
     /* ==========================================================================
-       Anmelde-Gate (Einsatzcode) & Einsatzverwaltung
+       起始頁面 Mission Code 登入閘門與「任務管理清單」樣式
        ========================================================================== */
     #mission-login-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -58,12 +115,12 @@
       overflow-y: auto;
     }
     .login-card {
-      background: #1e293b; color: #f8fafc; width: 460px; max-width: 100%;
-      padding: 26px 22px; border-radius: 12px; border: 1px solid #334155;
+      background: #1e293b; color: #f8fafc; width: 470px; max-width: 100%;
+      padding: 24px 22px; border-radius: 12px; border: 1px solid #334155;
       box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center;
     }
     .login-card h2 { margin: 0 0 6px 0; color: #00ffcc; font-size: 20px; letter-spacing: 0.5px; }
-    .login-card p { margin: 0 0 18px 0; color: #94a3b8; font-size: 12px; line-height: 1.5; }
+    .login-card p { margin: 0 0 16px 0; color: #94a3b8; font-size: 12px; line-height: 1.5; }
     .login-field { text-align: left; margin-bottom: 12px; }
     .login-field label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 4px; font-weight: 600; }
     .login-field input {
@@ -105,17 +162,18 @@
     .login-hint { margin-top: 12px; font-size: 11px; color: #64748b; text-align: left; background: #0f172a; padding: 10px; border-radius: 6px; line-height: 1.5; }
 
     /* ==========================================================================
-       Obere Navigationsleiste (Topbar)
+       頂部導覽列 (緊湊單行排版)
        ========================================================================== */
     #topbar {
-      display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+      display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
       background: #1e293b; color: #f8fafc; padding: 6px 10px; font-size: 13px;
       border-bottom: 1px solid #334155; z-index: 2000; position: relative;
     }
-    #topbar input, #topbar select, #topbar button {
+    #topbar input, #topbar select, #topbar button.btn {
       padding: 4px 8px; border-radius: 4px; border: 1px solid #475569; font-size: 12px;
     }
     #topbar input, #topbar select { background: #0f172a; color: #fff; }
+    #ui-app-brand { white-space: nowrap; font-size: 13px; }
     .mission-badge {
       background: #0f172a; color: #00ffcc; border: 1px solid #00ffcc;
       padding: 3px 7px; border-radius: 4px; font-family: monospace; font-weight: bold;
@@ -131,13 +189,13 @@
     .btn-del-mission { background: #7f1d1d; color: #fecaca; display: none; }
     .btn-del-mission:hover { background: #dc2626; color: #fff; }
 
-    .right-group { margin-left: auto; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .right-group { margin-left: auto; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
     #status { color: #38bdf8; font-weight: bold; font-size: 12px; white-space: nowrap; font-family: monospace; }
-    #user-callsign { border-color: #38bdf8 !important; width: 115px; }
+    #user-callsign { border-color: #38bdf8 !important; width: 105px; }
 
     #map { height: calc(100% - 44px); width: 100%; background: #000000; position: relative; }
 
-    /* 唯讀模式下僅隱藏繪圖與編輯工具列，保留獨立的 Fullscreen 按鈕 */
+    /* 唯讀模式下僅隱藏繪圖與編輯工具列，保留 Fullscreen 按鈕 */
     body.readonly-mode .leaflet-pm-toolbar.leaflet-pm-draw,
     body.readonly-mode .leaflet-pm-toolbar.leaflet-pm-edit {
       display: none !important;
@@ -156,7 +214,7 @@
     }
 
     /* ==========================================================================
-       Objektübersicht (Feature Summary Control) oben rechts
+       右上角圖資下方「點位及圖形彙整」小方塊按鈕與展開面板樣式
        ========================================================================== */
     .feature-summary-control { position: relative; }
     .feature-summary-btn {
@@ -173,7 +231,7 @@
       font-family: system-ui, sans-serif;
     }
     #feature-summary-panel {
-      display: none; position: absolute; top: 0; right: 54px; width: 360px;
+      display: none; position: absolute; top: 0; right: 54px; width: 350px;
       max-width: calc(100vw - 80px); max-height: 68vh;
       background: rgba(15, 23, 42, 0.96); color: #f8fafc; border: 1px solid #475569;
       border-radius: 8px; box-shadow: 0 10px 28px rgba(0,0,0,0.75);
@@ -230,9 +288,11 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.5); white-space: nowrap;
     }
 
-    /* Einsatztagebuch & Funkspruch-Panel unten rechts (400px 寬度單行不折行) */
+    /* ==========================================================================
+       右下角可折疊戰術紀錄與留言板 (加寬至 420px 並鎖定標題單行不換行)
+       ========================================================================== */
     #log-panel {
-      position: fixed; right: 12px; bottom: 48px; width: 400px; max-width: calc(100vw - 24px);
+      position: fixed; right: 12px; bottom: 48px; width: 420px; max-width: calc(100vw - 24px);
       background: rgba(15, 23, 42, 0.96); color: #f8fafc; border: 1px solid #475569;
       border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.7); z-index: 1500;
       display: flex; flex-direction: column; overflow: hidden;
@@ -243,7 +303,11 @@
       border-bottom: 1px solid #334155; font-size: 13px; font-weight: bold;
       white-space: nowrap;
     }
-    #log-header-left { display: flex; align-items: center; gap: 6px; color: #38bdf8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #log-header-left {
+      display: flex; align-items: center; gap: 6px; color: #38bdf8;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    #log-title-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     #log-header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; white-space: nowrap; }
     #btn-clear-logs {
       display: none; background: #ef4444; color: #fff; border: none; border-radius: 4px;
@@ -280,14 +344,14 @@
       padding: 5px 10px; font-size: 12px; font-weight: bold; cursor: pointer;
     }
 
-    /* Modal-Fenster */
+    /* 彈窗樣式 */
     #modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.65); z-index: 9999; align-items: center; justify-content: center;
     }
     #modal-box {
       background: #1e293b; color: #fff; padding: 20px; border-radius: 8px;
-      width: 400px; max-width: 92%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      width: 390px; max-width: 92%; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       border: 1px solid #475569; max-height: 92vh; overflow-y: auto;
     }
     #modal-box h3 { margin: 0 0 15px 0; font-size: 16px; color: #38bdf8; }
@@ -300,7 +364,7 @@
     .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
     .btn-cancel { background: #64748b; }
 
-    /* Popup-Schaltflächen */
+    /* Popup 內按鈕樣式 */
     .popup-btn-group { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
     .popup-btn {
       flex: 1 1 auto; padding: 5px 8px; border: none; border-radius: 4px;
@@ -314,14 +378,14 @@
 
     @media (max-width: 768px) {
       #topbar { padding: 6px 8px; gap: 4px; font-size: 12px; }
-      #gh-token { flex: 1 1 110px; width: auto !important; }
-      #gh-owner, #gh-repo { width: 85px !important; }
+      #gh-token { flex: 1 1 100px; width: auto !important; }
+      #gh-owner, #gh-repo { width: 75px !important; }
       .right-group { width: 100%; margin-left: 0; justify-content: space-between; margin-top: 2px; }
       #coord-bar {
         bottom: 6px; left: 8px; transform: none; max-width: calc(100vw - 16px);
         font-size: 11px; padding: 4px 8px;
       }
-      #log-panel { right: 8px; bottom: 38px; width: 310px; }
+      #log-panel { right: 8px; bottom: 38px; width: 320px; }
       #log-body { height: 180px; }
       #feature-summary-panel { width: 290px; max-height: 55vh; }
     }
@@ -331,126 +395,157 @@
 
 <div id="mission-login-overlay">
   <div class="login-card">
-    <h2>🐶 Heenisteininu Gefechtsstand</h2>
-    <p>Bitte bestehenden Einsatzcode eingeben oder S2-Token zur Einsatzleitung verwenden</p>
+    <!-- 登入頁頂部小國旗語言切換器 -->
+    <div class="login-lang-bar">
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')"><img src="https://flagcdn.com/w40/tw.png" alt="TW"> 繁中</button>
+        <button class="lang-btn" data-lang="en" onclick="setLanguage('en')"><img src="https://flagcdn.com/w40/gb.png" alt="UK"> EN</button>
+        <button class="lang-btn" data-lang="de" onclick="setLanguage('de')"><img src="https://flagcdn.com/w40/de.png" alt="DE"> DE</button>
+        <button class="lang-btn" data-lang="fr" onclick="setLanguage('fr')"><img src="https://flagcdn.com/w40/fr.png" alt="FR"> FR</button>
+        <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')"><img src="https://flagcdn.com/w40/jp.png" alt="JP"> 日本語</button>
+        <button class="lang-btn" data-lang="ru" onclick="setLanguage('ru')"><img src="https://flagcdn.com/w40/ru.png" alt="RU"> RU</button>
+      </div>
+    </div>
+
+    <h2 id="ui-login-title">🐹 HamsterTAK 戰術指揮系統</h2>
+    <p id="ui-login-sub">請輸入現有任務代號進入，或輸入情報官 Token 以創立/管理任務</p>
     
     <div class="login-field">
-      <label>🎯 Einsatzcode (Mission Code) *</label>
-      <input type="text" id="login-mission-code" placeholder="z. B. wenshan-01" autocomplete="off" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
+      <label id="ui-lbl-mission">🎯 任務代號 (Mission Code) *</label>
+      <input type="text" id="login-mission-code" placeholder="例如: rescue-01" autocomplete="off" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
     </div>
     
     <div class="login-field">
-      <label>🔑 Führungsoffizier GitHub-Token (Pflicht für Erstellung & Bearbeitung)</label>
-      <input type="password" id="login-token" placeholder="ghp_... (Ohne Token nur Lesezugriff auf bestehende Einsätze)" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
+      <label id="ui-lbl-token">🔑 情報官 GitHub Token (創立新任務、編輯與管理必填)</label>
+      <input type="password" id="login-token" placeholder="ghp_... (無 Token 僅可進入既有任務唯讀觀看)" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
     </div>
 
     <div class="login-field">
-      <label>👤 Ihr Rufzeichen (Callsign)</label>
-      <input type="text" id="login-callsign" placeholder="z. B. Stephanie" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
+      <label id="ui-lbl-callsign">👤 您的呼號 (Callsign)</label>
+      <input type="text" id="login-callsign" placeholder="例如: Stephanie" onkeydown="if(event.key==='Enter') enterMissionFromLogin()" />
     </div>
 
-    <button class="login-btn" id="btn-login-submit" onclick="enterMissionFromLogin()">🚀 Authentifizieren & Einsatz beitreten</button>
-    <button class="login-btn-secondary" onclick="loadMissionDirectoryList()">🗂️ Bestehende Einsätze in der Cloud verwalten (Token erf.)</button>
+    <button class="login-btn" id="btn-login-submit" onclick="enterMissionFromLogin()">🚀 驗證並進入任務 (Enter Mission)</button>
+    <button class="login-btn-secondary" id="btn-login-scan" onclick="loadMissionDirectoryList()">🗂️ 掃描並管理雲端現有任務 (需 Token)</button>
 
     <div id="mission-manager-box">
       <div class="mm-title">
-        <span>📂 Aktive Einsatzordner (`missions/`)</span>
+        <span id="ui-mm-folder">📂 雲端現有任務資料夾 (`missions/`)</span>
         <span id="mm-count" style="color:#00ffcc;"></span>
       </div>
       <div id="mission-manager-list"></div>
     </div>
 
-    <div class="login-hint">
-      🛡️ <strong>Zugriffsschutz:</strong> Ohne gültigen Token ist nur das Betrachten bereits existierender Einsätze im Lesemodus möglich. Das Erstellen oder Löschen von Einsatzdatenbanken erfordert verifizierte Offiziersrechte!
+    <div class="login-hint" id="ui-login-hint">
+      🛡️ <strong>安全防亂創機制：</strong>路人若無正確 Token，只能進入「已經存在」的任務唯讀觀看，<strong>絕對無法創立新任務或產生垃圾資料夾</strong>！只有驗證通過的 Token 才能創立或刪除任務。
     </div>
   </div>
 </div>
 
 <div id="topbar">
-  <strong>🐶 Heen</strong>
-  <div class="mission-badge" onclick="switchMissionPrompt()" title="Klicken, um den Einsatz zu wechseln oder zu verwalten">
-    <span>🎯 Einsatz:</span>
-    <span id="current-mission-label">Nicht angemeldet</span>
+  <strong id="ui-app-brand">🐹黃金鼠圖資</strong>
+  <div class="mission-badge" onclick="switchMissionPrompt()" id="ui-mission-badge">
+    <span id="ui-top-mission-prefix">🎯 任務:</span>
+    <span id="current-mission-label">未登入</span>
     <span style="font-size:10px; color:#94a3b8;">🔄</span>
   </div>
 
-  <input type="password" id="gh-token" placeholder="GitHub-Token (Schreibrecht)" style="width:130px;" />
-  <input type="text" id="gh-owner" placeholder="Konto" style="width:80px;" />
-  <input type="text" id="gh-repo" placeholder="Repo" style="width:85px;" />
+  <input type="password" id="gh-token" placeholder="GitHub Token (寫入密碼)" style="width:120px;" />
+  <input type="text" id="gh-owner" placeholder="帳號" style="width:75px;" />
+  <input type="text" id="gh-repo" placeholder="Repo" style="width:80px;" />
   
-  <button class="btn btn-save" id="btn-publish" onclick="publishToGitHub()" style="display:none;">☁️ Speichern & Senden</button>
-  <button class="btn btn-video" onclick="promptOpenTacticalPopout()" title="Stream-URL eingeben, um taktisches Videofenster zu öffnen">📺 Videoüberwachung</button>
-  <button class="btn btn-manage" id="btn-top-manage" onclick="openMissionManagerModal()" title="Cloud-Einsatzverwaltung öffnen">🗂️ Einsätze</button>
-  <button class="btn btn-del-mission" id="btn-delete-mission" onclick="deleteMissionByCode(currentMissionCode)" title="Diesen Einsatz samt aller Dateien unwiderruflich aus der Cloud löschen">💣 Einsatz löschen</button>
+  <button class="btn btn-save" id="btn-publish" onclick="publishToGitHub()" style="display:none;">☁️ 儲存並發布</button>
+  <button class="btn btn-video" id="btn-video-pop" onclick="promptOpenTacticalPopout()">📺 視訊監控</button>
+  <button class="btn btn-manage" id="btn-top-manage" onclick="openMissionManagerModal()">🗂️ 管理任務</button>
+  <button class="btn btn-del-mission" id="btn-delete-mission" onclick="deleteMissionByCode(currentMissionCode)">💣 刪除此任務</button>
   
   <div class="right-group">
-    <div class="status-container" title="Taktischer Systemstatus">
+    <!-- 1.9秒呼吸燈號 + 任務狀態顯示 -->
+    <div class="status-container" title="Tactical System Telemetry Status">
       <span id="status-led" class="status-led"></span>
-      <span id="status">Einsatzbereit</span>
+      <span id="status">準備就緒</span>
     </div>
-    <input type="text" id="user-callsign" placeholder="👤 Rufzeichen" title="Ihr Rufzeichen wird bei Änderungen automatisch mit Zeitstempel protokolliert" />
+
+    <input type="text" id="user-callsign" placeholder="👤 Callsign" />
+
+    <!-- Callsign 右側的緊湊型小國旗語言下拉選單 -->
+    <div class="top-lang-dropdown" id="top-lang-dropdown">
+      <div class="top-lang-trigger" onclick="toggleTopLangMenu(event)" title="Language / 語言切換">
+        <img id="top-lang-trigger-flag" src="https://flagcdn.com/w40/tw.png" alt="flag">
+        <span id="top-lang-trigger-text">繁中</span>
+        <span style="font-size:9px; color:#94a3b8;">▾</span>
+      </div>
+      <div class="top-lang-menu" id="top-lang-menu">
+        <button class="top-lang-item" data-lang="zh" onclick="setLanguage('zh')"><img src="https://flagcdn.com/w40/tw.png" alt="TW"> 繁中</button>
+        <button class="top-lang-item" data-lang="en" onclick="setLanguage('en')"><img src="https://flagcdn.com/w40/gb.png" alt="UK"> EN (UK)</button>
+        <button class="top-lang-item" data-lang="de" onclick="setLanguage('de')"><img src="https://flagcdn.com/w40/de.png" alt="DE"> Deutsch</button>
+        <button class="top-lang-item" data-lang="fr" onclick="setLanguage('fr')"><img src="https://flagcdn.com/w40/fr.png" alt="FR"> Français</button>
+        <button class="top-lang-item" data-lang="ja" onclick="setLanguage('ja')"><img src="https://flagcdn.com/w40/jp.png" alt="JP"> 日本語</button>
+        <button class="top-lang-item" data-lang="ru" onclick="setLanguage('ru')"><img src="https://flagcdn.com/w40/ru.png" alt="RU"> Русский</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <div id="map"></div>
 
-<div id="coord-bar">🎯 Maus bewegen für MGRS-Koordinaten...</div>
+<div id="coord-bar">🎯 移動滑鼠顯示 MGRS 戰術座標...</div>
 
 <div id="log-panel" class="collapsed">
   <div id="log-header" onclick="toggleLogPanel()">
     <div id="log-header-left">
       <span id="log-lock-icon">🔒</span>
-      <span id="log-title-text">Einsatztagebuch & Funk (0)</span>
+      <span id="log-title-text">戰術紀錄與留言板 (0)</span>
     </div>
     <div id="log-header-actions">
-      <button id="btn-clear-logs" onclick="clearAllLogs(event)" title="Gesamtes Einsatztagebuch unwiderruflich leeren">🗑️</button>
-      <span id="log-toggle-icon" style="color:#94a3b8; font-size:12px;">▲ Öffnen</span>
+      <button id="btn-clear-logs" onclick="clearAllLogs(event)">🗑️</button>
+      <span id="log-toggle-icon" style="color:#94a3b8; font-size:12px;">▲ 展開</span>
     </div>
   </div>
   <div id="log-body">
     <div id="log-locked-msg">
-      🔒 Tagebuch & Bearbeitung gesperrt<br>Bitte oben einen gültigen GitHub-Token mit Schreibrechten eingeben, um die Freigabe zu erhalten.
+      🔒 留言板與編輯功能受保護<br>請在上方輸入具備寫入權限的正確 GitHub Token 以解鎖情報官權限。
     </div>
     <div id="log-list"></div>
     <div id="log-input-area">
-      <input type="text" id="log-input" placeholder="Lagemeldung eingeben (Enter zum Senden)..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
-      <button id="btn-send-log" onclick="sendChatMessage()">Senden</button>
+      <input type="text" id="log-input" placeholder="輸入戰況留言 (按 Enter 送出)..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
+      <button id="btn-send-log" onclick="sendChatMessage()">發送</button>
     </div>
   </div>
 </div>
 
-<!-- Modal-Fenster zum Erstellen / Bearbeiten von taktischen Objekten -->
+<!-- 新增 / 編輯標記共用彈窗 -->
 <div id="modal-overlay">
   <div id="modal-box">
-    <h3 id="modal-title">📍 Taktisches Objekt konfigurieren</h3>
+    <h3 id="modal-title">📍 設定救災圖資屬性</h3>
     <div class="form-group">
-      <label>Bezeichnung / Ortsname *</label>
-      <input type="text" id="feat-name" placeholder="z. B. Beobachtungsposten Alpha" />
+      <label id="ui-mod-name">名稱 / 地點代號 *</label>
+      <input type="text" id="feat-name" placeholder="例如：台9線168K土石流阻斷" />
     </div>
     <div class="form-group">
-      <label>Taktische Kategorie & Signalfarbe</label>
+      <label id="ui-mod-cat">戰術分類與顏色</label>
       <select id="feat-cat">
-        <option value="danger">🔴 Gefahrenzone / Sperrgebiet (Rot)</option>
-        <option value="rescue">🟡 Rettungspunkt / Suchgebiet (Gelb)</option>
-        <option value="supply">🟢 Versorgungspunkt / Sicherheitszone (Grün)</option>
-        <option value="friendly">🔵 Eigene Kräfte / Gefechtsstand (Blau)</option>
+        <option value="danger" id="opt-cat-danger">🔴 災情 / 危險管制區 (Red)</option>
+        <option value="rescue" id="opt-cat-rescue">🟡 待援點 / 搜索目標區 (Yellow)</option>
+        <option value="supply" id="opt-cat-supply">🟢 物資站 / 醫療點 / 安全區 (Green)</option>
+        <option value="friendly" id="opt-cat-friendly">🔵 友軍單位 / 指揮所 / 搜救隊 (Friendly Blue)</option>
       </select>
     </div>
     <div class="form-group">
-      <label>🎯 Präzise MGRS-Koordinate (Direkteingabe zur Korrektur)</label>
-      <input type="text" id="feat-mgrs" style="font-family:monospace; color:#38bdf8; font-weight:bold;" placeholder="z. B. 51R UH 51909 65861" />
+      <label id="ui-mod-mgrs">🎯 MGRS 精確座標 (可直接修改以精準移位)</label>
+      <input type="text" id="feat-mgrs" style="font-family:monospace; color:#38bdf8; font-weight:bold;" placeholder="例如: 51R UH 51909 65861" />
     </div>
     <div class="form-group">
-      <label>Lagebeschreibung / Kontakt / Bemerkungen</label>
-      <textarea id="feat-desc" rows="2" placeholder="Detailinformationen eingeben (in ATAK per Klick auf das Symbol sichtbar)..."></textarea>
+      <label id="ui-mod-desc">現場狀況 / 聯絡人 / 需求備註</label>
+      <textarea id="feat-desc" rows="2" placeholder="輸入詳細資訊，匯入 ATAK 後點擊圖標即可查看..."></textarea>
     </div>
     <div class="form-group">
-      <label>🎥 Live-Stream-URL (Optional, für Pop-out & ATAK-Link)</label>
-      <input type="text" id="feat-stream" placeholder="Vollständige Stream-URL (z. B. http://... oder https://...)" />
+      <label id="ui-mod-stream">🎥 現場影像串流連結 (選填，點擊可開啟懸浮窗並寫入 KML)</label>
+      <input type="text" id="feat-stream" placeholder="請輸入完整串流連結 (如 http://... 或 https://...)" />
     </div>
     <div class="modal-actions">
-      <button class="btn btn-cancel" id="modal-cancel-btn" style="padding:7px 14px; border-radius:4px;" onclick="cancelModal()">Abbrechen</button>
-      <button class="btn btn-atak" style="padding:7px 14px; border-radius:4px;" onclick="saveModal()">Übernehmen</button>
+      <button class="btn btn-cancel" id="modal-cancel-btn" style="padding:7px 14px; border-radius:4px;" onclick="cancelModal()">取消</button>
+      <button class="btn btn-atak" id="modal-save-btn" style="padding:7px 14px; border-radius:4px;" onclick="saveModal()">確認套用</button>
     </div>
   </div>
 </div>
@@ -461,10 +556,22 @@
 
 <script>
   // ============================================================================
-  // 0. Globale Einsatzvariablen & Stream-URL-Verarbeitung
+  // 0. 六國語言字典 (I18N: 繁中 / 英式英語 UK / 德語 / 法語 / 日語 / 俄語)
   // ============================================================================
+  let currentLang = localStorage.getItem('hamster_lang') || 'zh';
   let currentMissionCode = '';
   let isTokenVerified = false;
+  let activeLayer = null;
+  let isEditingExisting = false;
+
+  const LANG_META = {
+    zh: { flag: 'https://flagcdn.com/w40/tw.png', short: '繁中' },
+    en: { flag: 'https://flagcdn.com/w40/gb.png', short: 'EN' },
+    de: { flag: 'https://flagcdn.com/w40/de.png', short: 'DE' },
+    fr: { flag: 'https://flagcdn.com/w40/fr.png', short: 'FR' },
+    ja: { flag: 'https://flagcdn.com/w40/jp.png', short: '日本語' },
+    ru: { flag: 'https://flagcdn.com/w40/ru.png', short: 'RU' }
+  };
 
   function setSystemStatus(text, ledState = 'ok') {
     const statusEl = document.getElementById('status');
@@ -503,6 +610,753 @@
     }
   }
 
+  const I18N = {
+    zh: {
+      locale: 'zh-TW', pmLang: 'zh',
+      loginTitle: '🐹 HamsterTAK 戰術指揮系統',
+      loginSub: '請輸入現有任務代號進入，或輸入情報官 Token 以創立/管理任務',
+      lblMission: '🎯 任務代號 (Mission Code) *',
+      phMission: '例如: rescue-01',
+      lblToken: '🔑 情報官 GitHub Token (創立新任務、編輯與管理必填)',
+      phToken: 'ghp_... (無 Token 僅可進入既有任務唯讀觀看)',
+      lblCallsign: '👤 您的呼號 (Callsign)',
+      phCallsign: '例如: Stephanie',
+      btnEnter: '🚀 驗證並進入任務 (Enter Mission)',
+      btnChecking: '⏳ 正在檢查任務與權限...',
+      btnScan: '🗂️ 掃描並管理雲端現有任務 (需 Token)',
+      mmFolder: '📂 雲端現有任務資料夾 (`missions/`)',
+      loginHint: '🛡️ <strong>安全防亂創機制：</strong>路人若無正確 Token，只能進入「已經存在」的任務唯讀觀看，<strong>絕對無法創立新任務或產生垃圾資料夾</strong>！只有驗證通過的 Token 才能創立或刪除任務。',
+      brand: '🐹黃金鼠圖資',
+      topMissionPrefix: '🎯 任務:',
+      notLoggedIn: '未登入',
+      phTopToken: 'GitHub Token (寫入密碼)',
+      phOwner: '帳號',
+      btnSave: '☁️ 儲存並發布',
+      btnVideo: '📺 視訊監控',
+      btnManage: '🗂️ 管理任務',
+      btnDelMission: '💣 刪除此任務',
+      statusReady: '準備就緒',
+      phTopCallsign: '👤 Callsign',
+      gridHidden: '隱藏',
+      gridLabel: '網格',
+      unknownCoord: '未知座標',
+      unnamed: '未命名標記',
+      unnamedZone: '未命名區域',
+      noDesc: '無備註',
+      coordPrefix: '座標：',
+      timePrefix: '更新：',
+      streamPrefix: '🎥 串流: ',
+      catDanger: '🔴 災情 / 危險管制區',
+      catRescue: '🟡 待援點 / 搜索目標區',
+      catSupply: '🟢 物資站 / 安全集結區',
+      catFriendly: '🔵 友軍單位 / 搜救隊',
+      optDanger: '🔴 災情 / 危險管制區 (Red)',
+      optRescue: '🟡 待援點 / 搜索目標區 (Yellow)',
+      optSupply: '🟢 物資站 / 醫療點 / 安全區 (Green)',
+      optFriendly: '🔵 友軍單位 / 指揮所 / 搜救隊 (Friendly Blue)',
+      fspTitle: '📋 點位及圖形彙整',
+      fspEmpty: '目前地圖上尚無標定的點位或圖形',
+      shapePoint: '📍 點位',
+      shapePoly: '⬠ 多邊形區域',
+      shapeLine: '📏 線段/路線',
+      btnFocus: '🎯 定位查看',
+      btnStreamOpen: '🎥 開啟現場影像',
+      btnEdit: '✏️ 編輯 / 改座標',
+      btnDel: '🗑️ 刪除',
+      readonlyTip: '🔒 唯讀模式 (輸入情報官 Token 可編輯)',
+      logTitle: '戰術紀錄與留言板',
+      logReadonlyTitle: '戰術紀錄與留言板 (唯讀未解鎖)',
+      logExpand: '▲ 展開',
+      logCollapse: '▼ 收合',
+      logLockedMsg: '🔒 留言板與編輯功能受保護<br>請在上方輸入具備寫入權限的正確 GitHub Token 以解鎖情報官權限。',
+      logEmpty: '尚無紀錄',
+      phChat: '輸入戰況留言 (按 Enter 送出)...',
+      btnSendChat: '發送',
+      badgeChat: '💬 留言',
+      badgeAction: '🛠️ 動作',
+      anonOfficer: '未具名情報官',
+      modAddTitle: '📍 新增救災圖資屬性',
+      modEditTitle: '✏️ 修改圖資內容、顏色與精確座標',
+      modLblName: '名稱 / 地點代號 *',
+      modPhName: '例如：台9線168K土石流阻斷',
+      modLblCat: '戰術分類與顏色',
+      modLblMgrs: '🎯 MGRS 精確座標 (可直接修改以精準移位)',
+      modPhMgrs: '例如: 51R UH 51909 65861',
+      modLblDesc: '現場狀況 / 聯絡人 / 需求備註',
+      modPhDesc: '輸入詳細資訊，匯入 ATAK 後點擊圖標即可查看...',
+      modLblStream: '🎥 現場影像串流連結 (選填，點擊可開啟懸浮窗並寫入 KML)',
+      modPhStream: '請輸入完整串流連結 (如 http://... 或 https://...)',
+      btnCancelDel: '取消刪除',
+      btnCancelClose: '關閉取消',
+      btnConfirm: '確認套用',
+      promptStream: '請輸入要開啟的即時影像串流完整連結 (URL)：',
+      alertEnterCode: '請輸入有效的任務代號 (Mission Code)，例如 rescue-01！',
+      alertNoMission: (c) => `❌ 找不到任務【${c}】！\n\n為了防止隨意建立空白資料夾，只有具備正確 GitHub Token 的情報官才能創立新任務。\n若您是觀看人員，請確認任務代號是否拼寫正確。`,
+      confirmCreateMission: (c) => `🆕 雲端尚無任務【${c}】的資料庫。\n\n您已通過情報官 Token 驗證，是否立即在雲端創立新任務【${c}】？`,
+      alertNeedTokenScan: '🔒 請先在上方「情報官 GitHub Token」欄位輸入正確的 Token，才能掃描與管理雲端任務資料夾！',
+      mmScanning: '⏳ 正在從 GitHub 掃描 missions/ 資料夾...',
+      mmZero: '0 個任務',
+      mmTotal: (n) => `共 ${n} 個任務`,
+      mmEmpty: '目前雲端尚無任何任務資料夾',
+      mmBtnGo: '🚀 進入',
+      mmBtnKml: '📋 KML網址',
+      mmBtnDel: '🗑️ 刪除',
+      alertCopiedKml: (c, u) => `✅ 已複製任務【${c}】的 ATAK 訂閱網址：\n${u}`,
+      alertNeedTokenDel: '您必須具備正確的情報官 GitHub Token 才能刪除任務！',
+      promptDelMission: (c) => `⚠️ 危險操作確認！\n您即將從 GitHub 雲端永久刪除任務【${c}】資料夾內的所有標記圖資、KML 與留言紀錄！\n\n請輸入任務代號「${c}」以確認徹底銷毀：`,
+      alertDelCancelled: '輸入的任務代號不相符，已取消刪除。',
+      alertDelSuccess: (c) => `✅ 任務【${c}】資料夾已從 GitHub 雲端徹底刪除！`,
+      confirmClearLogs: (c) => `⚠️ 確定要一鍵清空任務【${c}】所有堆積的留言與 Log 操作紀錄嗎？`,
+      alertReadonlyCreate: '唯讀模式：請先輸入正確的情報官 GitHub Token 才能新增標記！',
+      alertBadMgrs: '❌ MGRS 座標格式不正確！\n請輸入標準 MGRS 格式，例如：51R UH 51909 65861',
+      alertLoginFirst: '請先登入 Mission Code！',
+      alertFillGhInfo: '請先在上方輸入 GitHub Token、GitHub 帳號與 Repo 名稱！',
+      alertPubSuccess: (c, u) => `任務【${c}】發布成功！\n\n此任務專屬 ATAK 訂閱網址：\n${u}`,
+      confirmExitMission: (c) => `⚠️ 確定要退出當前任務【${c}】並返回任務管理畫面嗎？`,
+      confirmSaveBeforeExit: (c) => `💾 離開前，是否要先「儲存並發布」任務【${c}】目前的圖資變更？\n\n(按「確定」自動儲存並退出；按「取消」不儲存直接退出)`
+    },
+    en: {
+      locale: 'en-GB', pmLang: 'en',
+      loginTitle: '🐹 HamsterTAK Tactical Command Centre',
+      loginSub: 'Enter an existing Mission Code to join, or provide an Intelligence Officer Token to authorise & manage operations',
+      lblMission: '🎯 Mission Code *',
+      phMission: 'e.g. rescue-01',
+      lblToken: '🔑 Intelligence Officer GitHub Token (Required to create, edit & manage)',
+      phToken: 'ghp_... (Read-only access to existing missions without Token)',
+      lblCallsign: '👤 Your Callsign',
+      phCallsign: 'e.g. Stephanie',
+      btnEnter: '🚀 Authorise & Enter Mission',
+      btnChecking: '⏳ Verifying Mission & Credentials...',
+      btnScan: '🗂️ Scan & Manage Cloud Missions (Token Req.)',
+      mmFolder: '📂 Active Cloud Mission Directories (`missions/`)',
+      loginHint: '🛡️ <strong>Unauthorised Creation Safeguard:</strong> Personnel without a valid Token may only view existing operations in read-only mode. Creating or purging mission databases requires verified Officer credentials.',
+      brand: '🐹 HamsterTAK',
+      topMissionPrefix: '🎯 Mission:',
+      notLoggedIn: 'None',
+      phTopToken: 'GitHub Token (Key)',
+      phOwner: 'Account',
+      btnSave: '☁️ Publish',
+      btnVideo: '📺 Video',
+      btnManage: '🗂️ Missions',
+      btnDelMission: '💣 Purge',
+      statusReady: 'Ready',
+      phTopCallsign: '👤 Callsign',
+      gridHidden: 'Hidden',
+      gridLabel: 'Grid',
+      unknownCoord: 'Unknown Coordinates',
+      unnamed: 'Unnamed Feature',
+      unnamedZone: 'Unnamed Sector',
+      noDesc: 'No remarks recorded',
+      coordPrefix: 'Grid/Coord: ',
+      timePrefix: 'Updated: ',
+      streamPrefix: '🎥 Feed: ',
+      catDanger: '🔴 Hazard / Restricted Sector',
+      catRescue: '🟡 Casualty / Search Objective',
+      catSupply: '🟢 Logistics / Aid / Safe Harbour',
+      catFriendly: '🔵 Friendly Forces / Command Post',
+      optDanger: '🔴 Hazard / Restricted Sector (Red)',
+      optRescue: '🟡 Casualty / Search Objective (Yellow)',
+      optSupply: '🟢 Logistics / Aid / Safe Harbour (Green)',
+      optFriendly: '🔵 Friendly Forces / Command Post (Blue)',
+      fspTitle: '📋 Tactical Features Summary',
+      fspEmpty: 'No tactical points or geometries currently plotted on the map.',
+      shapePoint: '📍 Point',
+      shapePoly: '⬠ Sector / Polygon',
+      shapeLine: '📏 Route / Line',
+      btnFocus: '🎯 Centre on Map',
+      btnStreamOpen: '🎥 Open Live Feed',
+      btnEdit: '✏️ Edit / Colour / Grid',
+      btnDel: '🗑️ Delete',
+      readonlyTip: '🔒 Read-Only Mode (Enter Officer Token to edit)',
+      logTitle: 'Operational Log & Signals',
+      logReadonlyTitle: 'Operational Log (Read-Only)',
+      logExpand: '▲ Expand',
+      logCollapse: '▼ Collapse',
+      logLockedMsg: '🔒 Operational Log & Plotting Locked<br>Please enter a valid GitHub Token with write permissions above to unlock Intelligence Officer privileges.',
+      logEmpty: 'No log entries recorded',
+      phChat: 'Transmit operational signal (Press Enter)...',
+      btnSendChat: 'Send',
+      badgeChat: '💬 Signal',
+      badgeAction: '🛠️ Action',
+      anonOfficer: 'Unidentified Officer',
+      modAddTitle: '📍 Plot New Tactical Feature',
+      modEditTitle: '✏️ Amend Feature Details, Colour & MGRS Grid',
+      modLblName: 'Designation / Location Code *',
+      modPhName: 'e.g. Checkpoint Bravo / Landslide Sector',
+      modLblCat: 'Tactical Classification & Colour',
+      modLblMgrs: '🎯 Precise MGRS Grid Reference (Edit to relocate)',
+      modPhMgrs: 'e.g. 51R UH 51909 65861',
+      modLblDesc: 'Situation Report (SITREP) / Contact / Remarks',
+      modPhDesc: 'Enter detailed intelligence (visible in ATAK upon tapping the icon)...',
+      modLblStream: '🎥 Live Video Feed URL (Optional, for Pop-out & KML link)',
+      modPhStream: 'Enter full stream URL (e.g. http://... or https://...)',
+      btnCancelDel: 'Discard',
+      btnCancelClose: 'Cancel',
+      btnConfirm: 'Confirm & Apply',
+      promptStream: 'Please enter the full Live Video Feed URL to open in a tactical monitor:',
+      alertEnterCode: 'Please enter a valid Mission Code, e.g. rescue-01!',
+      alertNoMission: (c) => `❌ Mission 【${c}】 not found!\n\nTo prevent unauthorised creation of blank directories, only Intelligence Officers with a valid GitHub Token may initialise new missions.\nIf you are an observer, please check the spelling of the Mission Code.`,
+      confirmCreateMission: (c) => `🆕 Mission 【${c}】 does not yet exist in the cloud.\n\nOfficer Token verified. Would you like to initialise the new mission 【${c}】 now?`,
+      alertNeedTokenScan: '🔒 Please enter a valid Intelligence Officer GitHub Token above to scan and manage cloud mission directories!',
+      mmScanning: '⏳ Scanning missions/ directory on GitHub...',
+      mmZero: '0 Missions',
+      mmTotal: (n) => `Total: ${n}`,
+      mmEmpty: 'No mission directories currently stored in the cloud',
+      mmBtnGo: '🚀 Enter',
+      mmBtnKml: '📋 KML URL',
+      mmBtnDel: '🗑️ Purge',
+      alertCopiedKml: (c, u) => `✅ Copied ATAK subscription URL for Mission 【${c}】:\n${u}`,
+      alertNeedTokenDel: 'You must hold a valid Intelligence Officer GitHub Token to purge a mission!',
+      promptDelMission: (c) => `⚠️ CRITICAL CONFIRMATION!\nYou are about to permanently purge Mission 【${c}】 including all plotted features, KML files, and operational logs from the GitHub cloud!\n\nPlease type the Mission Code "${c}" to authorise permanent destruction:`,
+      alertDelCancelled: 'Mission Code did not match. Purge aborted.',
+      alertDelSuccess: (c) => `✅ Mission directory 【${c}】 has been permanently purged from the cloud!`,
+      confirmClearLogs: (c) => `⚠️ Are you certain you wish to clear all operational logs and signals for Mission 【${c}】?`,
+      alertReadonlyCreate: 'Read-Only Mode: Please enter a valid Intelligence Officer GitHub Token to plot new features!',
+      alertBadMgrs: '❌ Invalid MGRS Grid Reference!\nPlease enter a standard MGRS coordinate, e.g. 51R UH 51909 65861',
+      alertLoginFirst: 'Please log into a Mission Code first!',
+      alertFillGhInfo: 'Please enter your GitHub Token, Account Name, and Repo Name at the top!',
+      alertPubSuccess: (c, u) => `Mission 【${c}】 successfully published!\n\nDedicated ATAK Subscription URL:\n${u}`,
+      confirmExitMission: (c) => `⚠️ Are you certain you wish to exit Mission 【${c}】 and return to the Mission Manager?`,
+      confirmSaveBeforeExit: (c) => `💾 Before exiting, would you like to Save & Publish your current changes to Mission 【${c}】?\n\n(Click OK to Save & Exit; Cancel to Exit without saving)`
+    },
+    de: {
+      locale: 'de-DE', pmLang: 'de',
+      loginTitle: '🐹 HamsterTAK Gefechtsstand',
+      loginSub: 'Bitte bestehenden Einsatzcode eingeben oder S2-Token zur Einsatzleitung verwenden',
+      lblMission: '🎯 Einsatzcode (Mission Code) *',
+      phMission: 'z. B. rescue-01',
+      lblToken: '🔑 Führungsoffizier GitHub-Token (Pflicht für Erstellung & Bearbeitung)',
+      phToken: 'ghp_... (Ohne Token nur Lesezugriff auf bestehende Einsätze)',
+      lblCallsign: '👤 Ihr Rufzeichen (Callsign)',
+      phCallsign: 'z. B. Stephanie',
+      btnEnter: '🚀 Authentifizieren & Einsatz beitreten',
+      btnChecking: '⏳ Prüfe Einsatz & Berechtigung...',
+      btnScan: '🗂️ Bestehende Einsätze in der Cloud verwalten (Token erf.)',
+      mmFolder: '📂 Aktive Einsatzordner (`missions/`)',
+      loginHint: '🛡️ <strong>Zugriffsschutz:</strong> Ohne gültigen Token ist nur das Betrachten bereits existierender Einsätze im Lesemodus möglich. Das Erstellen oder Löschen von Einsatzdatenbanken erfordert verifizierte Offiziersrechte!',
+      brand: '🐹 Lagekarte',
+      topMissionPrefix: '🎯 Einsatz:',
+      notLoggedIn: 'Inaktiv',
+      phTopToken: 'GitHub-Token',
+      phOwner: 'Konto',
+      btnSave: '☁️ Senden',
+      btnVideo: '📺 Video',
+      btnManage: '🗂️ Einsätze',
+      btnDelMission: '💣 Löschen',
+      statusReady: 'Bereit',
+      phTopCallsign: '👤 Rufzeichen',
+      gridHidden: 'Aus',
+      gridLabel: 'Gitter',
+      unknownCoord: 'Unbekannte Koordinate',
+      unnamed: 'Unbenanntes Objekt',
+      unnamedZone: 'Unbenannte Zone',
+      noDesc: 'Keine Bemerkungen',
+      coordPrefix: 'Koord.: ',
+      timePrefix: 'Stand: ',
+      streamPrefix: '🎥 Stream: ',
+      catDanger: '🔴 Gefahrenzone / Sperrgebiet',
+      catRescue: '🟡 Rettungspunkt / Suchgebiet',
+      catSupply: '🟢 Versorgungspunkt / Sicherheitszone',
+      catFriendly: '🔵 Eigene Kräfte / Gefechtsstand',
+      optDanger: '🔴 Gefahrenzone / Sperrgebiet (Rot)',
+      optRescue: '🟡 Rettungspunkt / Suchgebiet (Gelb)',
+      optSupply: '🟢 Versorgungspunkt / Sicherheitszone (Grün)',
+      optFriendly: '🔵 Eigene Kräfte / Gefechtsstand (Blau)',
+      fspTitle: '📋 Objektübersicht',
+      fspEmpty: 'Derzeit sind keine Punkte oder Formen auf der Karte markiert.',
+      shapePoint: '📍 Punkt',
+      shapePoly: '⬠ Fläche / Zone',
+      shapeLine: '📏 Linie / Route',
+      btnFocus: '🎯 Zentrieren',
+      btnStreamOpen: '🎥 Live-Stream öffnen',
+      btnEdit: '✏️ Bearbeiten / MGRS',
+      btnDel: '🗑️ Löschen',
+      readonlyTip: '🔒 Lesemodus (Token für Bearbeitung erforderlich)',
+      logTitle: 'Einsatztagebuch & Funk',
+      logReadonlyTitle: 'Einsatztagebuch (Gesperrt)',
+      logExpand: '▲ Öffnen',
+      logCollapse: '▼ Zu',
+      logLockedMsg: '🔒 Tagebuch & Bearbeitung gesperrt<br>Bitte oben einen gültigen GitHub-Token mit Schreibrechten eingeben, um die Freigabe zu erhalten.',
+      logEmpty: 'Keine Einträge vorhanden',
+      phChat: 'Lagemeldung eingeben (Enter zum Senden)...',
+      btnSendChat: 'Senden',
+      badgeChat: '💬 Funk',
+      badgeAction: '🛠️ Aktion',
+      anonOfficer: 'Unbekannter Offizier',
+      modAddTitle: '📍 Neues taktisches Objekt anlegen',
+      modEditTitle: '✏️ Objekt, Farbe & MGRS-Koordinate bearbeiten',
+      modLblName: 'Bezeichnung / Ortsname *',
+      modPhName: 'z. B. Beobachtungsposten Alpha',
+      modLblCat: 'Taktische Kategorie & Signalfarbe',
+      modLblMgrs: '🎯 Präzise MGRS-Koordinate (Direkteingabe zur Korrektur)',
+      modPhMgrs: 'z. B. 51R UH 51909 65861',
+      modLblDesc: 'Lagebeschreibung / Kontakt / Bemerkungen',
+      modPhDesc: 'Detailinformationen eingeben (in ATAK per Klick sichtbar)...',
+      modLblStream: '🎥 Live-Stream-URL (Optional, für Pop-out & ATAK-Link)',
+      modPhStream: 'Vollständige Stream-URL (z. B. http://... oder https://...)',
+      btnCancelDel: 'Verwerfen',
+      btnCancelClose: 'Abbrechen',
+      btnConfirm: 'Übernehmen',
+      promptStream: 'Bitte vollständige Live-Stream-URL zur Videoüberwachung eingeben:',
+      alertEnterCode: 'Bitte einen gültigen Einsatzcode eingeben, z. B. rescue-01!',
+      alertNoMission: (c) => `❌ Einsatz 【${c}】 nicht gefunden!\n\nNur Führungsoffiziere mit gültigem GitHub-Token können neue Einsätze anlegen.`,
+      confirmCreateMission: (c) => `🆕 Einsatz 【${c}】 existiert noch nicht in der Cloud.\n\nToken verifiziert. Möchten Sie den neuen Einsatz 【${c}】 jetzt initialisieren?`,
+      alertNeedTokenScan: '🔒 Bitte zuerst oben einen gültigen GitHub-Token eingeben, um Einsatzordner zu verwalten!',
+      mmScanning: '⏳ Scanne Verzeichnis missions/ auf GitHub...',
+      mmZero: '0 Einsätze',
+      mmTotal: (n) => `Gesamt: ${n}`,
+      mmEmpty: 'Derzeit keine Einsatzordner in der Cloud vorhanden',
+      mmBtnGo: '🚀 Beitreten',
+      mmBtnKml: '📋 KML-URL',
+      mmBtnDel: '🗑️ Löschen',
+      alertCopiedKml: (c, u) => `✅ ATAK-Abo-URL für Einsatz 【${c}】 kopiert:\n${u}`,
+      alertNeedTokenDel: 'Sie benötigen einen gültigen GitHub-Token, um einen Einsatz zu löschen!',
+      promptDelMission: (c) => `⚠️ SICHERHEITSWARNUNG!\nSie sind dabei, den Einsatz 【${c}】 dauerhaft aus der Cloud zu löschen!\n\nBitte zur Bestätigung „${c}“ eingeben:`,
+      alertDelCancelled: 'Einsatzcode stimmt nicht überein. Abgebrochen.',
+      alertDelSuccess: (c) => `✅ Einsatzordner 【${c}】 wurde vollständig gelöscht!`,
+      confirmClearLogs: (c) => `⚠️ Möchten Sie wirklich alle Tagebucheinträge für Einsatz 【${c}】 löschen?`,
+      alertReadonlyCreate: 'Lesemodus: Bitte zuerst einen gültigen GitHub-Token eingeben!',
+      alertBadMgrs: '❌ Ungültiges MGRS-Format!\nBeispiel: 51R UH 51909 65861',
+      alertLoginFirst: 'Bitte zuerst mit einem Einsatzcode anmelden!',
+      alertFillGhInfo: 'Bitte oben GitHub-Token, Konto und Repo-Namen vollständig eingeben!',
+      alertPubSuccess: (c, u) => `Einsatz 【${c}】 erfolgreich veröffentlicht!\n\nATAK-Abonnement-URL:\n${u}`,
+      confirmExitMission: (c) => `⚠️ Möchten Sie den aktuellen Einsatz 【${c}】 wirklich verlassen und zur Einsatzverwaltung zurückkehren?`,
+      confirmSaveBeforeExit: (c) => `💾 Möchten Sie vor dem Verlassen die aktuellen Änderungen für Einsatz 【${c}】 speichern und senden?\n\n(OK = Speichern & Verlassen; Abbrechen = Ohne Speichern verlassen)`
+    },
+    fr: {
+      locale: 'fr-FR', pmLang: 'fr',
+      loginTitle: '🐹 Poste de Commandement HamsterTAK',
+      loginSub: 'Entrez un code de mission existant ou un jeton Officier S2 pour créer/gérer les opérations',
+      lblMission: '🎯 Code de Mission *',
+      phMission: 'ex. rescue-01',
+      lblToken: '🔑 Jeton GitHub Officier (Requis pour créer, éditer et gérer)',
+      phToken: 'ghp_... (Lecture seule sans jeton)',
+      lblCallsign: '👤 Votre Indicatif (Callsign)',
+      phCallsign: 'ex. Stephanie',
+      btnEnter: '🚀 Authentifier & Rejoindre la Mission',
+      btnChecking: '⏳ Vérification de la mission et des droits...',
+      btnScan: '🗂️ Scanner & Gérer les Missions Cloud (Jeton req.)',
+      mmFolder: '📂 Dossiers de Missions Actifs (`missions/`)',
+      loginHint: '🛡️ <strong>Sécurité :</strong> Sans jeton valide, seules les missions existantes sont consultables en lecture seule. La création ou suppression nécessite des droits d\'officier vérifiés.',
+      brand: '🐹 HamsterTAK',
+      topMissionPrefix: '🎯 Mission:',
+      notLoggedIn: 'Aucune',
+      phTopToken: 'Jeton GitHub',
+      phOwner: 'Compte',
+      btnSave: '☁️ Publier',
+      btnVideo: '📺 Vidéo',
+      btnManage: '🗂️ Missions',
+      btnDelMission: '💣 Suppr.',
+      statusReady: 'Prêt',
+      phTopCallsign: '👤 Indicatif',
+      gridHidden: 'Masqué',
+      gridLabel: 'Grille',
+      unknownCoord: 'Coordonnée inconnue',
+      unnamed: 'Objet sans nom',
+      unnamedZone: 'Secteur sans nom',
+      noDesc: 'Aucune remarque',
+      coordPrefix: 'Coord. : ',
+      timePrefix: 'MAJ : ',
+      streamPrefix: '🎥 Flux : ',
+      catDanger: '🔴 Zone de Danger / Secteur Interdit',
+      catRescue: '🟡 Point de Secours / Zone de Recherche',
+      catSupply: '🟢 Point Logistique / Zone de Sécurité',
+      catFriendly: '🔵 Forces Amies / Poste de Commandement',
+      optDanger: '🔴 Zone de Danger / Secteur Interdit (Rouge)',
+      optRescue: '🟡 Point de Secours / Zone de Recherche (Jaune)',
+      optSupply: '🟢 Point Logistique / Zone de Sécurité (Vert)',
+      optFriendly: '🔵 Forces Amies / Poste de Commandement (Bleu)',
+      fspTitle: '📋 Récapitulatif des Objets',
+      fspEmpty: 'Aucun point ou tracé tactique sur la carte.',
+      shapePoint: '📍 Point',
+      shapePoly: '⬠ Polygone / Zone',
+      shapeLine: '📏 Ligne / Itinéraire',
+      btnFocus: '🎯 Centrer',
+      btnStreamOpen: '🎥 Ouvrir le Flux',
+      btnEdit: '✏️ Éditer / MGRS',
+      btnDel: '🗑️ Supprimer',
+      readonlyTip: '🔒 Mode Lecture Seule (Jeton requis pour éditer)',
+      logTitle: 'Journal & Radio',
+      logReadonlyTitle: 'Journal & Radio (Verrouillé)',
+      logExpand: '▲ Ouvrir',
+      logCollapse: '▼ Réduire',
+      logLockedMsg: '🔒 Journal et édition verrouillés<br>Veuillez saisir un jeton GitHub valide avec droits d\'écriture ci-dessus.',
+      logEmpty: 'Aucune entrée enregistrée',
+      phChat: 'Transmettre un message radio (Entrée)...',
+      btnSendChat: 'Envoyer',
+      badgeChat: '💬 Radio',
+      badgeAction: '🛠️ Action',
+      anonOfficer: 'Officier Anonyme',
+      modAddTitle: '📍 Configurer un Nouvel Objet Tactique',
+      modEditTitle: '✏️ Modifier l\'Objet, la Couleur et la Coordonnée MGRS',
+      modLblName: 'Désignation / Code Lieu *',
+      modPhName: 'ex. Poste d\'Observation Alpha',
+      modLblCat: 'Catégorie Tactique & Couleur',
+      modLblMgrs: '🎯 Coordonnée MGRS Précise (Modifier pour déplacer)',
+      modPhMgrs: 'ex. 51R UH 51909 65861',
+      modLblDesc: 'Situation (SITREP) / Contact / Remarques',
+      modPhDesc: 'Détails visibles dans ATAK en cliquant sur l\'icône...',
+      modLblStream: '🎥 URL du Flux Vidéo en Direct (Optionnel)',
+      modPhStream: 'URL complète (ex. http://... ou https://...)',
+      btnCancelDel: 'Abandonner',
+      btnCancelClose: 'Annuler',
+      btnConfirm: 'Valider',
+      promptStream: 'Veuillez saisir l\'URL complète du flux vidéo en direct :',
+      alertEnterCode: 'Veuillez saisir un Code de Mission valide, ex. rescue-01 !',
+      alertNoMission: (c) => `❌ Mission 【${c}】 introuvable !\n\nSeuls les officiers munis d'un jeton GitHub valide peuvent créer une nouvelle mission.`,
+      confirmCreateMission: (c) => `🆕 La mission 【${c}】 n'existe pas encore.\n\nJeton vérifié. Voulez-vous initialiser la mission 【${c}】 maintenant ?`,
+      alertNeedTokenScan: '🔒 Veuillez d\'abord saisir un jeton GitHub valide pour scanner les missions !',
+      mmScanning: '⏳ Analyse du dossier missions/ sur GitHub...',
+      mmZero: '0 Mission',
+      mmTotal: (n) => `Total : ${n}`,
+      mmEmpty: 'Aucun dossier de mission dans le cloud',
+      mmBtnGo: '🚀 Entrer',
+      mmBtnKml: '📋 URL KML',
+      mmBtnDel: '🗑️ Suppr.',
+      alertCopiedKml: (c, u) => `✅ URL d'abonnement ATAK copiée pour 【${c}】 :\n${u}`,
+      alertNeedTokenDel: 'Un jeton GitHub valide est requis pour supprimer une mission !',
+      promptDelMission: (c) => `⚠️ CONFIRMATION CRITIQUE !\nVous allez supprimer définitivement la mission 【${c}】 du cloud !\n\nTapez « ${c} » pour confirmer :`,
+      alertDelCancelled: 'Code incorrect. Suppression annulée.',
+      alertDelSuccess: (c) => `✅ Dossier de mission 【${c}】 supprimé !`,
+      confirmClearLogs: (c) => `⚠️ Voulez-vous vraiment vider tout le journal de la mission 【${c}】 ?`,
+      alertReadonlyCreate: 'Mode lecture seule : jeton GitHub valide requis pour ajouter des objets !',
+      alertBadMgrs: '❌ Format MGRS invalide !\nExemple : 51R UH 51909 65861',
+      alertLoginFirst: 'Veuillez d\'abord vous connecter à une mission !',
+      alertFillGhInfo: 'Veuillez renseigner le jeton GitHub, le compte et le dépôt en haut !',
+      alertPubSuccess: (c, u) => `Mission 【${c}】 publiée avec succès !\n\nURL d'abonnement ATAK :\n${u}`,
+      confirmExitMission: (c) => `⚠️ Voulez-vous vraiment quitter la mission 【${c}】 et revenir à la gestion des missions ?`,
+      confirmSaveBeforeExit: (c) => `💾 Avant de quitter, voulez-vous sauvegarder et publier les modifications de la mission 【${c}】 ?\n\n(OK = Sauvegarder et quitter ; Annuler = Quitter sans sauvegarder)`
+    },
+    ja: {
+      locale: 'ja-JP', pmLang: 'ja',
+      loginTitle: '🐹 HamsterTAK 戦術指揮統制システム',
+      loginSub: '既存の作戦コードを入力して入室するか、情報官トークンを入力して作戦を作成・管理してください',
+      lblMission: '🎯 作戦コード (Mission Code) *',
+      phMission: '例: rescue-01',
+      lblToken: '🔑 情報官 GitHub トークン (新規作成・編集・管理に必須)',
+      phToken: 'ghp_... (トークン無しは既存作戦の閲覧のみ可能)',
+      lblCallsign: '👤 コールサイン (Callsign)',
+      phCallsign: '例: Stephanie',
+      btnEnter: '🚀 認証して作戦に入室 (Enter Mission)',
+      btnChecking: '⏳ 作戦データと権限を確認中...',
+      btnScan: '🗂️ クラウド上の既存作戦をスキャン・管理 (要トークン)',
+      mmFolder: '📂 クラウド上の作戦フォルダ (`missions/`)',
+      loginHint: '🛡️ <strong>不正作成防止機構：</strong>有効なトークンを持たないユーザーは「既存の作戦」の閲覧のみ可能で、新規フォルダの乱造はできません。',
+      brand: '🐹黄金鼠マップ',
+      topMissionPrefix: '🎯 作戦:',
+      notLoggedIn: '未入室',
+      phTopToken: 'GitHub トークン',
+      phOwner: 'アカウント',
+      btnSave: '☁️ 保存配信',
+      btnVideo: '📺 映像監視',
+      btnManage: '🗂️ 作戦管理',
+      btnDelMission: '💣 作戦削除',
+      statusReady: '準備完了',
+      phTopCallsign: '👤 コールサイン',
+      gridHidden: '非表示',
+      gridLabel: 'グリッド',
+      unknownCoord: '不明な座標',
+      unnamed: '名称未設定ポイント',
+      unnamedZone: '名称未設定エリア',
+      noDesc: '備考なし',
+      coordPrefix: '座標：',
+      timePrefix: '更新：',
+      streamPrefix: '🎥 配信: ',
+      catDanger: '🔴 災害・危険規制区域',
+      catRescue: '🟡 要救助点・捜索目標区域',
+      catSupply: '🟢 物資拠点・救護所・安全区域',
+      catFriendly: '🔵 友軍部隊・指揮所・捜索隊',
+      optDanger: '🔴 災害・危険規制区域 (Red)',
+      optRescue: '🟡 要救助点・捜索目標区域 (Yellow)',
+      optSupply: '🟢 物資拠点・救護所・安全区域 (Green)',
+      optFriendly: '🔵 友軍部隊・指揮所・捜索隊 (Blue)',
+      fspTitle: '📋 地点・図形一覧',
+      fspEmpty: '現在マップ上にプロットされた地点や図形はありません',
+      shapePoint: '📍 地点',
+      shapePoly: '⬠ 多角形エリア',
+      shapeLine: '📏 ルート・線分',
+      btnFocus: '🎯 位置へ移動',
+      btnStreamOpen: '🎥 現場映像を開く',
+      btnEdit: '✏️ 編集 / 座標修正',
+      btnDel: '🗑️ 削除',
+      readonlyTip: '🔒 閲覧専用モード (トークン入力で編集可能)',
+      logTitle: '戦術ログ・通信掲示板',
+      logReadonlyTitle: '戦術ログ・通信板 (ロック中)',
+      logExpand: '▲ 展開',
+      logCollapse: '▼ 閉じる',
+      logLockedMsg: '🔒 掲示板と編集機能は保護されています<br>上部に書込権限のある GitHub トークンを入力してロックを解除してください。',
+      logEmpty: '記録はありません',
+      phChat: '状況報告を入力 (Enter で送信)...',
+      btnSendChat: '送信',
+      badgeChat: '💬 通信',
+      badgeAction: '🛠️ 操作',
+      anonOfficer: '匿名情報官',
+      modAddTitle: '📍 新規戦術オブジェクトの設定',
+      modEditTitle: '✏️ 内容・色・MGRS精密座標の編集',
+      modLblName: '名称 / 地点コード *',
+      modPhName: '例：国道9号168K土砂崩れ通行止め',
+      modLblCat: '戦術カテゴリーと色',
+      modLblMgrs: '🎯 MGRS 精密座標 (直接書き換えて位置を精密修正)',
+      modPhMgrs: '例: 51R UH 51909 65861',
+      modLblDesc: '現場状況 / 連絡先 / 要請メモ',
+      modPhDesc: '詳細情報を入力（ATAKでアイコンをタップすると表示されます）...',
+      modLblStream: '🎥 現場ライブ映像URL (任意・ポップアップ表示およびKML書込)',
+      modPhStream: '完全なストリームURLを入力 (http://... または https://...)',
+      btnCancelDel: '破棄して閉じる',
+      btnCancelClose: 'キャンセル',
+      btnConfirm: '適用する',
+      promptStream: '開きたいライブ映像ストリームの完全なURLを入力してください：',
+      alertEnterCode: '有効な作戦コード (Mission Code) を入力してください（例: rescue-01）！',
+      alertNoMission: (c) => `❌ 作戦【${c}】が見つかりません！\n\n新規作戦の作成には有効な情報官 GitHub トークンが必要です。`,
+      confirmCreateMission: (c) => `🆕 クラウド上に作戦【${c}】のデータがありません。\n\nトークン認証済みです。直ちに新規作戦【${c}】を作成しますか？`,
+      alertNeedTokenScan: '🔒 クラウド上の作戦フォルダをスキャン・管理するには、先に有効な GitHub トークンを入力してください！',
+      mmScanning: '⏳ GitHub の missions/ フォルダをスキャン中...',
+      mmZero: '0 件',
+      mmTotal: (n) => `合計 ${n} 件`,
+      mmEmpty: '現在クラウド上に作戦フォルダはありません',
+      mmBtnGo: '🚀 入室',
+      mmBtnKml: '📋 KML URL',
+      mmBtnDel: '🗑️ 削除',
+      alertCopiedKml: (c, u) => `✅ 作戦【${c}】の ATAK 購読URLをコピーしました：\n${u}`,
+      alertNeedTokenDel: '作戦を削除するには有効な情報官トークンが必要です！',
+      promptDelMission: (c) => `⚠️ 危険操作の確認！\n作戦【${c}】の全データをクラウドから永久に削除します！\n\n確認のため作戦コード「${c}」を入力してください：`,
+      alertDelCancelled: 'コードが一致しないため、削除を中止しました。',
+      alertDelSuccess: (c) => `✅ 作戦【${c}】をクラウドから完全に削除しました！`,
+      confirmClearLogs: (c) => `⚠️ 作戦【${c}】のすべての通信ログを消去してもよろしいですか？`,
+      alertReadonlyCreate: '閲覧モード：マーカーを追加するには有効な GitHub トークンを入力してください！',
+      alertBadMgrs: '❌ MGRS 座標の形式が正しくありません！\n例：51R UH 51909 65861',
+      alertLoginFirst: '先に作戦コードでログインしてください！',
+      alertFillGhInfo: '上部に GitHub トークン、アカウント、リポジトリ名を入力してください！',
+      alertPubSuccess: (c, u) => `作戦【${c}】の配信に成功しました！\n\nATAK 購読URL：\n${u}`,
+      confirmExitMission: (c) => `⚠️ 現在の作戦【${c}】を退出し、作戦管理画面に戻りますか？`,
+      confirmSaveBeforeExit: (c) => `💾 退出する前に、作戦【${c}】の現在の変更を「保存して配信」しますか？\n\n(「OK」で保存して退出 / 「キャンセル」で保存せず退出)`
+    },
+    ru: {
+      locale: 'ru-RU', pmLang: 'ru',
+      loginTitle: '🐹 Командный Пункт HamsterTAK',
+      loginSub: 'Введите существующий код операции или токен офицера связи для создания и управления',
+      lblMission: '🎯 Код операции (Mission Code) *',
+      phMission: 'напр.: rescue-01',
+      lblToken: '🔑 GitHub-токен офицера (Обязателен для создания и редактирования)',
+      phToken: 'ghp_... (Без токена доступен только просмотр существующих операций)',
+      lblCallsign: '👤 Ваш позывной (Callsign)',
+      phCallsign: 'напр.: Stephanie',
+      btnEnter: '🚀 Авторизоваться и войти в операцию',
+      btnChecking: '⏳ Проверка операции и прав доступа...',
+      btnScan: '🗂️ Сканировать и управлять операциями в облаке (Нужен токен)',
+      mmFolder: '📂 Активные папки операций (`missions/`)',
+      loginHint: '🛡️ <strong>Защита от спама:</strong> Без верного токена возможен только просмотр существующих операций в режиме чтения. Создание и удаление требует прав офицера!',
+      brand: '🐹 HamsterTAK',
+      topMissionPrefix: '🎯 Миссия:',
+      notLoggedIn: 'Нет',
+      phTopToken: 'GitHub-токен',
+      phOwner: 'Аккаунт',
+      btnSave: '☁️ Передать',
+      btnVideo: '📺 Видео',
+      btnManage: '🗂️ Миссии',
+      btnDelMission: '💣 Удалить',
+      statusReady: 'Готов',
+      phTopCallsign: '👤 Позывной',
+      gridHidden: 'Скрыта',
+      gridLabel: 'Сетка',
+      unknownCoord: 'Неизвестные координаты',
+      unnamed: 'Безымянный объект',
+      unnamedZone: 'Безымянный сектор',
+      noDesc: 'Без примечаний',
+      coordPrefix: 'Коорд.: ',
+      timePrefix: 'Обновл.: ',
+      streamPrefix: '🎥 Поток: ',
+      catDanger: '🔴 Опасная зона / Запретный сектор',
+      catRescue: '🟡 Точка эвакуации / Район поиска',
+      catSupply: '🟢 Пункт снабжения / Безопасная зона',
+      catFriendly: '🔵 Свои силы / Командный пункт / ПСО',
+      optDanger: '🔴 Опасная зона / Запретный сектор (Красный)',
+      optRescue: '🟡 Точка эвакуации / Район поиска (Желтый)',
+      optSupply: '🟢 Пункт снабжения / Безопасная зона (Зеленый)',
+      optFriendly: '🔵 Свои силы / Командный пункт (Синий)',
+      fspTitle: '📋 Сводка объектов и зон',
+      fspEmpty: 'На карте пока нет отмеченных точек или фигур.',
+      shapePoint: '📍 Точка',
+      shapePoly: '⬠ Полигон / Зона',
+      shapeLine: '📏 Линия / Маршрут',
+      btnFocus: '🎯 Центрировать',
+      btnStreamOpen: '🎥 Открыть видеопоток',
+      btnEdit: '✏️ Изм. / Коорд. MGRS',
+      btnDel: '🗑️ Удалить',
+      readonlyTip: '🔒 Режим чтения (Введите токен для редактирования)',
+      logTitle: 'Журнал и Радио',
+      logReadonlyTitle: 'Журнал и Радио (Только чтение)',
+      logExpand: '▲ Открыть',
+      logCollapse: '▼ Скрыть',
+      logLockedMsg: '🔒 Журнал и редактирование защищены<br>Введите действительный GitHub-токен с правами записи выше.',
+      logEmpty: 'Записей пока нет',
+      phChat: 'Введите радиограмму (Enter для отправки)...',
+      btnSendChat: 'Отправить',
+      badgeChat: '💬 Радио',
+      badgeAction: '🛠️ Действие',
+      anonOfficer: 'Неизвестный офицер',
+      modAddTitle: '📍 Новый тактический объект',
+      modEditTitle: '✏️ Изменить объект, цвет и координаты MGRS',
+      modLblName: 'Наименование / Код точки *',
+      modPhName: 'напр.: Пост наблюдения Альфа',
+      modLblCat: 'Тактическая категория и цвет',
+      modLblMgrs: '🎯 Точные координаты MGRS (Измените для перемещения)',
+      modPhMgrs: 'напр.: 51R UH 51909 65861',
+      modLblDesc: 'Обстановка / Контакты / Примечания',
+      modPhDesc: 'Подробная информация (отображается в ATAK при нажатии)...',
+      modLblStream: '🎥 Ссылка на видеопоток (Необязательно, для окна и KML)',
+      modPhStream: 'Полный URL потока (http://... или https://...)',
+      btnCancelDel: 'Отменить и удалить',
+      btnCancelClose: 'Закрыть',
+      btnConfirm: 'Применить',
+      promptStream: 'Введите полный URL видеопотока для открытия монитора:',
+      alertEnterCode: 'Введите корректный код операции, например rescue-01!',
+      alertNoMission: (c) => `❌ Операция 【${c}】 не найдена!\n\nСоздавать новые операции могут только офицеры с верным GitHub-токеном.`,
+      confirmCreateMission: (c) => `🆕 Операция 【${c}】 еще не существует в облаке.\n\nТокен подтвержден. Создать новую операцию 【${c}】 сейчас?`,
+      alertNeedTokenScan: '🔒 Сначала введите верный GitHub-токен выше для сканирования папок!',
+      mmScanning: '⏳ Сканирование папки missions/ на GitHub...',
+      mmZero: '0 операций',
+      mmTotal: (n) => `Всего: ${n}`,
+      mmEmpty: 'В облаке нет активных папок операций',
+      mmBtnGo: '🚀 Войти',
+      mmBtnKml: '📋 KML URL',
+      mmBtnDel: '🗑️ Удалить',
+      alertCopiedKml: (c, u) => `✅ Ссылка подписки ATAK для 【${c}】 скопирована:\n${u}`,
+      alertNeedTokenDel: 'Для удаления операции необходим действительный GitHub-токен!',
+      promptDelMission: (c) => `⚠️ ПОДТВЕРЖДЕНИЕ УДАЛЕНИЯ!\nВы навсегда удаляете операцию 【${c}】 со всеми данными из облака!\n\nВведите код «${c}» для подтверждения:`,
+      alertDelCancelled: 'Код не совпадает. Удаление отменено.',
+      alertDelSuccess: (c) => `✅ Папка операции 【${c}】 полностью удалена!`,
+      confirmClearLogs: (c) => `⚠️ Вы уверены, что хотите очистить весь журнал операции 【${c}】?`,
+      alertReadonlyCreate: 'Режим чтения: введите верный GitHub-токен для добавления меток!',
+      alertBadMgrs: '❌ Неверный формат координат MGRS!\nПример: 51R UH 51909 65861',
+      alertLoginFirst: 'Сначала войдите в операцию (Mission Code)!',
+      alertFillGhInfo: 'Заполните токен GitHub, аккаунт и имя репозитория сверху!',
+      alertPubSuccess: (c, u) => `Операция 【${c}】 успешно опубликована!\n\nСсылка для подписки ATAK:\n${u}`,
+      confirmExitMission: (c) => `⚠️ Вы уверены, что хотите выйти из операции 【${c}】 и вернуться в меню управления?`,
+      confirmSaveBeforeExit: (c) => `💾 Сохранить и передать текущие изменения операции 【${c}】 перед выходом?\n\n(ОК = Сохранить и выйти; Отмена = Выйти без сохранения)`
+    }
+  };
+
+  function T() {
+    return I18N[currentLang] || I18N.zh;
+  }
+
+  function getCategoryConfig(cat) {
+    const t = T();
+    const mapCfg = {
+      danger: { label: t.catDanger, webColor: '#ef4444', kmlColor: 'ff0000ff', kmlPolyColor: '660000ff' },
+      rescue: { label: t.catRescue, webColor: '#eab308', kmlColor: 'ff00ffff', kmlPolyColor: '6600ffff' },
+      supply: { label: t.catSupply, webColor: '#22c55e', kmlColor: 'ff00ff00', kmlPolyColor: '6600ff00' },
+      friendly: { label: t.catFriendly, webColor: '#3b82f6', kmlColor: 'ffff0000', kmlPolyColor: '66ff0000' }
+    };
+    return mapCfg[cat] || mapCfg.danger;
+  }
+
+  window.toggleTopLangMenu = function(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('top-lang-menu');
+    if (menu) menu.classList.toggle('open');
+  };
+
+  document.addEventListener('click', () => {
+    const menu = document.getElementById('top-lang-menu');
+    if (menu) menu.classList.remove('open');
+  });
+
+  window.setLanguage = function(lang) {
+    if (!I18N[lang]) lang = 'zh';
+    currentLang = lang;
+    localStorage.setItem('hamster_lang', lang);
+    document.documentElement.lang = I18N[lang].locale;
+
+    document.querySelectorAll('.lang-btn, .top-lang-item').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+
+    const meta = LANG_META[lang] || LANG_META.zh;
+    const triggerFlag = document.getElementById('top-lang-trigger-flag');
+    const triggerText = document.getElementById('top-lang-trigger-text');
+    if (triggerFlag) triggerFlag.src = meta.flag;
+    if (triggerText) triggerText.innerText = meta.short;
+
+    const menuEl = document.getElementById('top-lang-menu');
+    if (menuEl) menuEl.classList.remove('open');
+
+    const t = T();
+    document.getElementById('ui-login-title').innerText = t.loginTitle;
+    document.getElementById('ui-login-sub').innerText = t.loginSub;
+    document.getElementById('ui-lbl-mission').innerText = t.lblMission;
+    document.getElementById('login-mission-code').placeholder = t.phMission;
+    document.getElementById('ui-lbl-token').innerText = t.lblToken;
+    document.getElementById('login-token').placeholder = t.phToken;
+    document.getElementById('ui-lbl-callsign').innerText = t.lblCallsign;
+    document.getElementById('login-callsign').placeholder = t.phCallsign;
+    document.getElementById('btn-login-submit').innerText = t.btnEnter;
+    document.getElementById('btn-login-scan').innerText = t.btnScan;
+    document.getElementById('ui-mm-folder').innerText = t.mmFolder;
+    document.getElementById('ui-login-hint').innerHTML = t.loginHint;
+
+    document.getElementById('ui-app-brand').innerText = t.brand;
+    document.getElementById('ui-top-mission-prefix').innerText = t.topMissionPrefix;
+    if (!currentMissionCode) {
+      document.getElementById('current-mission-label').innerText = t.notLoggedIn;
+    }
+    document.getElementById('gh-token').placeholder = t.phTopToken;
+    document.getElementById('gh-owner').placeholder = t.phOwner;
+    document.getElementById('btn-publish').innerText = t.btnSave;
+    document.getElementById('btn-video-pop').innerText = t.btnVideo;
+    document.getElementById('btn-top-manage').innerText = t.btnManage;
+    document.getElementById('btn-delete-mission').innerText = t.btnDelMission;
+    document.getElementById('user-callsign').placeholder = t.phTopCallsign;
+    if (!currentMissionCode) {
+      setSystemStatus(t.statusReady, 'ok');
+    }
+
+    const panel = document.getElementById('log-panel');
+    const isCollapsed = panel.classList.contains('collapsed');
+    document.getElementById('log-toggle-icon').innerText = isCollapsed ? t.logExpand : t.logCollapse;
+    document.getElementById('log-locked-msg').innerHTML = t.logLockedMsg;
+    document.getElementById('log-input').placeholder = t.phChat;
+    document.getElementById('btn-send-log').innerText = t.btnSendChat;
+
+    document.getElementById('modal-title').innerText = isEditingExisting ? t.modEditTitle : t.modAddTitle;
+    document.getElementById('ui-mod-name').innerText = t.modLblName;
+    document.getElementById('feat-name').placeholder = t.modPhName;
+    document.getElementById('ui-mod-cat').innerText = t.modLblCat;
+    document.getElementById('opt-cat-danger').innerText = t.optDanger;
+    document.getElementById('opt-cat-rescue').innerText = t.optRescue;
+    document.getElementById('opt-cat-supply').innerText = t.optSupply;
+    document.getElementById('opt-cat-friendly').innerText = t.optFriendly;
+    document.getElementById('ui-mod-mgrs').innerText = t.modLblMgrs;
+    document.getElementById('feat-mgrs').placeholder = t.modPhMgrs;
+    document.getElementById('ui-mod-desc').innerText = t.modLblDesc;
+    document.getElementById('feat-desc').placeholder = t.modPhDesc;
+    document.getElementById('ui-mod-stream').innerText = t.modLblStream;
+    document.getElementById('feat-stream').placeholder = t.modPhStream;
+    document.getElementById('modal-cancel-btn').innerText = isEditingExisting ? t.btnCancelClose : t.btnCancelDel;
+    document.getElementById('modal-save-btn').innerText = t.btnConfirm;
+
+    if (typeof map !== 'undefined' && map.pm) {
+      try { map.pm.setLang(t.pmLang); } catch (e) {}
+      injectCustomToolbarIcons();
+    }
+
+    updateCoordBarText();
+    if (isTokenVerified) {
+      renderLogList();
+    } else {
+      document.getElementById('log-title-text').innerText = t.logReadonlyTitle;
+    }
+
+    if (typeof drawnItems !== 'undefined') {
+      drawnItems.eachLayer(layer => {
+        if (layer.feature) applyFeatureProperties(layer, layer.feature.properties || {});
+      });
+      renderFeatureSummaryList();
+    }
+    adjustMapHeight();
+  };
+
   function sanitizeMissionCode(raw) {
     return String(raw || '').trim().replace(/[^a-zA-Z0-9_-]/g, '-');
   }
@@ -524,7 +1378,7 @@
   window.openTacticalStreamWindow = function(rawStreamUrl) {
     const fullUrl = formatCustomStreamUrl(rawStreamUrl);
     if (!fullUrl) return;
-    const winName = 'HeenTAK_Monitor_' + Math.random().toString(36).substring(2, 7);
+    const winName = 'HamsterTAK_Monitor_' + Math.random().toString(36).substring(2, 7);
     const winSpecs = 'width=540,height=360,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=no';
 
     const isFlvStream = /\/flv\/|\.flv($|\?)/i.test(fullUrl);
@@ -538,7 +1392,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>🎥 Taktischer CCTV-Monitor (FLV)</title>
+  <title>🎥 Tactical CCTV Monitor (FLV)</title>
   <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.js"><\/script>
   <style>
     body, html { margin:0; padding:0; width:100%; height:100%; background:#0f172a; color:#f8fafc; font-family:monospace; display:flex; flex-direction:column; overflow:hidden; }
@@ -550,12 +1404,12 @@
 </head>
 <body>
   <div id="bar">
-    <span>🟢 LIVE FLV-STREAM</span>
+    <span>🟢 LIVE FLV STREAM</span>
     <span style="color:#38bdf8; font-size:10px; margin-left:8px;">${escapeHTML(fullUrl)}</span>
   </div>
   <div id="vid-wrap">
     <video id="v" autoplay muted controls playsinline></video>
-    <div id="msg">⏳ Dekodiere Live-Video-Stream (FLV)...</div>
+    <div id="msg">⏳ 正在解碼即時影像串流 (Decoding FLV)...</div>
   </div>
   <script>
     const url = '${safeUrl}';
@@ -565,14 +1419,14 @@
       const player = mpegts.createPlayer({ type: 'flv', isLive: true, hasAudio: false, url: url }, { enableWorker: true, enableStashBuffer: false, stashInitialSize: 128 });
       player.attachMediaElement(v);
       player.load();
-      player.play().then(() => { msg.style.display = 'none'; }).catch(() => { msg.innerText = '▶️ Bitte auf das Bild klicken, um die Wiedergabe zu starten'; });
+      player.play().then(() => { msg.style.display = 'none'; }).catch(() => { msg.innerText = '▶️ 請點擊畫面開始播放'; });
       v.addEventListener('playing', () => { msg.style.display = 'none'; });
       player.on(mpegts.Events.ERROR, (errType) => {
         msg.style.display = 'block';
-        msg.innerHTML = '⚠️ Stream durch Zielserver (CORS) blockiert oder offline (' + errType + ')<br><span style="color:#f59e0b;font-size:11px;">Empfehlung: Stream über MediaMTX-Relay weiterleiten</span>';
+        msg.innerHTML = '⚠️ 串流遭目標伺服器 CORS 跨網域阻擋或離線 (' + errType + ')<br><span style="color:#f59e0b;font-size:11px;">建議改由 MediaMTX 中繼拉流以突破瀏覽器限制</span>';
       });
     } else {
-      msg.innerText = '❌ Dieser Browser unterstützt keine MSE/FLV-Hardwaredekodierung';
+      msg.innerText = '❌ 此瀏覽器環境不支援 MSE/FLV 硬體解碼';
     }
   <\/script>
 </body>
@@ -583,17 +1437,8 @@
     window.open(blobUrl, winName, winSpecs);
   };
 
-  window.promptOpenTacticalPopout = function() {
-    const lastUrl = localStorage.getItem('hamster_custom_stream_url') || '';
-    const input = prompt('Bitte vollständige Live-Stream-URL zur Videoüberwachung eingeben:', lastUrl);
-    if (input !== null && input.trim() !== '') {
-      localStorage.setItem('hamster_custom_stream_url', input.trim());
-      openTacticalStreamWindow(input.trim());
-    }
-  };
-
   // ============================================================================
-  // 1. Karteninitialisierung & Kartenebenen-Auswahl (oben rechts)
+  // 1. 初始化底圖與圖資切換器
   // ============================================================================
   const map = L.map('map', { maxZoom: 22 }).setView([25.002, 121.533], 16);
 
@@ -616,7 +1461,7 @@
   }).addTo(map);
 
   const twHappyman = L.tileLayer('https://tile.happyman.idv.tw/map/rudy/{z}/{x}/{y}.png', {
-    minZoom: 1, maxZoom: 22, maxNativeZoom: 18, attribution: '© Taiwan Topo (Rudy)'
+    minZoom: 1, maxZoom: 22, maxNativeZoom: 18, attribution: '© 魯地圖 TW_HAPPYMAN'
   });
 
   const cycleOsm = L.tileLayer('https://a.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
@@ -628,11 +1473,11 @@
   });
 
   const googleRoadmap = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-    minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© Google Straßenkarte'
+    minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© Google Roadmap'
   });
 
   const googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-    minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© Google Satellit'
+    minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© Google Satellite'
   });
 
   const openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
@@ -640,35 +1485,32 @@
   });
 
   const nlscEMap = L.tileLayer('https://wmts.nlsc.gov.tw/wmts/EMAP/default/GoogleMapsCompatible/{z}/{y}/{x}', {
-    maxZoom: 22, maxNativeZoom: 19, attribution: '© NLSC Taiwan'
+    maxZoom: 22, maxNativeZoom: 19, attribution: '© 內政部國土測繪中心'
   });
   const nlscPhoto = L.tileLayer('https://wmts.nlsc.gov.tw/wmts/PHOTO2/default/GoogleMapsCompatible/{z}/{y}/{x}', {
-    maxZoom: 22, maxNativeZoom: 19, attribution: '© NLSC Orthofoto'
+    maxZoom: 22, maxNativeZoom: 19, attribution: '© 內政部國土測繪中心航照'
   });
 
   const mgrsGridGroup = L.layerGroup().addTo(map);
 
   const baseMaps = {
-    "🛰️ Google Hybrid (Satellit + Straßen)": googleHybrid,
-    "⛰️ Taiwan Topo (Rudy-Geländekarte)": twHappyman,
-    "🚴 Cycle OSM (Topografisch / Wege)": cycleOsm,
-    "✈️ Luftfahrt-Streckenkarte (Aviation)": aviationEnroute,
-    "🗺️ Google Straßenkarte (Standard)": googleRoadmap,
-    "🌎 Google Satellit (Reinbild)": googleSat,
-    "🧭 OpenTopoMap (Höhenlinien)": openTopo,
-    "🇹🇼 NLSC Elektronische Karte": nlscEMap,
-    "📷 NLSC Luftbild (Orthofoto)": nlscPhoto
+    "🛰️ Google Hybrid (Sat + Roads)": googleHybrid,
+    "⛰️ TW_HAPPYMAN (Taiwan Topo)": twHappyman,
+    "🚴 Cycle OSM (Topo / Trails)": cycleOsm,
+    "✈️ Aviation Enroute Chart": aviationEnroute,
+    "🗺️ Google Roadmap": googleRoadmap,
+    "🌎 Google Satellite": googleSat,
+    "🧭 Open Topo Map": openTopo,
+    "🇹🇼 NLSC E-Map (Taiwan)": nlscEMap,
+    "📷 NLSC Ortho Photo": nlscPhoto
   };
 
   const overlayMaps = {
-    "🟦 MGRS-Koordinatengitter (Auto-Zoom)": mgrsGridGroup
+    "🟦 MGRS Tactical Grid (Auto-Zoom)": mgrsGridGroup
   };
 
   L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
 
-  // ============================================================================
-  // Objektübersicht (Feature Summary Control) unterhalb der Ebenenauswahl
-  // ============================================================================
   const FeatureSummaryControl = L.Control.extend({
     options: { position: 'topright' },
     onAdd: function() {
@@ -677,14 +1519,14 @@
       L.DomEvent.disableScrollPropagation(container);
 
       container.innerHTML = `
-        <div class="feature-summary-btn" onclick="toggleFeatureSummaryPanel()" title="Objektübersicht (Alle Punkte & Formen)">
+        <div class="feature-summary-btn" onclick="toggleFeatureSummaryPanel()" title="Tactical Features Summary">
           📋
           <span class="feature-summary-badge" id="feature-summary-count">0</span>
         </div>
         <div id="feature-summary-panel">
           <div class="fsp-header">
-            <span id="fsp-header-title">📋 Objektübersicht (0)</span>
-            <button class="fsp-close" onclick="toggleFeatureSummaryPanel()" title="Schließen">✕</button>
+            <span id="fsp-header-title">📋 點位及圖形彙整 (0)</span>
+            <button class="fsp-close" onclick="toggleFeatureSummaryPanel()">✕</button>
           </div>
           <div id="fsp-list"></div>
         </div>
@@ -722,6 +1564,7 @@
     const listEl = document.getElementById('fsp-list');
     if (!countBadge || !listEl) return;
 
+    const t = T();
     const layers = [];
     drawnItems.eachLayer(layer => {
       if (map.hasLayer(layer) && layer.feature && (layer instanceof L.Marker || layer instanceof L.Path)) {
@@ -730,46 +1573,46 @@
     });
 
     countBadge.innerText = layers.length;
-    headerTitle.innerText = `📋 Objektübersicht (${layers.length})`;
+    headerTitle.innerText = `${t.fspTitle} (${layers.length})`;
 
     if (layers.length === 0) {
-      listEl.innerHTML = `<div style="color:#94a3b8; text-align:center; padding:24px 10px; font-size:12px;">Derzeit sind keine Punkte oder Formen auf der Karte markiert.</div>`;
+      listEl.innerHTML = `<div style="color:#94a3b8; text-align:center; padding:24px 10px; font-size:12px;">${t.fspEmpty}</div>`;
       return;
     }
 
     listEl.innerHTML = layers.map(layer => {
       const props = (layer.feature && layer.feature.properties) ? layer.feature.properties : {};
       const cat = props.category || 'danger';
-      const cfg = categoryConfig[cat] || categoryConfig.danger;
+      const cfg = getCategoryConfig(cat);
       const layerId = L.stamp(layer);
 
-      let shapeType = '📍 Punkt';
-      if (layer instanceof L.Polygon) shapeType = '⬠ Fläche / Zone';
-      else if (layer instanceof L.Polyline) shapeType = '📏 Linie / Route';
+      let shapeType = t.shapePoint;
+      if (layer instanceof L.Polygon) shapeType = t.shapePoly;
+      else if (layer instanceof L.Polyline) shapeType = t.shapeLine;
 
       const streamBtnHtml = props.stream ? `
-        <button class="popup-btn popup-btn-video" onclick="openTacticalStreamWindow('${escapeHTML(props.stream)}')">🎥 Live-Stream</button>
+        <button class="popup-btn popup-btn-video" onclick="openTacticalStreamWindow('${escapeHTML(props.stream)}')">${t.btnStreamOpen}</button>
       ` : '';
 
       const editButtonsHtml = isTokenVerified ? `
-        <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">✏️ Bearbeiten / MGRS</button>
-        <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">🗑️ Löschen</button>
+        <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">${t.btnEdit}</button>
+        <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">${t.btnDel}</button>
       ` : '';
 
       return `
         <div class="fsp-card" style="border-left-color: ${cfg.webColor};">
-          <div class="fsp-card-title" onclick="focusFeatureFromSummary(${layerId})" title="Klicken, um zur Position zu springen und Details zu öffnen">
-            <span>${escapeHTML(props.name || 'Unbenanntes Objekt')}</span>
+          <div class="fsp-card-title" onclick="focusFeatureFromSummary(${layerId})">
+            <span>${escapeHTML(props.name || t.unnamed)}</span>
             <span class="fsp-type-tag">${shapeType}</span>
           </div>
           <div style="color:#cbd5e1; font-size:12px; font-weight:600; margin-top:3px;">${cfg.label}</div>
           <hr style="border:0; border-top:1px solid #334155; margin:6px 0;">
-          <div style="white-space:pre-wrap; color:#e2e8f0; font-size:12px; line-height:1.4;">${escapeHTML(props.desc || 'Keine Bemerkungen')}</div>
-          ${props.stream ? `<div style="margin-top:4px; font-size:11px; color:#34d399; font-weight:bold; word-break:break-all;">🎥 Stream: ${escapeHTML(props.stream)}</div>` : ''}
-          <div style="margin-top:6px; font-size:11px; color:#38bdf8; font-family:monospace; font-weight:bold;">Koord.: ${escapeHTML(props.coord || '')}</div>
-          <div style="margin-top:2px; font-size:11px; color:#94a3b8;">Stand: ${escapeHTML(props.time || '')}</div>
+          <div style="white-space:pre-wrap; color:#e2e8f0; font-size:12px; line-height:1.4;">${escapeHTML(props.desc || t.noDesc)}</div>
+          ${props.stream ? `<div style="margin-top:4px; font-size:11px; color:#34d399; font-weight:bold; word-break:break-all;">${t.streamPrefix}${escapeHTML(props.stream)}</div>` : ''}
+          <div style="margin-top:6px; font-size:11px; color:#38bdf8; font-family:monospace; font-weight:bold;">${t.coordPrefix}${escapeHTML(props.coord || '')}</div>
+          <div style="margin-top:2px; font-size:11px; color:#94a3b8;">${t.timePrefix}${escapeHTML(props.time || '')}</div>
           <div class="popup-btn-group">
-            <button class="popup-btn popup-btn-focus" onclick="focusFeatureFromSummary(${layerId})">🎯 Zentrieren</button>
+            <button class="popup-btn popup-btn-focus" onclick="focusFeatureFromSummary(${layerId})">${t.btnFocus}</button>
             ${streamBtnHtml}
             ${editButtonsHtml}
           </div>
@@ -779,7 +1622,7 @@
   }
 
   // ============================================================================
-  // 2. MGRS-Koordinatenberechnung & Dynamisches Kartengitter
+  // 2. MGRS 座標換算與動態縮放網格引擎
   // ============================================================================
   let currentGridStepText = '100m';
   let lastMouseLatLng = null;
@@ -810,7 +1653,7 @@
     if (zoom >= 16) { step = 100; currentGridStepText = '100m'; }
     else if (zoom >= 13) { step = 1000; currentGridStepText = '1km'; }
     else if (zoom >= 10) { step = 10000; currentGridStepText = '10km'; }
-    else { currentGridStepText = 'Aus'; updateCoordBarText(); return; }
+    else { currentGridStepText = T().gridHidden; updateCoordBarText(); return; }
 
     updateCoordBarText();
 
@@ -904,13 +1747,15 @@
 
   function updateCoordBarText() {
     const bar = document.getElementById('coord-bar');
+    if (!bar) return;
     const pt = lastMouseLatLng || map.getCenter();
     const mgrsStr = toFormattedMGRS(pt.lat, pt.lng);
     const isMobile = window.innerWidth <= 768;
+    const t = T();
     if (isMobile) {
       bar.innerText = `🎯 ${mgrsStr} (${pt.lat.toFixed(4)}, ${pt.lng.toFixed(4)}) [${currentGridStepText}]`;
     } else {
-      bar.innerText = `🎯 MGRS: ${mgrsStr} ｜ WGS84: ${pt.lat.toFixed(5)}, ${pt.lng.toFixed(5)} ｜ 🟦 Gitter: ${currentGridStepText}`;
+      bar.innerText = `🎯 MGRS: ${mgrsStr} ｜ WGS84: ${pt.lat.toFixed(5)}, ${pt.lng.toFixed(5)} ｜ 🟦 ${t.gridLabel}: ${currentGridStepText}`;
     }
   }
 
@@ -931,7 +1776,7 @@
 
   function getLayerCoordString(layer) {
     const latlng = getLayerRepresentativeLatLng(layer);
-    if (!latlng) return 'Unbekannte Koordinate';
+    if (!latlng) return T().unknownCoord;
     return `${toFormattedMGRS(latlng.lat, latlng.lng)} (${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)})`;
   }
 
@@ -947,7 +1792,7 @@
   }
 
   // ============================================================================
-  // 3. ATAK-Tropfensymbol (`google_pin.png`) & Taktische Kategorien
+  // 3. 產生 ATAK 專用「Google 水滴圖示 (`google_pin.png`)」與戰術分類
   // ============================================================================
   function generateATAKWaterdropBase64() {
     const canvas = document.createElement('canvas');
@@ -966,15 +1811,8 @@
 
   const ATAK_WATERDROP_RAW_BASE64 = generateATAKWaterdropBase64();
 
-  const categoryConfig = {
-    danger: { label: '🔴 Gefahrenzone / Sperrgebiet', webColor: '#ef4444', kmlColor: 'ff0000ff', kmlPolyColor: '660000ff' },
-    rescue: { label: '🟡 Rettungspunkt / Suchgebiet', webColor: '#eab308', kmlColor: 'ff00ffff', kmlPolyColor: '6600ffff' },
-    supply: { label: '🟢 Versorgungspunkt / Sicherheitszone', webColor: '#22c55e', kmlColor: 'ff00ff00', kmlPolyColor: '6600ff00' },
-    friendly: { label: '🔵 Eigene Kräfte / Gefechtsstand', webColor: '#3b82f6', kmlColor: 'ffff0000', kmlPolyColor: '66ff0000' }
-  };
-
   function createCoTDotIcon(cat) {
-    const cfg = categoryConfig[cat] || categoryConfig.danger;
+    const cfg = getCategoryConfig(cat);
     const svg = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="33" height="33">
         <circle cx="18" cy="18" r="13.5" fill="${cfg.webColor}" stroke="#000000" stroke-width="2.5"/>
@@ -988,11 +1826,11 @@
   }
 
   // ============================================================================
-  // 4. Strenge Einsatzprüfung & Einsatzverwaltung (inkl. Zweistufiger Sicherheitsabfrage)
+  // 4. 嚴格 Mission 創立守門機制 + 任務管理中心 (含兩段式戰術防呆退出)
   // ============================================================================
   async function checkMissionExistsOnCloud(code) {
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
-    const repo = document.getElementById('gh-repo').value.trim() || 'Heenisteininu';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const token = document.getElementById('gh-token').value.trim();
 
     try {
@@ -1011,10 +1849,11 @@
   }
 
   window.enterMissionFromLogin = async function() {
+    const t = T();
     const rawCode = document.getElementById('login-mission-code').value;
     const code = sanitizeMissionCode(rawCode);
     if (!code) {
-      alert('Bitte einen gültigen Einsatzcode (Mission Code) eingeben, z. B. wenshan-01!');
+      alert(t.alertEnterCode);
       document.getElementById('login-mission-code').focus();
       return;
     }
@@ -1030,7 +1869,7 @@
     }
 
     const submitBtn = document.getElementById('btn-login-submit');
-    submitBtn.innerText = '⏳ Prüfe Einsatz & Berechtigung...';
+    submitBtn.innerText = t.btnChecking;
     submitBtn.disabled = true;
 
     try {
@@ -1039,11 +1878,11 @@
 
       if (!missionExists) {
         if (!hasValidToken) {
-          alert(`❌ Einsatz 【${code}】 nicht gefunden!\n\nUm unbefugtes Erstellen leerer Ordner zu verhindern, können nur Führungsoffiziere mit gültigem GitHub-Token neue Einsätze anlegen.\nBitte Einsatzcode auf Tippfehler prüfen.`);
+          alert(t.alertNoMission(code));
           return;
         }
 
-        if (!confirm(`🆕 Einsatz 【${code}】 existiert noch nicht in der Cloud.\n\nToken-Authentifizierung erfolgreich. Möchten Sie den neuen Einsatz 【${code}】 jetzt initialisieren?`)) {
+        if (!confirm(t.confirmCreateMission(code))) {
           return;
         }
 
@@ -1052,7 +1891,7 @@
 
       await activateMission(code);
     } finally {
-      submitBtn.innerText = '🚀 Authentifizieren & Einsatz beitreten';
+      submitBtn.innerText = T().btnEnter;
       submitBtn.disabled = false;
     }
   };
@@ -1060,27 +1899,28 @@
   async function initializeNewMissionOnCloud(code) {
     const token = document.getElementById('gh-token').value.trim();
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
-    const repo = document.getElementById('gh-repo').value.trim() || 'Heenisteininu';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const callsign = getCurrentCallsign();
-    const timeStr = new Date().toLocaleString('de-DE', { hour12: false });
+    const timeStr = new Date().toLocaleString(T().locale, { hour12: false });
 
     const emptyGeoJSON = JSON.stringify({ type: 'FeatureCollection', features: [] }, null, 2);
     const initLogs = JSON.stringify([{
       time: timeStr,
       user: callsign,
       type: 'action',
-      text: `Hat die neue Einsatzdatenbank 【${code}】 initialisiert`
+      text: `Initialised mission [${code}]`
     }], null, 2);
 
     currentMissionCode = code;
     const emptyKML = generateKML({ type: 'FeatureCollection', features: [] });
 
-    await putGitHubFile(owner, repo, getMissionFilePath('data.geojson', code), emptyGeoJSON, token, `[${code}] Einsatzdatenbank erstellt`);
-    await putGitHubFile(owner, repo, getMissionFilePath('live.kml', code), emptyKML, token, `[${code}] Einsatz-KML erstellt`);
-    await putGitHubFile(owner, repo, getMissionFilePath('logs.json', code), initLogs, token, `[${code}] Einsatztagebuch erstellt`);
+    await putGitHubFile(owner, repo, getMissionFilePath('data.geojson', code), emptyGeoJSON, token, `[${code}] Init GeoJSON`);
+    await putGitHubFile(owner, repo, getMissionFilePath('live.kml', code), emptyKML, token, `[${code}] Init KML`);
+    await putGitHubFile(owner, repo, getMissionFilePath('logs.json', code), initLogs, token, `[${code}] Init Logs`);
   }
 
   window.loadMissionDirectoryList = async function() {
+    const t = T();
     const tokenInput = document.getElementById('login-token').value.trim() || document.getElementById('gh-token').value.trim();
     if (tokenInput) {
       document.getElementById('gh-token').value = tokenInput;
@@ -1089,19 +1929,19 @@
 
     const hasValidToken = await verifyGitHubToken();
     if (!hasValidToken) {
-      alert('🔒 Bitte zuerst oben einen gültigen GitHub-Token eingeben, um Einsatzordner in der Cloud zu scannen und zu verwalten!');
+      alert(t.alertNeedTokenScan);
       return;
     }
 
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
-    const repo = document.getElementById('gh-repo').value.trim() || 'Heenisteininu';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const token = document.getElementById('gh-token').value.trim();
     const box = document.getElementById('mission-manager-box');
     const listEl = document.getElementById('mission-manager-list');
     const countEl = document.getElementById('mm-count');
 
     box.style.display = 'block';
-    listEl.innerHTML = `<div style="color:#94a3b8; font-size:12px; padding:8px;">⏳ Scanne Verzeichnis missions/ auf GitHub...</div>`;
+    listEl.innerHTML = `<div style="color:#94a3b8; font-size:12px; padding:8px;">${t.mmScanning}</div>`;
 
     try {
       const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/missions?t=${Date.now()}`, {
@@ -1109,17 +1949,17 @@
       });
 
       if (res.status === 404) {
-        countEl.innerText = '0 Einsätze';
-        listEl.innerHTML = `<div style="color:#94a3b8; font-size:12px; padding:8px;">Derzeit keine Einsatzordner in der Cloud vorhanden</div>`;
+        countEl.innerText = t.mmZero;
+        listEl.innerHTML = `<div style="color:#94a3b8; font-size:12px; padding:8px;">${t.mmEmpty}</div>`;
         return;
       }
 
       const items = await res.json();
       const dirs = Array.isArray(items) ? items.filter(i => i.type === 'dir') : [];
-      countEl.innerText = `Gesamt: ${dirs.length}`;
+      countEl.innerText = t.mmTotal(dirs.length);
 
       if (dirs.length === 0) {
-        listEl.innerHTML = `<div style="color:#94a3b8; font-size:12px; padding:8px;">Derzeit keine Einsatzordner in der Cloud vorhanden</div>`;
+        listEl.innerHTML = `<div style="color:#94a3b8; font-size:12px; padding:8px;">${t.mmEmpty}</div>`;
         return;
       }
 
@@ -1129,15 +1969,15 @@
           <div class="mm-item">
             <strong>🎯 ${mCode}</strong>
             <div class="mm-actions">
-              <button class="mm-btn mm-btn-go" onclick="quickEnterMission('${mCode}')">🚀 Beitreten</button>
-              <button class="mm-btn mm-btn-kml" onclick="copyMissionKmlUrl('${mCode}')" title="ATAK-KML-URL für diesen Einsatz kopieren">📋 KML-URL</button>
-              <button class="mm-btn mm-btn-del" onclick="deleteMissionByCode('${mCode}')" title="Einsatzordner unwiderruflich löschen">🗑️ Löschen</button>
+              <button class="mm-btn mm-btn-go" onclick="quickEnterMission('${mCode}')">${t.mmBtnGo}</button>
+              <button class="mm-btn mm-btn-kml" onclick="copyMissionKmlUrl('${mCode}')">${t.mmBtnKml}</button>
+              <button class="mm-btn mm-btn-del" onclick="deleteMissionByCode('${mCode}')">${t.mmBtnDel}</button>
             </div>
           </div>
         `;
       }).join('');
     } catch (err) {
-      listEl.innerHTML = `<div style="color:#ef4444; font-size:12px;">Scan fehlgeschlagen: ${escapeHTML(err.message)}</div>`;
+      listEl.innerHTML = `<div style="color:#ef4444; font-size:12px;">Error: ${escapeHTML(err.message)}</div>`;
     }
   };
 
@@ -1148,10 +1988,10 @@
 
   window.copyMissionKmlUrl = function(code) {
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
-    const repo = document.getElementById('gh-repo').value.trim() || 'Heenisteininu';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const url = `https://${owner}.github.io/${repo}/missions/${code}/live.kml`;
     navigator.clipboard.writeText(url).then(() => {
-      alert(`✅ ATAK-Abo-URL für Einsatz 【${code}】 kopiert:\n${url}`);
+      alert(T().alertCopiedKml(code, url));
     });
   };
 
@@ -1179,20 +2019,21 @@
     cleanAndRefreshUndoUI();
     renderFeatureSummaryList();
 
-    setSystemStatus(`Lade [${currentMissionCode}]...`, 'busy');
+    setSystemStatus(`[${currentMissionCode}]...`, 'busy');
 
     await loadExistingData();
     await verifyGitHubToken();
   }
 
-  // Zweistufige Sicherheitsabfrage beim Verlassen / Einsatzwechsel
+  // 兩段式戰術防呆退出與切換任務彈窗
   window.switchMissionPrompt = async function() {
+    const t = T();
     if (currentMissionCode) {
-      const wantExit = confirm(`⚠️ Möchten Sie den aktuellen Einsatz 【${currentMissionCode}】 wirklich verlassen und zur Einsatzverwaltung zurückkehren?`);
+      const wantExit = confirm(t.confirmExitMission(currentMissionCode));
       if (!wantExit) return false;
 
       if (isTokenVerified) {
-        const wantSave = confirm(`💾 Möchten Sie vor dem Verlassen die aktuellen Änderungen für Einsatz 【${currentMissionCode}】 speichern und senden?\n\n(OK = Speichern & Verlassen; Abbrechen = Ohne Speichern verlassen)`);
+        const wantSave = confirm(t.confirmSaveBeforeExit(currentMissionCode));
         if (wantSave) {
           await publishToGitHub();
         }
@@ -1208,23 +2049,22 @@
   };
 
   window.deleteMissionByCode = async function(targetCode) {
+    const t = T();
     if (!isTokenVerified || !targetCode) {
-      alert('Sie benötigen einen gültigen GitHub-Token, um einen Einsatz zu löschen!');
+      alert(t.alertNeedTokenDel);
       return;
     }
 
-    const confirmCode = prompt(
-      `⚠️ SICHERHEITSWARNUNG!\nSie sind dabei, den Einsatz 【${targetCode}】 inklusive aller Kartendaten, KML-Dateien und Tagebucheinträge dauerhaft aus der GitHub-Cloud zu löschen!\n\nBitte geben Sie zur Bestätigung den Einsatzcode „${targetCode}“ ein:`
-    );
+    const confirmCode = prompt(t.promptDelMission(targetCode));
     if (confirmCode !== targetCode) {
-      if (confirmCode !== null) alert('Einsatzcode stimmt nicht überein. Löschvorgang abgebrochen.');
+      if (confirmCode !== null) alert(t.alertDelCancelled);
       return;
     }
 
     const token = document.getElementById('gh-token').value.trim();
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
-    const repo = document.getElementById('gh-repo').value.trim() || 'Heenisteininu';
-    setSystemStatus(`Lösche [${targetCode}]...`, 'busy');
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
+    setSystemStatus(`[${targetCode}]...`, 'busy');
 
     try {
       const dirUrl = `https://api.github.com/repos/${owner}/${repo}/contents/missions/${targetCode}?t=${Date.now()}`;
@@ -1233,30 +2073,30 @@
         const files = await dirRes.json();
         if (Array.isArray(files)) {
           for (const fileObj of files) {
-            await deleteGitHubFileIfExist(owner, repo, fileObj.path, token, `Einsatz ${targetCode} Datei gelöscht (${fileObj.name})`);
+            await deleteGitHubFileIfExist(owner, repo, fileObj.path, token, `Purge ${targetCode} (${fileObj.name})`);
           }
         }
       }
 
-      alert(`✅ Einsatzordner 【${targetCode}】 wurde vollständig aus der Cloud gelöscht!`);
+      alert(t.alertDelSuccess(targetCode));
       if (currentMissionCode === targetCode) {
         localStorage.removeItem('hamster_last_mission');
         currentMissionCode = '';
         document.getElementById('login-mission-code').value = '';
         document.getElementById('mission-login-overlay').style.display = 'flex';
-        setSystemStatus('Einsatzbereit', 'ok');
+        setSystemStatus(t.statusReady, 'ok');
       }
       if (document.getElementById('mission-manager-box').style.display === 'block') {
         loadMissionDirectoryList();
       }
     } catch (err) {
-      setSystemStatus('Löschen fehlgeschlagen', 'error');
-      alert('Fehler beim Löschen des Einsatzes: ' + err.message);
+      setSystemStatus('Error', 'error');
+      alert(err.message);
     }
   };
 
   // ============================================================================
-  // 5. Einsatztagebuch (Log) & Token-Authentifizierung
+  // 5. 戰術 Log 留言板與 Token 權限驗證系統
   // ============================================================================
   let tacticalLogs = [];
 
@@ -1265,7 +2105,7 @@
     const icon = document.getElementById('log-toggle-icon');
     panel.classList.toggle('collapsed');
     const isCollapsed = panel.classList.contains('collapsed');
-    icon.innerText = isCollapsed ? '▲ Öffnen' : '▼ Schließen';
+    icon.innerText = isCollapsed ? T().logExpand : T().logCollapse;
     if (!isCollapsed && isTokenVerified) {
       const listEl = document.getElementById('log-list');
       listEl.scrollTop = listEl.scrollHeight;
@@ -1273,13 +2113,13 @@
   };
 
   function getCurrentCallsign() {
-    return document.getElementById('user-callsign').value.trim() || 'Unbekannter Offizier';
+    return document.getElementById('user-callsign').value.trim() || T().anonOfficer;
   }
 
   async function verifyGitHubToken() {
     const token = document.getElementById('gh-token').value.trim();
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
-    const repo = document.getElementById('gh-repo').value.trim() || 'Heenisteininu';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
 
     if (!token || !owner || !repo) {
       setEditorAndLogAuthStatus(false);
@@ -1340,7 +2180,7 @@
       logList.style.display = 'none';
       inputArea.style.display = 'none';
       clearBtn.style.display = 'none';
-      document.getElementById('log-title-text').innerText = 'Einsatztagebuch (Schreibgeschützt)';
+      document.getElementById('log-title-text').innerText = T().logReadonlyTitle;
     }
     adjustMapHeight();
     drawnItems.eachLayer(layer => {
@@ -1350,19 +2190,20 @@
   }
 
   function renderLogList() {
+    const t = T();
     const titleEl = document.getElementById('log-title-text');
     const listEl = document.getElementById('log-list');
-    titleEl.innerText = `Einsatztagebuch & Funk (${tacticalLogs.length})`;
+    titleEl.innerText = `${t.logTitle} (${tacticalLogs.length})`;
     if (!isTokenVerified) return;
 
     if (tacticalLogs.length === 0) {
-      listEl.innerHTML = `<div style="color:#64748b; text-align:center; padding:20px 0;">Keine Einträge für Einsatz [${escapeHTML(currentMissionCode)}]</div>`;
+      listEl.innerHTML = `<div style="color:#64748b; text-align:center; padding:20px 0;">[${escapeHTML(currentMissionCode)}] ${t.logEmpty}</div>`;
       return;
     }
 
     listEl.innerHTML = tacticalLogs.map(item => {
       const cls = item.type === 'chat' ? 'log-chat' : 'log-action';
-      const badge = item.type === 'chat' ? '💬 Funk' : '🛠️ Aktion';
+      const badge = item.type === 'chat' ? t.badgeChat : t.badgeAction;
       return `
         <div class="log-item ${cls}">
           <div class="log-meta">[${escapeHTML(item.time)}] ${badge} ｜ 👤 <strong>${escapeHTML(item.user)}</strong></div>
@@ -1375,7 +2216,7 @@
 
   function appendTacticalLog(type, text, autoSync = true) {
     if (!isTokenVerified || !currentMissionCode) return;
-    const time = new Date().toLocaleString('de-DE', { hour12: false });
+    const time = new Date().toLocaleString(T().locale, { hour12: false });
     const user = getCurrentCallsign();
     tacticalLogs.push({ time, user, type, text });
     if (tacticalLogs.length > 200) tacticalLogs.shift();
@@ -1395,11 +2236,11 @@
   window.clearAllLogs = async function(e) {
     e.stopPropagation();
     if (!isTokenVerified) return;
-    if (!confirm(`⚠️ Möchten Sie wirklich alle Einträge und Funksprüche für Einsatz 【${currentMissionCode}】 unwiderruflich löschen?`)) return;
+    if (!confirm(T().confirmClearLogs(currentMissionCode))) return;
     tacticalLogs = [];
     renderLogList();
-    await syncLogsToGitHubSilent(`Tagebuch für Einsatz ${currentMissionCode} geleert`);
-    setSystemStatus(`Tagebuch geleert`, 'ok');
+    await syncLogsToGitHubSilent(`Clear logs ${currentMissionCode}`);
+    setSystemStatus(`[${currentMissionCode}]`, 'ok');
   };
 
   async function loadExistingLogs() {
@@ -1436,7 +2277,7 @@
     isSyncingLogs = true;
     try {
       const logsStr = JSON.stringify(tacticalLogs, null, 2);
-      const msg = customMsg || `Tagebuch aktualisiert: ${currentMissionCode} (${getCurrentCallsign()})`;
+      const msg = customMsg || `Update logs ${currentMissionCode} (${getCurrentCallsign()})`;
       await putGitHubFile(owner, repo, getMissionFilePath('logs.json'), logsStr, token, msg);
     } catch (e) {} finally {
       isSyncingLogs = false;
@@ -1448,7 +2289,7 @@
   });
 
   // ============================================================================
-  // 6. Rückgängig-System (Undo) & Geoman-Werkzeugleiste
+  // 6. 恢復上一步 (Undo) 系統與 Geoman 工具列
   // ============================================================================
   const drawnItems = new L.FeatureGroup().addTo(map);
   const MAX_UNDO_STEPS = 10;
@@ -1504,8 +2345,8 @@
     });
     cleanAndRefreshUndoUI();
     renderFeatureSummaryList();
-    setSystemStatus(`Rückgängig (${undoStack.length})`, 'ok');
-    appendTacticalLog('action', `Hat den letzten Bearbeitungsschritt rückgängig gemacht (Undo)`);
+    setSystemStatus(`Undo (${undoStack.length})`, 'ok');
+    appendTacticalLog('action', `Undo last action`);
   };
 
   window.addEventListener('keydown', (e) => {
@@ -1529,20 +2370,17 @@
 
   map.pm.Toolbar.createCustomControl({
     name: 'UndoAction', block: 'edit',
-    title: 'Schritt rückgängig machen (max. 10 Schritte / 5 Min. / Strg+Z)',
+    title: 'Undo (Ctrl+Z)',
     toggle: false, onClick: () => undoLastAction(), afterClick: () => {},
     className: 'leaflet-pm-icon-undo'
   });
 
   map.pm.Toolbar.createCustomControl({
     name: 'FullscreenAction', block: 'custom',
-    title: 'Vollbildmodus umschalten',
+    title: 'Fullscreen',
     toggle: false, onClick: () => toggleFullScreenMode(), afterClick: () => {},
     className: 'leaflet-pm-icon-fullscreen'
   });
-
-  map.pm.setLang('de');
-  injectCustomToolbarIcons();
 
   window.toggleFullScreenMode = function() {
     const docEl = document.documentElement;
@@ -1561,21 +2399,19 @@
   };
 
   // ============================================================================
-  // 7. Objekte erstellen, bearbeiten, löschen & MGRS-Korrektur
+  // 7. 繪圖新增、修改、刪除邏輯
   // ============================================================================
-  let activeLayer = null;
-  let isEditingExisting = false;
-
   map.on('pm:create', (e) => {
+    const t = T();
     if (!isTokenVerified) {
       map.removeLayer(e.layer);
-      alert('Lesemodus: Bitte zuerst einen gültigen GitHub-Token eingeben, um Objekte hinzuzufügen!');
+      alert(t.alertReadonlyCreate);
       return;
     }
     activeLayer = e.layer;
     isEditingExisting = false;
-    document.getElementById('modal-title').innerText = '📍 Neues taktisches Objekt anlegen';
-    document.getElementById('modal-cancel-btn').innerText = 'Verwerfen';
+    document.getElementById('modal-title').innerText = t.modAddTitle;
+    document.getElementById('modal-cancel-btn').innerText = t.btnCancelDel;
     document.getElementById('feat-name').value = '';
     document.getElementById('feat-cat').value = 'danger';
     document.getElementById('feat-mgrs').value = getLayerMGRSOnly(activeLayer);
@@ -1589,10 +2425,10 @@
     drawnItems.removeLayer(e.layer);
     recordUndoSnapshot(e.layer);
     renderFeatureSummaryList();
-    const removedName = (e.layer.feature && e.layer.feature.properties && e.layer.feature.properties.name) || 'Unbenanntes Objekt';
+    const removedName = (e.layer.feature && e.layer.feature.properties && e.layer.feature.properties.name) || T().unnamed;
     const removedCoord = getLayerCoordString(e.layer);
-    setSystemStatus(`Gelöscht: ${removedName}`, 'ok');
-    appendTacticalLog('action', `Objekt „${removedName}“ gelöscht (${removedCoord})`);
+    setSystemStatus(`Del: ${removedName}`, 'ok');
+    appendTacticalLog('action', `Deleted "${removedName}" (${removedCoord})`);
   });
 
   window.openEditModal = function(leafletId) {
@@ -1601,12 +2437,13 @@
     if (!layer) return;
     layer.closePopup();
 
+    const t = T();
     activeLayer = layer;
     isEditingExisting = true;
     const props = (layer.feature && layer.feature.properties) ? layer.feature.properties : {};
 
-    document.getElementById('modal-title').innerText = '✏️ Objekt, Farbe & MGRS-Koordinate bearbeiten';
-    document.getElementById('modal-cancel-btn').innerText = 'Abbrechen';
+    document.getElementById('modal-title').innerText = t.modEditTitle;
+    document.getElementById('modal-cancel-btn').innerText = t.btnCancelClose;
     document.getElementById('feat-name').value = props.name || '';
     document.getElementById('feat-cat').value = props.category || 'danger';
     document.getElementById('feat-mgrs').value = getLayerMGRSOnly(layer);
@@ -1621,14 +2458,14 @@
     const layer = drawnItems.getLayer(leafletId);
     if (!layer) return;
     layer.closePopup();
-    const removedName = (layer.feature && layer.feature.properties && layer.feature.properties.name) || 'Unbenanntes Objekt';
+    const removedName = (layer.feature && layer.feature.properties && layer.feature.properties.name) || T().unnamed;
     const removedCoord = getLayerCoordString(layer);
     recordUndoSnapshot();
     map.removeLayer(layer);
     drawnItems.removeLayer(layer);
     renderFeatureSummaryList();
-    setSystemStatus(`Gelöscht: ${removedName}`, 'ok');
-    appendTacticalLog('action', `Objekt „${removedName}“ gelöscht (${removedCoord})`);
+    setSystemStatus(`Del: ${removedName}`, 'ok');
+    appendTacticalLog('action', `Deleted "${removedName}" (${removedCoord})`);
   };
 
   function cancelModal() {
@@ -1640,6 +2477,7 @@
 
   function saveModal() {
     if (!activeLayer) return;
+    const t = T();
 
     const mgrsInputRaw = document.getElementById('feat-mgrs').value.trim();
     const originalMGRS = getLayerMGRSOnly(activeLayer);
@@ -1650,7 +2488,7 @@
         const pt = mgrs.toPoint(cleanMGRS);
         const newLat = pt[1];
         const newLng = pt[0];
-        if (isNaN(newLat) || isNaN(newLng)) throw new Error('Ungültige Koordinaten');
+        if (isNaN(newLat) || isNaN(newLng)) throw new Error('Invalid coordinates');
 
         recordUndoSnapshot();
 
@@ -1666,7 +2504,7 @@
         }
         map.panTo([newLat, newLng]);
       } catch (err) {
-        alert('❌ Ungültiges MGRS-Koordinatenformat!\nBitte Standard-MGRS-Format eingeben, z. B.: 51R UH 51909 65861');
+        alert(t.alertBadMgrs);
         document.getElementById('feat-mgrs').focus();
         return;
       }
@@ -1674,25 +2512,25 @@
       recordUndoSnapshot();
     }
 
-    const name = document.getElementById('feat-name').value.trim() || 'Unbenanntes Objekt';
+    const name = document.getElementById('feat-name').value.trim() || t.unnamed;
     const cat = document.getElementById('feat-cat').value;
     const desc = document.getElementById('feat-desc').value.trim();
     const stream = document.getElementById('feat-stream').value.trim();
     const callsign = document.getElementById('user-callsign').value.trim();
     localStorage.setItem('rescue_callsign', callsign);
 
-    const rawTime = new Date().toLocaleString('de-DE', { hour12: false });
+    const rawTime = new Date().toLocaleString(t.locale, { hour12: false });
     const time = callsign ? `${rawTime} (${callsign})` : rawTime;
     const coord = getLayerCoordString(activeLayer);
-    const catLabel = (categoryConfig[cat] || categoryConfig.danger).label;
+    const catLabel = getCategoryConfig(cat).label;
 
     const wasEditing = isEditingExisting;
     if (!drawnItems.hasLayer(activeLayer)) drawnItems.addLayer(activeLayer);
 
     applyFeatureProperties(activeLayer, { name, category: cat, desc, stream, coord, time, updatedBy: callsign });
 
-    if (wasEditing) appendTacticalLog('action', `Objekt „${name}“ bearbeitet [${catLabel}] (${coord})`);
-    else appendTacticalLog('action', `Objekt „${name}“ erstellt [${catLabel}] (${coord})`);
+    if (wasEditing) appendTacticalLog('action', `Updated "${name}" [${catLabel}] (${coord})`);
+    else appendTacticalLog('action', `Added "${name}" [${catLabel}] (${coord})`);
 
     activeLayer = null;
     isEditingExisting = false;
@@ -1704,12 +2542,13 @@
   });
 
   function applyFeatureProperties(layer, props) {
+    const t = T();
     props.coord = getLayerCoordString(layer);
     layer.feature = layer.feature || { type: 'Feature', properties: {} };
     layer.feature.properties = props;
 
     const cat = props.category || 'danger';
-    const cfg = categoryConfig[cat] || categoryConfig.danger;
+    const cfg = getCategoryConfig(cat);
 
     if (layer instanceof L.Marker) layer.setIcon(createCoTDotIcon(cat));
     else if (layer.setStyle) layer.setStyle({ color: cfg.webColor, fillColor: cfg.webColor, fillOpacity: 0.35, weight: 4 });
@@ -1728,31 +2567,31 @@
       layer.on('pm:dragstart pm:markerdragstart pm:rotatestart', () => recordUndoSnapshot());
       layer.on('pm:dragend pm:edit pm:rotateend', () => {
         applyFeatureProperties(layer, layer.feature.properties);
-        const itemName = (layer.feature && layer.feature.properties && layer.feature.properties.name) || 'Objekt';
-        appendTacticalLog('action', `Position von „${itemName}“ verschoben nach ${layer.feature.properties.coord}`);
+        const itemName = (layer.feature && layer.feature.properties && layer.feature.properties.name) || T().unnamed;
+        appendTacticalLog('action', `Moved "${itemName}" -> ${layer.feature.properties.coord}`);
       });
       layer._hasCoordUpdateListener = true;
     }
 
     const layerId = L.stamp(layer);
     const editButtonsHtml = isTokenVerified ? `
-      <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">✏️ Bearbeiten / MGRS</button>
-      <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">🗑️ Löschen</button>
-    ` : `<div style="margin-top:6px; font-size:11px; color:#94a3b8;">🔒 Lesemodus (Token für Bearbeitung erforderlich)</div>`;
+      <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">${t.btnEdit}</button>
+      <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">${t.btnDel}</button>
+    ` : `<div style="margin-top:6px; font-size:11px; color:#94a3b8;">${t.readonlyTip}</div>`;
 
     const streamBtnHtml = props.stream ? `
-      <button class="popup-btn popup-btn-video" onclick="openTacticalStreamWindow('${escapeHTML(props.stream)}')">🎥 Live-Stream öffnen</button>
+      <button class="popup-btn popup-btn-video" onclick="openTacticalStreamWindow('${escapeHTML(props.stream)}')">${t.btnStreamOpen}</button>
     ` : '';
 
     layer.bindPopup(`
       <div style="font-size:14px; min-width:230px;">
-        <strong style="font-size:15px;">${escapeHTML(props.name)}</strong><br>
+        <strong style="font-size:15px;">${escapeHTML(props.name || t.unnamed)}</strong><br>
         <span style="color:#475569; font-size:12px; font-weight:600;">${cfg.label}</span>
         <hr style="border:0; border-top:1px solid #e2e8f0; margin:6px 0;">
-        <div style="white-space:pre-wrap; color:#1e293b;">${escapeHTML(props.desc || 'Keine Bemerkungen')}</div>
-        ${props.stream ? `<div style="margin-top:4px; font-size:11px; color:#059669; font-weight:bold; word-break:break-all;">🎥 Stream: ${escapeHTML(props.stream)}</div>` : ''}
-        <div style="margin-top:8px; font-size:11px; color:#0284c7; font-family:monospace; font-weight:bold;">Koord.: ${escapeHTML(props.coord || '')}</div>
-        <div style="margin-top:2px; font-size:11px; color:#64748b;">Stand: ${escapeHTML(props.time || '')}</div>
+        <div style="white-space:pre-wrap; color:#1e293b;">${escapeHTML(props.desc || t.noDesc)}</div>
+        ${props.stream ? `<div style="margin-top:4px; font-size:11px; color:#059669; font-weight:bold; word-break:break-all;">${t.streamPrefix}${escapeHTML(props.stream)}</div>` : ''}
+        <div style="margin-top:8px; font-size:11px; color:#0284c7; font-family:monospace; font-weight:bold;">${t.coordPrefix}${escapeHTML(props.coord || '')}</div>
+        <div style="margin-top:2px; font-size:11px; color:#64748b;">${t.timePrefix}${escapeHTML(props.time || '')}</div>
         <div class="popup-btn-group">
           ${streamBtnHtml}
           ${editButtonsHtml}
@@ -1768,7 +2607,7 @@
   }
 
   // ============================================================================
-  // 8. Systemstart & Laden bestehender Einsatzdaten (Heenisteininu)
+  // 8. 系統啟動初始化與載入任務資料
   // ============================================================================
   window.addEventListener('DOMContentLoaded', () => {
     injectCustomToolbarIcons();
@@ -1776,7 +2615,7 @@
     const host = window.location.hostname;
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     document.getElementById('gh-owner').value = 'HamsterTAK';
-    document.getElementById('gh-repo').value = (host.endsWith('github.io') && pathParts.length > 0) ? pathParts[0] : 'Heenisteininu';
+    document.getElementById('gh-repo').value = (host.endsWith('github.io') && pathParts.length > 0) ? pathParts[0] : 'Hamster-Map';
 
     const savedToken = localStorage.getItem('rescue_gh_token') || '';
     const savedCallsign = localStorage.getItem('rescue_callsign') || '';
@@ -1791,6 +2630,7 @@
     const queryMission = sanitizeMissionCode(urlParams.get('mission') || '');
     document.getElementById('login-mission-code').value = queryMission || savedMission;
 
+    setLanguage(currentLang);
     updateMGRSGrid();
     adjustMapHeight();
     setTimeout(() => document.getElementById('login-mission-code').focus(), 150);
@@ -1799,7 +2639,7 @@
   async function loadExistingData() {
     if (!currentMissionCode) return;
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
-    const repo = document.getElementById('gh-repo').value.trim() || 'Heenisteininu';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const token = document.getElementById('gh-token').value.trim();
 
     try {
@@ -1819,7 +2659,7 @@
 
       if (!geojson) {
         renderFeatureSummaryList();
-        setSystemStatus(`Aktiv [${currentMissionCode}]`, 'ok');
+        setSystemStatus(`[${currentMissionCode}]`, 'ok');
         return;
       }
 
@@ -1833,15 +2673,15 @@
       if (drawnItems.getLayers().length > 0) {
         map.fitBounds(drawnItems.getBounds(), { maxZoom: 17, padding: [40, 40] });
       }
-      setSystemStatus(`Geladen [${currentMissionCode}]`, 'ok');
+      setSystemStatus(`[${currentMissionCode}]`, 'ok');
     } catch (e) {
       renderFeatureSummaryList();
-      setSystemStatus(`Bereit [${currentMissionCode}]`, 'ok');
+      setSystemStatus(`[${currentMissionCode}]`, 'ok');
     }
   }
 
   // ============================================================================
-  // 9. KML-Generierung für ATAK (inkl. klickbarem Live-Stream-Link)
+  // 9. 圖資轉 KML
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
@@ -1857,9 +2697,10 @@
   }
 
   function generateKML(geojson) {
+    const t = T();
     let placemarks = '';
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
-    const repo = document.getElementById('gh-repo').value.trim() || 'Heenisteininu';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const waterdropPinUrl = `https://${owner}.github.io/${repo}/google_pin.png`;
 
     geojson.features.forEach(f => {
@@ -1868,20 +2709,20 @@
       if (!g) return;
 
       const cat = p.category || 'danger';
-      const cfg = categoryConfig[cat] || categoryConfig.danger;
+      const cfg = getCategoryConfig(cat);
       
       let streamHtmlLine = '';
       if (p.stream) {
         const customUrl = formatCustomStreamUrl(p.stream);
-        streamHtmlLine = `\n🎥 Live-Stream: <a href="${customUrl}">${customUrl}</a>`;
+        streamHtmlLine = `\n🎥 Live Feed: <a href="${customUrl}">${customUrl}</a>`;
       }
 
-      const descText = `[Einsatz: ${currentMissionCode}]\n[Kategorie: ${cfg.label}]\n${p.desc || ''}${streamHtmlLine}\nKoord.: ${p.coord || ''}\nStand: ${p.time || ''}`;
+      const descText = `[Mission: ${currentMissionCode}]\n[${cfg.label}]\n${p.desc || ''}${streamHtmlLine}\n${t.coordPrefix}${p.coord || ''}\n${t.timePrefix}${p.time || ''}`;
 
       if (g.type === 'Point') {
         placemarks += `
     <Placemark>
-      <name><![CDATA[${p.name || 'Unbenannt'}]]></name>
+      <name><![CDATA[${p.name || t.unnamed}]]></name>
       <description><![CDATA[${descText}]]></description>
       <Style>
         <IconStyle>
@@ -1911,7 +2752,7 @@
 
         placemarks += `
     <Placemark>
-      <name><![CDATA[${p.name || 'Unbenannte Zone'}]]></name>
+      <name><![CDATA[${p.name || t.unnamedZone}]]></name>
       <description><![CDATA[${descText}]]></description>
       <Style>
         <LineStyle>
@@ -1932,44 +2773,14 @@
     return `<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
-    <name>Heenisteininu - Einsatz [${currentMissionCode}]</name>
+    <name>HamsterTAK - Mission [${currentMissionCode}]</name>
     ${placemarks}
   </Document>
 </kml>`;
   }
 
-  window.downloadBootstrapKML = function() {
-    if (!currentMissionCode) {
-      alert('Bitte zuerst mit einem Einsatzcode anmelden!');
-      return;
-    }
-    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
-    const repo = document.getElementById('gh-repo').value.trim() || 'Heenisteininu';
-    const liveKmlUrl = `https://${owner}.github.io/${repo}/${getMissionFilePath('live.kml')}`;
-
-    const netLinkKml = `<?xml version="1.0" encoding="UTF-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2">
-  <Folder>
-    <name>Heenisteininu Einsatz [${currentMissionCode}]</name>
-    <NetworkLink>
-      <name>Taktische Lagekarte - ${currentMissionCode} (Auto-Update alle 5 Min.)</name>
-      <Link>
-        <href>${liveKmlUrl}</href>
-        <refreshMode>onInterval</refreshMode>
-        <refreshInterval>300</refreshInterval>
-      </Link>
-    </NetworkLink>
-  </Folder>
-</kml>`;
-    const blob = new Blob([netLinkKml], { type: 'application/vnd.google-earth.kml+xml' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `ATAK_Einsatz_${currentMissionCode}.kml`;
-    a.click();
-  };
-
   // ============================================================================
-  // 10. GitHub-API Schreib-, Sende- und Löschfunktionen
+  // 10. GitHub API 寫入、發布與刪除函式
   // ============================================================================
   async function putGitHubFile(owner, repo, path, content, token, message, isRawBase64 = false) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
@@ -1990,7 +2801,7 @@
     });
     if (!putRes.ok) {
       const err = await putRes.json();
-      throw new Error(err.message || 'GitHub-API Schreibfehler');
+      throw new Error(err.message || 'GitHub API Write Error');
     }
   }
 
@@ -2008,13 +2819,14 @@
     });
     if (!delRes.ok) {
       const err = await delRes.json();
-      throw new Error(err.message || `Fehler beim Löschen von ${path}`);
+      throw new Error(err.message || `Delete failed: ${path}`);
     }
   }
 
   async function publishToGitHub() {
+    const t = T();
     if (!currentMissionCode) {
-      alert('Bitte zuerst mit einem Einsatzcode anmelden!');
+      alert(t.alertLoginFirst);
       return;
     }
     const token = document.getElementById('gh-token').value.trim();
@@ -2023,39 +2835,39 @@
     const callsign = document.getElementById('user-callsign').value.trim();
 
     if (!token || !owner || !repo) {
-      alert('Bitte oben GitHub-Token, Konto und Repo-Namen vollständig eingeben!');
+      alert(t.alertFillGhInfo);
       return;
     }
 
-    setSystemStatus(`Sende [${currentMissionCode}]...`, 'busy');
+    setSystemStatus(`Publishing [${currentMissionCode}]...`, 'busy');
 
     try {
       const isValid = await verifyGitHubToken();
-      if (!isValid) throw new Error('Token-Überprüfung fehlgeschlagen oder keine Schreibberechtigung für dieses Repo!');
+      if (!isValid) throw new Error('Token verification failed or no write access!');
 
       if (callsign) localStorage.setItem('rescue_callsign', callsign);
 
-      const timeStr = new Date().toLocaleTimeString('de-DE', { hour12: false });
-      const byWho = callsign ? ` von ${callsign}` : '';
+      const timeStr = new Date().toLocaleTimeString(t.locale, { hour12: false });
+      const byWho = callsign ? ` by ${callsign}` : '';
 
-      appendTacticalLog('action', `Hat die neuesten Lagedaten für Einsatz [${currentMissionCode}] in die Cloud übertragen`, false);
+      appendTacticalLog('action', `Published mission [${currentMissionCode}] to cloud`, false);
 
       const collection = collectGeoJSON();
       const geojsonStr = JSON.stringify(collection, null, 2);
       const kmlStr = generateKML(collection);
       const logsStr = JSON.stringify(tacticalLogs, null, 2);
 
-      await putGitHubFile(owner, repo, 'google_pin.png', ATAK_WATERDROP_RAW_BASE64, token, `ATAK-Tropfensymbol bereitgestellt`, true);
-      await putGitHubFile(owner, repo, getMissionFilePath('data.geojson'), geojsonStr, token, `[${currentMissionCode}] Kartendaten aktualisiert (${timeStr}${byWho})`);
-      await putGitHubFile(owner, repo, getMissionFilePath('live.kml'), kmlStr, token, `[${currentMissionCode}] ATAK-KML aktualisiert (${timeStr}${byWho})`);
-      await putGitHubFile(owner, repo, getMissionFilePath('logs.json'), logsStr, token, `[${currentMissionCode}] Einsatztagebuch aktualisiert (${timeStr}${byWho})`);
+      await putGitHubFile(owner, repo, 'google_pin.png', ATAK_WATERDROP_RAW_BASE64, token, `Deploy ATAK pin`, true);
+      await putGitHubFile(owner, repo, getMissionFilePath('data.geojson'), geojsonStr, token, `[${currentMissionCode}] Update GeoJSON (${timeStr}${byWho})`);
+      await putGitHubFile(owner, repo, getMissionFilePath('live.kml'), kmlStr, token, `[${currentMissionCode}] Update KML (${timeStr}${byWho})`);
+      await putGitHubFile(owner, repo, getMissionFilePath('logs.json'), logsStr, token, `[${currentMissionCode}] Update Logs (${timeStr}${byWho})`);
 
       const missionKmlUrl = `https://${owner}.github.io/${repo}/${getMissionFilePath('live.kml')}`;
       setSystemStatus(`[${currentMissionCode}] (${timeStr})`, 'ok');
-      alert(`🟢 Einsatz 【${currentMissionCode}】 erfolgreich veröffentlicht!\n\nATAK-Abonnement-URL für diesen Einsatz:\n${missionKmlUrl}`);
+      alert(t.alertPubSuccess(currentMissionCode, missionKmlUrl));
     } catch (err) {
-      setSystemStatus('Senden fehlgeschlagen', 'error');
-      alert('Speichern fehlgeschlagen: ' + err.message);
+      setSystemStatus('Failed', 'error');
+      alert(err.message);
     }
   }
 </script>
