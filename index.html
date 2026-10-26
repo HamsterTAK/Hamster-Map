@@ -195,7 +195,7 @@
 
     #map { height: calc(100% - 44px); width: 100%; background: #000000; position: relative; }
 
-    /* 唯讀模式下僅隱藏繪圖與編輯工具列，保留 Fullscreen 按鈕 */
+    /* [修正] 唯讀模式下僅隱藏「繪圖 (draw)」與「編輯 (edit)」工具列，保留獨立的 Fullscreen 按鈕供觀看者使用！ */
     body.readonly-mode .leaflet-pm-toolbar.leaflet-pm-draw,
     body.readonly-mode .leaflet-pm-toolbar.leaflet-pm-edit {
       display: none !important;
@@ -584,6 +584,7 @@
     }
   }
 
+  // 確保每次 map.pm.setLang 重新渲染工具列後，自動把 Undo 與 Fullscreen 的 SVG 圖示補回來！
   function injectCustomToolbarIcons() {
     const undoIconEl = document.querySelector('.leaflet-pm-icon-undo');
     if (undoIconEl) {
@@ -711,9 +712,7 @@
       alertBadMgrs: '❌ MGRS 座標格式不正確！\n請輸入標準 MGRS 格式，例如：51R UH 51909 65861',
       alertLoginFirst: '請先登入 Mission Code！',
       alertFillGhInfo: '請先在上方輸入 GitHub Token、GitHub 帳號與 Repo 名稱！',
-      alertPubSuccess: (c, u) => `任務【${c}】發布成功！\n\n此任務專屬 ATAK 訂閱網址：\n${u}`,
-      confirmExitMission: (c) => `⚠️ 確定要退出當前任務【${c}】並返回任務管理畫面嗎？`,
-      confirmSaveBeforeExit: (c) => `💾 離開前，是否要先「儲存並發布」任務【${c}】目前的圖資變更？\n\n(按「確定」自動儲存並退出；按「取消」不儲存直接退出)`
+      alertPubSuccess: (c, u) => `任務【${c}】發布成功！\n\n此任務專屬 ATAK 訂閱網址：\n${u}`
     },
     en: {
       locale: 'en-GB', pmLang: 'en',
@@ -815,9 +814,7 @@
       alertBadMgrs: '❌ Invalid MGRS Grid Reference!\nPlease enter a standard MGRS coordinate, e.g. 51R UH 51909 65861',
       alertLoginFirst: 'Please log into a Mission Code first!',
       alertFillGhInfo: 'Please enter your GitHub Token, Account Name, and Repo Name at the top!',
-      alertPubSuccess: (c, u) => `Mission 【${c}】 successfully published!\n\nDedicated ATAK Subscription URL:\n${u}`,
-      confirmExitMission: (c) => `⚠️ Are you certain you wish to exit Mission 【${c}】 and return to the Mission Manager?`,
-      confirmSaveBeforeExit: (c) => `💾 Before exiting, would you like to Save & Publish your current changes to Mission 【${c}】?\n\n(Click OK to Save & Exit; Cancel to Exit without saving)`
+      alertPubSuccess: (c, u) => `Mission 【${c}】 successfully published!\n\nDedicated ATAK Subscription URL:\n${u}`
     },
     de: {
       locale: 'de-DE', pmLang: 'de',
@@ -919,9 +916,7 @@
       alertBadMgrs: '❌ Ungültiges MGRS-Format!\nBeispiel: 51R UH 51909 65861',
       alertLoginFirst: 'Bitte zuerst mit einem Einsatzcode anmelden!',
       alertFillGhInfo: 'Bitte oben GitHub-Token, Konto und Repo-Namen vollständig eingeben!',
-      alertPubSuccess: (c, u) => `Einsatz 【${c}】 erfolgreich veröffentlicht!\n\nATAK-Abonnement-URL:\n${u}`,
-      confirmExitMission: (c) => `⚠️ Möchten Sie den aktuellen Einsatz 【${c}】 wirklich verlassen und zur Einsatzverwaltung zurückkehren?`,
-      confirmSaveBeforeExit: (c) => `💾 Möchten Sie vor dem Verlassen die aktuellen Änderungen für Einsatz 【${c}】 speichern und senden?\n\n(OK = Speichern & Verlassen; Abbrechen = Ohne Speichern verlassen)`
+      alertPubSuccess: (c, u) => `Einsatz 【${c}】 erfolgreich veröffentlicht!\n\nATAK-Abonnement-URL:\n${u}`
     },
     fr: {
       locale: 'fr-FR', pmLang: 'fr',
@@ -1023,9 +1018,7 @@
       alertBadMgrs: '❌ Format MGRS invalide !\nExemple : 51R UH 51909 65861',
       alertLoginFirst: 'Veuillez d\'abord vous connecter à une mission !',
       alertFillGhInfo: 'Veuillez renseigner le jeton GitHub, le compte et le dépôt en haut !',
-      alertPubSuccess: (c, u) => `Mission 【${c}】 publiée avec succès !\n\nURL d'abonnement ATAK :\n${u}`,
-      confirmExitMission: (c) => `⚠️ Voulez-vous vraiment quitter la mission 【${c}】 et revenir à la gestion des missions ?`,
-      confirmSaveBeforeExit: (c) => `💾 Avant de quitter, voulez-vous sauvegarder et publier les modifications de la mission 【${c}】 ?\n\n(OK = Sauvegarder et quitter ; Annuler = Quitter sans sauvegarder)`
+      alertPubSuccess: (c, u) => `Mission 【${c}】 publiée avec succès !\n\nURL d'abonnement ATAK :\n${u}`
     },
     ja: {
       locale: 'ja-JP', pmLang: 'ja',
@@ -1127,9 +1120,7 @@
       alertBadMgrs: '❌ MGRS 座標の形式が正しくありません！\n例：51R UH 51909 65861',
       alertLoginFirst: '先に作戦コードでログインしてください！',
       alertFillGhInfo: '上部に GitHub トークン、アカウント、リポジトリ名を入力してください！',
-      alertPubSuccess: (c, u) => `作戦【${c}】の配信に成功しました！\n\nATAK 購読URL：\n${u}`,
-      confirmExitMission: (c) => `⚠️ 現在の作戦【${c}】を退出し、作戦管理画面に戻りますか？`,
-      confirmSaveBeforeExit: (c) => `💾 退出する前に、作戦【${c}】の現在の変更を「保存して配信」しますか？\n\n(「OK」で保存して退出 / 「キャンセル」で保存せず退出)`
+      alertPubSuccess: (c, u) => `作戦【${c}】の配信に成功しました！\n\nATAK 購読URL：\n${u}`
     },
     ru: {
       locale: 'ru-RU', pmLang: 'ru',
@@ -1231,9 +1222,7 @@
       alertBadMgrs: '❌ Неверный формат координат MGRS!\nПример: 51R UH 51909 65861',
       alertLoginFirst: 'Сначала войдите в операцию (Mission Code)!',
       alertFillGhInfo: 'Заполните токен GitHub, аккаунт и имя репозитория сверху!',
-      alertPubSuccess: (c, u) => `Операция 【${c}】 успешно опубликована!\n\nСсылка для подписки ATAK:\n${u}`,
-      confirmExitMission: (c) => `⚠️ Вы уверены, что хотите выйти из операции 【${c}】 и вернуться в меню управления?`,
-      confirmSaveBeforeExit: (c) => `💾 Сохранить и передать текущие изменения операции 【${c}】 перед выходом?\n\n(ОК = Сохранить и выйти; Отмена = Выйти без сохранения)`
+      alertPubSuccess: (c, u) => `Операция 【${c}】 успешно опубликована!\n\nСсылка для подписки ATAK:\n${u}`
     }
   };
 
@@ -1263,6 +1252,7 @@
     if (menu) menu.classList.remove('open');
   });
 
+  // 一鍵切換全站語系與頂部小國旗選單狀態
   window.setLanguage = function(lang) {
     if (!I18N[lang]) lang = 'zh';
     currentLang = lang;
@@ -1338,6 +1328,7 @@
 
     if (typeof map !== 'undefined' && map.pm) {
       try { map.pm.setLang(t.pmLang); } catch (e) {}
+      // setLang 會重建左側 Geoman 工具列，這裡立刻把 Undo 與 Fullscreen 圖示補回去！
       injectCustomToolbarIcons();
     }
 
@@ -1375,18 +1366,20 @@
     return 'http://' + v;
   }
 
-  window.openTacticalStreamWindow = function(rawStreamUrl) {
+window.openTacticalStreamWindow = function(rawStreamUrl) {
     const fullUrl = formatCustomStreamUrl(rawStreamUrl);
     if (!fullUrl) return;
     const winName = 'HamsterTAK_Monitor_' + Math.random().toString(36).substring(2, 7);
     const winSpecs = 'width=540,height=360,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=no';
 
+    // 偵測是否為公部門 CCTV 常見的 HTTP-FLV 裸串流 (含 /flv/ 或 .flv)
     const isFlvStream = /\/flv\/|\.flv($|\?)/i.test(fullUrl);
     if (!isFlvStream) {
       window.open(fullUrl, winName, winSpecs);
       return;
     }
 
+    // 若為 FLV 裸串流，動態生成內建 mpegts.js 解碼器的暗黑戰術監控視窗，防止瀏覽器觸發下載！
     const safeUrl = fullUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     const playerHtml = `<!DOCTYPE html>
 <html>
@@ -1421,7 +1414,7 @@
       player.load();
       player.play().then(() => { msg.style.display = 'none'; }).catch(() => { msg.innerText = '▶️ 請點擊畫面開始播放'; });
       v.addEventListener('playing', () => { msg.style.display = 'none'; });
-      player.on(mpegts.Events.ERROR, (errType) => {
+      player.on(mpegts.Events.ERROR, (errType, errDetail) => {
         msg.style.display = 'block';
         msg.innerHTML = '⚠️ 串流遭目標伺服器 CORS 跨網域阻擋或離線 (' + errType + ')<br><span style="color:#f59e0b;font-size:11px;">建議改由 MediaMTX 中繼拉流以突破瀏覽器限制</span>';
       });
@@ -1435,6 +1428,15 @@
     const blob = new Blob([playerHtml], { type: 'text/html;charset=utf-8' });
     const blobUrl = URL.createObjectURL(blob);
     window.open(blobUrl, winName, winSpecs);
+  };
+  
+  window.promptOpenTacticalPopout = function() {
+    const lastUrl = localStorage.getItem('hamster_custom_stream_url') || '';
+    const input = prompt(T().promptStream, lastUrl);
+    if (input !== null && input.trim() !== '') {
+      localStorage.setItem('hamster_custom_stream_url', input.trim());
+      openTacticalStreamWindow(input.trim());
+    }
   };
 
   // ============================================================================
@@ -1511,6 +1513,7 @@
 
   L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
 
+  // 右上角圖資切換器正下方「📋 點位及圖形彙整」小方塊控制項
   const FeatureSummaryControl = L.Control.extend({
     options: { position: 'topright' },
     onAdd: function() {
@@ -1826,7 +1829,7 @@
   }
 
   // ============================================================================
-  // 4. 嚴格 Mission 創立守門機制 + 任務管理中心 (含兩段式戰術防呆退出)
+  // 4. 嚴格 Mission 創立守門機制 + 任務管理中心
   // ============================================================================
   async function checkMissionExistsOnCloud(code) {
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
@@ -1995,11 +1998,9 @@
     });
   };
 
-  window.openMissionManagerModal = async function() {
-    const exited = await switchMissionPrompt();
-    if (exited) {
-      loadMissionDirectoryList();
-    }
+  window.openMissionManagerModal = function() {
+    switchMissionPrompt();
+    loadMissionDirectoryList();
   };
 
   async function activateMission(code) {
@@ -2025,27 +2026,12 @@
     await verifyGitHubToken();
   }
 
-  // 兩段式戰術防呆退出與切換任務彈窗
-  window.switchMissionPrompt = async function() {
-    const t = T();
-    if (currentMissionCode) {
-      const wantExit = confirm(t.confirmExitMission(currentMissionCode));
-      if (!wantExit) return false;
-
-      if (isTokenVerified) {
-        const wantSave = confirm(t.confirmSaveBeforeExit(currentMissionCode));
-        if (wantSave) {
-          await publishToGitHub();
-        }
-      }
-    }
-
+  window.switchMissionPrompt = function() {
     document.getElementById('login-mission-code').value = currentMissionCode;
     document.getElementById('login-token').value = document.getElementById('gh-token').value;
     document.getElementById('login-callsign').value = document.getElementById('user-callsign').value;
     document.getElementById('mission-login-overlay').style.display = 'flex';
     document.getElementById('login-mission-code').select();
-    return true;
   };
 
   window.deleteMissionByCode = async function(targetCode) {
@@ -2375,6 +2361,7 @@
     className: 'leaflet-pm-icon-undo'
   });
 
+  // [修正] 將 Fullscreen 獨立放在 custom 區塊，唯讀模式下依然保留給一般觀看人員使用！
   map.pm.Toolbar.createCustomControl({
     name: 'FullscreenAction', block: 'custom',
     title: 'Fullscreen',
@@ -2399,7 +2386,7 @@
   };
 
   // ============================================================================
-  // 7. 繪圖新增、修改、刪除邏輯
+  // 7. 繪圖新增、修改、刪除邏輯 (整合 MGRS 座標精確微調與彙整清單連動)
   // ============================================================================
   map.on('pm:create', (e) => {
     const t = T();
@@ -2681,7 +2668,7 @@
   }
 
   // ============================================================================
-  // 9. 圖資轉 KML
+  // 9. 圖資轉 KML (直接將情報官填寫的自訂串流連結寫入 KML 超連結)
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
