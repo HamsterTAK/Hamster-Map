@@ -11,7 +11,7 @@
     body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; }
 
     /* ==========================================================================
-       登入頁面頂部小國旗切換器樣式
+       登入頁面頂部小國旗切換器樣式 (繁中 / 英式英語 UK)
        ========================================================================== */
     .lang-switcher {
       display: inline-flex; align-items: center; gap: 4px; background: #0f172a;
@@ -24,7 +24,7 @@
     .lang-btn {
       display: inline-flex; align-items: center; gap: 4px; background: transparent;
       color: #94a3b8; border: 1px solid transparent; border-radius: 4px;
-      padding: 3px 6px; font-size: 11px; font-weight: 700; cursor: pointer;
+      padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer;
       transition: all 0.15s; white-space: nowrap;
     }
     .lang-btn:hover { background: #1e293b; color: #f8fafc; }
@@ -289,7 +289,7 @@
     }
 
     /* ==========================================================================
-       右下角可折疊戰術紀錄與留言板 (加寬至 420px 並鎖定標題單行不換行)
+       右下角可折疊戰術紀錄與留言板 (420px 寬度並鎖定標題單行不換行)
        ========================================================================== */
     #log-panel {
       position: fixed; right: 12px; bottom: 48px; width: 420px; max-width: calc(100vw - 24px);
@@ -395,15 +395,11 @@
 
 <div id="mission-login-overlay">
   <div class="login-card">
-    <!-- 登入頁頂部小國旗語言切換器 -->
+    <!-- 登入頁頂部小國旗語言切換器 (僅保留 繁中 / EN UK) -->
     <div class="login-lang-bar">
       <div class="lang-switcher">
         <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')"><img src="https://flagcdn.com/w40/tw.png" alt="TW"> 繁中</button>
-        <button class="lang-btn" data-lang="en" onclick="setLanguage('en')"><img src="https://flagcdn.com/w40/gb.png" alt="UK"> EN</button>
-        <button class="lang-btn" data-lang="de" onclick="setLanguage('de')"><img src="https://flagcdn.com/w40/de.png" alt="DE"> DE</button>
-        <button class="lang-btn" data-lang="fr" onclick="setLanguage('fr')"><img src="https://flagcdn.com/w40/fr.png" alt="FR"> FR</button>
-        <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')"><img src="https://flagcdn.com/w40/jp.png" alt="JP"> 日本語</button>
-        <button class="lang-btn" data-lang="ru" onclick="setLanguage('ru')"><img src="https://flagcdn.com/w40/ru.png" alt="RU"> RU</button>
+        <button class="lang-btn" data-lang="en" onclick="setLanguage('en')"><img src="https://flagcdn.com/w40/gb.png" alt="UK"> EN (UK)</button>
       </div>
     </div>
 
@@ -468,7 +464,7 @@
 
     <input type="text" id="user-callsign" placeholder="👤 Callsign" />
 
-    <!-- Callsign 右側的緊湊型小國旗語言下拉選單 -->
+    <!-- Callsign 右側的緊湊型小國旗語言下拉選單 (繁中 / EN UK) -->
     <div class="top-lang-dropdown" id="top-lang-dropdown">
       <div class="top-lang-trigger" onclick="toggleTopLangMenu(event)" title="Language / 語言切換">
         <img id="top-lang-trigger-flag" src="https://flagcdn.com/w40/tw.png" alt="flag">
@@ -478,10 +474,6 @@
       <div class="top-lang-menu" id="top-lang-menu">
         <button class="top-lang-item" data-lang="zh" onclick="setLanguage('zh')"><img src="https://flagcdn.com/w40/tw.png" alt="TW"> 繁中</button>
         <button class="top-lang-item" data-lang="en" onclick="setLanguage('en')"><img src="https://flagcdn.com/w40/gb.png" alt="UK"> EN (UK)</button>
-        <button class="top-lang-item" data-lang="de" onclick="setLanguage('de')"><img src="https://flagcdn.com/w40/de.png" alt="DE"> Deutsch</button>
-        <button class="top-lang-item" data-lang="fr" onclick="setLanguage('fr')"><img src="https://flagcdn.com/w40/fr.png" alt="FR"> Français</button>
-        <button class="top-lang-item" data-lang="ja" onclick="setLanguage('ja')"><img src="https://flagcdn.com/w40/jp.png" alt="JP"> 日本語</button>
-        <button class="top-lang-item" data-lang="ru" onclick="setLanguage('ru')"><img src="https://flagcdn.com/w40/ru.png" alt="RU"> Русский</button>
       </div>
     </div>
   </div>
@@ -556,9 +548,10 @@
 
 <script>
   // ============================================================================
-  // 0. 六國語言字典 (I18N: 繁中 / 英式英語 UK / 德語 / 法語 / 日語 / 俄語)
+  // 0. 雙語字典 (I18N: 繁中 zh / 英式英語 UK en)
   // ============================================================================
-  let currentLang = localStorage.getItem('hamster_lang') || 'zh';
+  let savedLangPref = localStorage.getItem('hamster_lang') || 'zh';
+  let currentLang = (savedLangPref === 'en') ? 'en' : 'zh';
   let currentMissionCode = '';
   let isTokenVerified = false;
   let activeLayer = null;
@@ -566,11 +559,7 @@
 
   const LANG_META = {
     zh: { flag: 'https://flagcdn.com/w40/tw.png', short: '繁中' },
-    en: { flag: 'https://flagcdn.com/w40/gb.png', short: 'EN' },
-    de: { flag: 'https://flagcdn.com/w40/de.png', short: 'DE' },
-    fr: { flag: 'https://flagcdn.com/w40/fr.png', short: 'FR' },
-    ja: { flag: 'https://flagcdn.com/w40/jp.png', short: '日本語' },
-    ru: { flag: 'https://flagcdn.com/w40/ru.png', short: 'RU' }
+    en: { flag: 'https://flagcdn.com/w40/gb.png', short: 'EN' }
   };
 
   function setSystemStatus(text, ledState = 'ok') {
@@ -818,422 +807,6 @@
       alertPubSuccess: (c, u) => `Mission 【${c}】 successfully published!\n\nDedicated ATAK Subscription URL:\n${u}`,
       confirmExitMission: (c) => `⚠️ Are you certain you wish to exit Mission 【${c}】 and return to the Mission Manager?`,
       confirmSaveBeforeExit: (c) => `💾 Before exiting, would you like to Save & Publish your current changes to Mission 【${c}】?\n\n(Click OK to Save & Exit; Cancel to Exit without saving)`
-    },
-    de: {
-      locale: 'de-DE', pmLang: 'de',
-      loginTitle: '🐹 HamsterTAK Gefechtsstand',
-      loginSub: 'Bitte bestehenden Einsatzcode eingeben oder S2-Token zur Einsatzleitung verwenden',
-      lblMission: '🎯 Einsatzcode (Mission Code) *',
-      phMission: 'z. B. rescue-01',
-      lblToken: '🔑 Führungsoffizier GitHub-Token (Pflicht für Erstellung & Bearbeitung)',
-      phToken: 'ghp_... (Ohne Token nur Lesezugriff auf bestehende Einsätze)',
-      lblCallsign: '👤 Ihr Rufzeichen (Callsign)',
-      phCallsign: 'z. B. Stephanie',
-      btnEnter: '🚀 Authentifizieren & Einsatz beitreten',
-      btnChecking: '⏳ Prüfe Einsatz & Berechtigung...',
-      btnScan: '🗂️ Bestehende Einsätze in der Cloud verwalten (Token erf.)',
-      mmFolder: '📂 Aktive Einsatzordner (`missions/`)',
-      loginHint: '🛡️ <strong>Zugriffsschutz:</strong> Ohne gültigen Token ist nur das Betrachten bereits existierender Einsätze im Lesemodus möglich. Das Erstellen oder Löschen von Einsatzdatenbanken erfordert verifizierte Offiziersrechte!',
-      brand: '🐹 Lagekarte',
-      topMissionPrefix: '🎯 Einsatz:',
-      notLoggedIn: 'Inaktiv',
-      phTopToken: 'GitHub-Token',
-      phOwner: 'Konto',
-      btnSave: '☁️ Senden',
-      btnVideo: '📺 Video',
-      btnManage: '🗂️ Einsätze',
-      btnDelMission: '💣 Löschen',
-      statusReady: 'Bereit',
-      phTopCallsign: '👤 Rufzeichen',
-      gridHidden: 'Aus',
-      gridLabel: 'Gitter',
-      unknownCoord: 'Unbekannte Koordinate',
-      unnamed: 'Unbenanntes Objekt',
-      unnamedZone: 'Unbenannte Zone',
-      noDesc: 'Keine Bemerkungen',
-      coordPrefix: 'Koord.: ',
-      timePrefix: 'Stand: ',
-      streamPrefix: '🎥 Stream: ',
-      catDanger: '🔴 Gefahrenzone / Sperrgebiet',
-      catRescue: '🟡 Rettungspunkt / Suchgebiet',
-      catSupply: '🟢 Versorgungspunkt / Sicherheitszone',
-      catFriendly: '🔵 Eigene Kräfte / Gefechtsstand',
-      optDanger: '🔴 Gefahrenzone / Sperrgebiet (Rot)',
-      optRescue: '🟡 Rettungspunkt / Suchgebiet (Gelb)',
-      optSupply: '🟢 Versorgungspunkt / Sicherheitszone (Grün)',
-      optFriendly: '🔵 Eigene Kräfte / Gefechtsstand (Blau)',
-      fspTitle: '📋 Objektübersicht',
-      fspEmpty: 'Derzeit sind keine Punkte oder Formen auf der Karte markiert.',
-      shapePoint: '📍 Punkt',
-      shapePoly: '⬠ Fläche / Zone',
-      shapeLine: '📏 Linie / Route',
-      btnFocus: '🎯 Zentrieren',
-      btnStreamOpen: '🎥 Live-Stream öffnen',
-      btnEdit: '✏️ Bearbeiten / MGRS',
-      btnDel: '🗑️ Löschen',
-      readonlyTip: '🔒 Lesemodus (Token für Bearbeitung erforderlich)',
-      logTitle: 'Einsatztagebuch & Funk',
-      logReadonlyTitle: 'Einsatztagebuch (Gesperrt)',
-      logExpand: '▲ Öffnen',
-      logCollapse: '▼ Zu',
-      logLockedMsg: '🔒 Tagebuch & Bearbeitung gesperrt<br>Bitte oben einen gültigen GitHub-Token mit Schreibrechten eingeben, um die Freigabe zu erhalten.',
-      logEmpty: 'Keine Einträge vorhanden',
-      phChat: 'Lagemeldung eingeben (Enter zum Senden)...',
-      btnSendChat: 'Senden',
-      badgeChat: '💬 Funk',
-      badgeAction: '🛠️ Aktion',
-      anonOfficer: 'Unbekannter Offizier',
-      modAddTitle: '📍 Neues taktisches Objekt anlegen',
-      modEditTitle: '✏️ Objekt, Farbe & MGRS-Koordinate bearbeiten',
-      modLblName: 'Bezeichnung / Ortsname *',
-      modPhName: 'z. B. Beobachtungsposten Alpha',
-      modLblCat: 'Taktische Kategorie & Signalfarbe',
-      modLblMgrs: '🎯 Präzise MGRS-Koordinate (Direkteingabe zur Korrektur)',
-      modPhMgrs: 'z. B. 51R UH 51909 65861',
-      modLblDesc: 'Lagebeschreibung / Kontakt / Bemerkungen',
-      modPhDesc: 'Detailinformationen eingeben (in ATAK per Klick sichtbar)...',
-      modLblStream: '🎥 Live-Stream-URL (Optional, für Pop-out & ATAK-Link)',
-      modPhStream: 'Vollständige Stream-URL (z. B. http://... oder https://...)',
-      btnCancelDel: 'Verwerfen',
-      btnCancelClose: 'Abbrechen',
-      btnConfirm: 'Übernehmen',
-      promptStream: 'Bitte vollständige Live-Stream-URL zur Videoüberwachung eingeben:',
-      alertEnterCode: 'Bitte einen gültigen Einsatzcode eingeben, z. B. rescue-01!',
-      alertNoMission: (c) => `❌ Einsatz 【${c}】 nicht gefunden!\n\nNur Führungsoffiziere mit gültigem GitHub-Token können neue Einsätze anlegen.`,
-      confirmCreateMission: (c) => `🆕 Einsatz 【${c}】 existiert noch nicht in der Cloud.\n\nToken verifiziert. Möchten Sie den neuen Einsatz 【${c}】 jetzt initialisieren?`,
-      alertNeedTokenScan: '🔒 Bitte zuerst oben einen gültigen GitHub-Token eingeben, um Einsatzordner zu verwalten!',
-      mmScanning: '⏳ Scanne Verzeichnis missions/ auf GitHub...',
-      mmZero: '0 Einsätze',
-      mmTotal: (n) => `Gesamt: ${n}`,
-      mmEmpty: 'Derzeit keine Einsatzordner in der Cloud vorhanden',
-      mmBtnGo: '🚀 Beitreten',
-      mmBtnKml: '📋 KML-URL',
-      mmBtnDel: '🗑️ Löschen',
-      alertCopiedKml: (c, u) => `✅ ATAK-Abo-URL für Einsatz 【${c}】 kopiert:\n${u}`,
-      alertNeedTokenDel: 'Sie benötigen einen gültigen GitHub-Token, um einen Einsatz zu löschen!',
-      promptDelMission: (c) => `⚠️ SICHERHEITSWARNUNG!\nSie sind dabei, den Einsatz 【${c}】 dauerhaft aus der Cloud zu löschen!\n\nBitte zur Bestätigung „${c}“ eingeben:`,
-      alertDelCancelled: 'Einsatzcode stimmt nicht überein. Abgebrochen.',
-      alertDelSuccess: (c) => `✅ Einsatzordner 【${c}】 wurde vollständig gelöscht!`,
-      confirmClearLogs: (c) => `⚠️ Möchten Sie wirklich alle Tagebucheinträge für Einsatz 【${c}】 löschen?`,
-      alertReadonlyCreate: 'Lesemodus: Bitte zuerst einen gültigen GitHub-Token eingeben!',
-      alertBadMgrs: '❌ Ungültiges MGRS-Format!\nBeispiel: 51R UH 51909 65861',
-      alertLoginFirst: 'Bitte zuerst mit einem Einsatzcode anmelden!',
-      alertFillGhInfo: 'Bitte oben GitHub-Token, Konto und Repo-Namen vollständig eingeben!',
-      alertPubSuccess: (c, u) => `Einsatz 【${c}】 erfolgreich veröffentlicht!\n\nATAK-Abonnement-URL:\n${u}`,
-      confirmExitMission: (c) => `⚠️ Möchten Sie den aktuellen Einsatz 【${c}】 wirklich verlassen und zur Einsatzverwaltung zurückkehren?`,
-      confirmSaveBeforeExit: (c) => `💾 Möchten Sie vor dem Verlassen die aktuellen Änderungen für Einsatz 【${c}】 speichern und senden?\n\n(OK = Speichern & Verlassen; Abbrechen = Ohne Speichern verlassen)`
-    },
-    fr: {
-      locale: 'fr-FR', pmLang: 'fr',
-      loginTitle: '🐹 Poste de Commandement HamsterTAK',
-      loginSub: 'Entrez un code de mission existant ou un jeton Officier S2 pour créer/gérer les opérations',
-      lblMission: '🎯 Code de Mission *',
-      phMission: 'ex. rescue-01',
-      lblToken: '🔑 Jeton GitHub Officier (Requis pour créer, éditer et gérer)',
-      phToken: 'ghp_... (Lecture seule sans jeton)',
-      lblCallsign: '👤 Votre Indicatif (Callsign)',
-      phCallsign: 'ex. Stephanie',
-      btnEnter: '🚀 Authentifier & Rejoindre la Mission',
-      btnChecking: '⏳ Vérification de la mission et des droits...',
-      btnScan: '🗂️ Scanner & Gérer les Missions Cloud (Jeton req.)',
-      mmFolder: '📂 Dossiers de Missions Actifs (`missions/`)',
-      loginHint: '🛡️ <strong>Sécurité :</strong> Sans jeton valide, seules les missions existantes sont consultables en lecture seule. La création ou suppression nécessite des droits d\'officier vérifiés.',
-      brand: '🐹 HamsterTAK',
-      topMissionPrefix: '🎯 Mission:',
-      notLoggedIn: 'Aucune',
-      phTopToken: 'Jeton GitHub',
-      phOwner: 'Compte',
-      btnSave: '☁️ Publier',
-      btnVideo: '📺 Vidéo',
-      btnManage: '🗂️ Missions',
-      btnDelMission: '💣 Suppr.',
-      statusReady: 'Prêt',
-      phTopCallsign: '👤 Indicatif',
-      gridHidden: 'Masqué',
-      gridLabel: 'Grille',
-      unknownCoord: 'Coordonnée inconnue',
-      unnamed: 'Objet sans nom',
-      unnamedZone: 'Secteur sans nom',
-      noDesc: 'Aucune remarque',
-      coordPrefix: 'Coord. : ',
-      timePrefix: 'MAJ : ',
-      streamPrefix: '🎥 Flux : ',
-      catDanger: '🔴 Zone de Danger / Secteur Interdit',
-      catRescue: '🟡 Point de Secours / Zone de Recherche',
-      catSupply: '🟢 Point Logistique / Zone de Sécurité',
-      catFriendly: '🔵 Forces Amies / Poste de Commandement',
-      optDanger: '🔴 Zone de Danger / Secteur Interdit (Rouge)',
-      optRescue: '🟡 Point de Secours / Zone de Recherche (Jaune)',
-      optSupply: '🟢 Point Logistique / Zone de Sécurité (Vert)',
-      optFriendly: '🔵 Forces Amies / Poste de Commandement (Bleu)',
-      fspTitle: '📋 Récapitulatif des Objets',
-      fspEmpty: 'Aucun point ou tracé tactique sur la carte.',
-      shapePoint: '📍 Point',
-      shapePoly: '⬠ Polygone / Zone',
-      shapeLine: '📏 Ligne / Itinéraire',
-      btnFocus: '🎯 Centrer',
-      btnStreamOpen: '🎥 Ouvrir le Flux',
-      btnEdit: '✏️ Éditer / MGRS',
-      btnDel: '🗑️ Supprimer',
-      readonlyTip: '🔒 Mode Lecture Seule (Jeton requis pour éditer)',
-      logTitle: 'Journal & Radio',
-      logReadonlyTitle: 'Journal & Radio (Verrouillé)',
-      logExpand: '▲ Ouvrir',
-      logCollapse: '▼ Réduire',
-      logLockedMsg: '🔒 Journal et édition verrouillés<br>Veuillez saisir un jeton GitHub valide avec droits d\'écriture ci-dessus.',
-      logEmpty: 'Aucune entrée enregistrée',
-      phChat: 'Transmettre un message radio (Entrée)...',
-      btnSendChat: 'Envoyer',
-      badgeChat: '💬 Radio',
-      badgeAction: '🛠️ Action',
-      anonOfficer: 'Officier Anonyme',
-      modAddTitle: '📍 Configurer un Nouvel Objet Tactique',
-      modEditTitle: '✏️ Modifier l\'Objet, la Couleur et la Coordonnée MGRS',
-      modLblName: 'Désignation / Code Lieu *',
-      modPhName: 'ex. Poste d\'Observation Alpha',
-      modLblCat: 'Catégorie Tactique & Couleur',
-      modLblMgrs: '🎯 Coordonnée MGRS Précise (Modifier pour déplacer)',
-      modPhMgrs: 'ex. 51R UH 51909 65861',
-      modLblDesc: 'Situation (SITREP) / Contact / Remarques',
-      modPhDesc: 'Détails visibles dans ATAK en cliquant sur l\'icône...',
-      modLblStream: '🎥 URL du Flux Vidéo en Direct (Optionnel)',
-      modPhStream: 'URL complète (ex. http://... ou https://...)',
-      btnCancelDel: 'Abandonner',
-      btnCancelClose: 'Annuler',
-      btnConfirm: 'Valider',
-      promptStream: 'Veuillez saisir l\'URL complète du flux vidéo en direct :',
-      alertEnterCode: 'Veuillez saisir un Code de Mission valide, ex. rescue-01 !',
-      alertNoMission: (c) => `❌ Mission 【${c}】 introuvable !\n\nSeuls les officiers munis d'un jeton GitHub valide peuvent créer une nouvelle mission.`,
-      confirmCreateMission: (c) => `🆕 La mission 【${c}】 n'existe pas encore.\n\nJeton vérifié. Voulez-vous initialiser la mission 【${c}】 maintenant ?`,
-      alertNeedTokenScan: '🔒 Veuillez d\'abord saisir un jeton GitHub valide pour scanner les missions !',
-      mmScanning: '⏳ Analyse du dossier missions/ sur GitHub...',
-      mmZero: '0 Mission',
-      mmTotal: (n) => `Total : ${n}`,
-      mmEmpty: 'Aucun dossier de mission dans le cloud',
-      mmBtnGo: '🚀 Entrer',
-      mmBtnKml: '📋 URL KML',
-      mmBtnDel: '🗑️ Suppr.',
-      alertCopiedKml: (c, u) => `✅ URL d'abonnement ATAK copiée pour 【${c}】 :\n${u}`,
-      alertNeedTokenDel: 'Un jeton GitHub valide est requis pour supprimer une mission !',
-      promptDelMission: (c) => `⚠️ CONFIRMATION CRITIQUE !\nVous allez supprimer définitivement la mission 【${c}】 du cloud !\n\nTapez « ${c} » pour confirmer :`,
-      alertDelCancelled: 'Code incorrect. Suppression annulée.',
-      alertDelSuccess: (c) => `✅ Dossier de mission 【${c}】 supprimé !`,
-      confirmClearLogs: (c) => `⚠️ Voulez-vous vraiment vider tout le journal de la mission 【${c}】 ?`,
-      alertReadonlyCreate: 'Mode lecture seule : jeton GitHub valide requis pour ajouter des objets !',
-      alertBadMgrs: '❌ Format MGRS invalide !\nExemple : 51R UH 51909 65861',
-      alertLoginFirst: 'Veuillez d\'abord vous connecter à une mission !',
-      alertFillGhInfo: 'Veuillez renseigner le jeton GitHub, le compte et le dépôt en haut !',
-      alertPubSuccess: (c, u) => `Mission 【${c}】 publiée avec succès !\n\nURL d'abonnement ATAK :\n${u}`,
-      confirmExitMission: (c) => `⚠️ Voulez-vous vraiment quitter la mission 【${c}】 et revenir à la gestion des missions ?`,
-      confirmSaveBeforeExit: (c) => `💾 Avant de quitter, voulez-vous sauvegarder et publier les modifications de la mission 【${c}】 ?\n\n(OK = Sauvegarder et quitter ; Annuler = Quitter sans sauvegarder)`
-    },
-    ja: {
-      locale: 'ja-JP', pmLang: 'ja',
-      loginTitle: '🐹 HamsterTAK 戦術指揮統制システム',
-      loginSub: '既存の作戦コードを入力して入室するか、情報官トークンを入力して作戦を作成・管理してください',
-      lblMission: '🎯 作戦コード (Mission Code) *',
-      phMission: '例: rescue-01',
-      lblToken: '🔑 情報官 GitHub トークン (新規作成・編集・管理に必須)',
-      phToken: 'ghp_... (トークン無しは既存作戦の閲覧のみ可能)',
-      lblCallsign: '👤 コールサイン (Callsign)',
-      phCallsign: '例: Stephanie',
-      btnEnter: '🚀 認証して作戦に入室 (Enter Mission)',
-      btnChecking: '⏳ 作戦データと権限を確認中...',
-      btnScan: '🗂️ クラウド上の既存作戦をスキャン・管理 (要トークン)',
-      mmFolder: '📂 クラウド上の作戦フォルダ (`missions/`)',
-      loginHint: '🛡️ <strong>不正作成防止機構：</strong>有効なトークンを持たないユーザーは「既存の作戦」の閲覧のみ可能で、新規フォルダの乱造はできません。',
-      brand: '🐹黄金鼠マップ',
-      topMissionPrefix: '🎯 作戦:',
-      notLoggedIn: '未入室',
-      phTopToken: 'GitHub トークン',
-      phOwner: 'アカウント',
-      btnSave: '☁️ 保存配信',
-      btnVideo: '📺 映像監視',
-      btnManage: '🗂️ 作戦管理',
-      btnDelMission: '💣 作戦削除',
-      statusReady: '準備完了',
-      phTopCallsign: '👤 コールサイン',
-      gridHidden: '非表示',
-      gridLabel: 'グリッド',
-      unknownCoord: '不明な座標',
-      unnamed: '名称未設定ポイント',
-      unnamedZone: '名称未設定エリア',
-      noDesc: '備考なし',
-      coordPrefix: '座標：',
-      timePrefix: '更新：',
-      streamPrefix: '🎥 配信: ',
-      catDanger: '🔴 災害・危険規制区域',
-      catRescue: '🟡 要救助点・捜索目標区域',
-      catSupply: '🟢 物資拠点・救護所・安全区域',
-      catFriendly: '🔵 友軍部隊・指揮所・捜索隊',
-      optDanger: '🔴 災害・危険規制区域 (Red)',
-      optRescue: '🟡 要救助点・捜索目標区域 (Yellow)',
-      optSupply: '🟢 物資拠点・救護所・安全区域 (Green)',
-      optFriendly: '🔵 友軍部隊・指揮所・捜索隊 (Blue)',
-      fspTitle: '📋 地点・図形一覧',
-      fspEmpty: '現在マップ上にプロットされた地点や図形はありません',
-      shapePoint: '📍 地点',
-      shapePoly: '⬠ 多角形エリア',
-      shapeLine: '📏 ルート・線分',
-      btnFocus: '🎯 位置へ移動',
-      btnStreamOpen: '🎥 現場映像を開く',
-      btnEdit: '✏️ 編集 / 座標修正',
-      btnDel: '🗑️ 削除',
-      readonlyTip: '🔒 閲覧専用モード (トークン入力で編集可能)',
-      logTitle: '戦術ログ・通信掲示板',
-      logReadonlyTitle: '戦術ログ・通信板 (ロック中)',
-      logExpand: '▲ 展開',
-      logCollapse: '▼ 閉じる',
-      logLockedMsg: '🔒 掲示板と編集機能は保護されています<br>上部に書込権限のある GitHub トークンを入力してロックを解除してください。',
-      logEmpty: '記録はありません',
-      phChat: '状況報告を入力 (Enter で送信)...',
-      btnSendChat: '送信',
-      badgeChat: '💬 通信',
-      badgeAction: '🛠️ 操作',
-      anonOfficer: '匿名情報官',
-      modAddTitle: '📍 新規戦術オブジェクトの設定',
-      modEditTitle: '✏️ 内容・色・MGRS精密座標の編集',
-      modLblName: '名称 / 地点コード *',
-      modPhName: '例：国道9号168K土砂崩れ通行止め',
-      modLblCat: '戦術カテゴリーと色',
-      modLblMgrs: '🎯 MGRS 精密座標 (直接書き換えて位置を精密修正)',
-      modPhMgrs: '例: 51R UH 51909 65861',
-      modLblDesc: '現場状況 / 連絡先 / 要請メモ',
-      modPhDesc: '詳細情報を入力（ATAKでアイコンをタップすると表示されます）...',
-      modLblStream: '🎥 現場ライブ映像URL (任意・ポップアップ表示およびKML書込)',
-      modPhStream: '完全なストリームURLを入力 (http://... または https://...)',
-      btnCancelDel: '破棄して閉じる',
-      btnCancelClose: 'キャンセル',
-      btnConfirm: '適用する',
-      promptStream: '開きたいライブ映像ストリームの完全なURLを入力してください：',
-      alertEnterCode: '有効な作戦コード (Mission Code) を入力してください（例: rescue-01）！',
-      alertNoMission: (c) => `❌ 作戦【${c}】が見つかりません！\n\n新規作戦の作成には有効な情報官 GitHub トークンが必要です。`,
-      confirmCreateMission: (c) => `🆕 クラウド上に作戦【${c}】のデータがありません。\n\nトークン認証済みです。直ちに新規作戦【${c}】を作成しますか？`,
-      alertNeedTokenScan: '🔒 クラウド上の作戦フォルダをスキャン・管理するには、先に有効な GitHub トークンを入力してください！',
-      mmScanning: '⏳ GitHub の missions/ フォルダをスキャン中...',
-      mmZero: '0 件',
-      mmTotal: (n) => `合計 ${n} 件`,
-      mmEmpty: '現在クラウド上に作戦フォルダはありません',
-      mmBtnGo: '🚀 入室',
-      mmBtnKml: '📋 KML URL',
-      mmBtnDel: '🗑️ 削除',
-      alertCopiedKml: (c, u) => `✅ 作戦【${c}】の ATAK 購読URLをコピーしました：\n${u}`,
-      alertNeedTokenDel: '作戦を削除するには有効な情報官トークンが必要です！',
-      promptDelMission: (c) => `⚠️ 危険操作の確認！\n作戦【${c}】の全データをクラウドから永久に削除します！\n\n確認のため作戦コード「${c}」を入力してください：`,
-      alertDelCancelled: 'コードが一致しないため、削除を中止しました。',
-      alertDelSuccess: (c) => `✅ 作戦【${c}】をクラウドから完全に削除しました！`,
-      confirmClearLogs: (c) => `⚠️ 作戦【${c}】のすべての通信ログを消去してもよろしいですか？`,
-      alertReadonlyCreate: '閲覧モード：マーカーを追加するには有効な GitHub トークンを入力してください！',
-      alertBadMgrs: '❌ MGRS 座標の形式が正しくありません！\n例：51R UH 51909 65861',
-      alertLoginFirst: '先に作戦コードでログインしてください！',
-      alertFillGhInfo: '上部に GitHub トークン、アカウント、リポジトリ名を入力してください！',
-      alertPubSuccess: (c, u) => `作戦【${c}】の配信に成功しました！\n\nATAK 購読URL：\n${u}`,
-      confirmExitMission: (c) => `⚠️ 現在の作戦【${c}】を退出し、作戦管理画面に戻りますか？`,
-      confirmSaveBeforeExit: (c) => `💾 退出する前に、作戦【${c}】の現在の変更を「保存して配信」しますか？\n\n(「OK」で保存して退出 / 「キャンセル」で保存せず退出)`
-    },
-    ru: {
-      locale: 'ru-RU', pmLang: 'ru',
-      loginTitle: '🐹 Командный Пункт HamsterTAK',
-      loginSub: 'Введите существующий код операции или токен офицера связи для создания и управления',
-      lblMission: '🎯 Код операции (Mission Code) *',
-      phMission: 'напр.: rescue-01',
-      lblToken: '🔑 GitHub-токен офицера (Обязателен для создания и редактирования)',
-      phToken: 'ghp_... (Без токена доступен только просмотр существующих операций)',
-      lblCallsign: '👤 Ваш позывной (Callsign)',
-      phCallsign: 'напр.: Stephanie',
-      btnEnter: '🚀 Авторизоваться и войти в операцию',
-      btnChecking: '⏳ Проверка операции и прав доступа...',
-      btnScan: '🗂️ Сканировать и управлять операциями в облаке (Нужен токен)',
-      mmFolder: '📂 Активные папки операций (`missions/`)',
-      loginHint: '🛡️ <strong>Защита от спама:</strong> Без верного токена возможен только просмотр существующих операций в режиме чтения. Создание и удаление требует прав офицера!',
-      brand: '🐹 HamsterTAK',
-      topMissionPrefix: '🎯 Миссия:',
-      notLoggedIn: 'Нет',
-      phTopToken: 'GitHub-токен',
-      phOwner: 'Аккаунт',
-      btnSave: '☁️ Передать',
-      btnVideo: '📺 Видео',
-      btnManage: '🗂️ Миссии',
-      btnDelMission: '💣 Удалить',
-      statusReady: 'Готов',
-      phTopCallsign: '👤 Позывной',
-      gridHidden: 'Скрыта',
-      gridLabel: 'Сетка',
-      unknownCoord: 'Неизвестные координаты',
-      unnamed: 'Безымянный объект',
-      unnamedZone: 'Безымянный сектор',
-      noDesc: 'Без примечаний',
-      coordPrefix: 'Коорд.: ',
-      timePrefix: 'Обновл.: ',
-      streamPrefix: '🎥 Поток: ',
-      catDanger: '🔴 Опасная зона / Запретный сектор',
-      catRescue: '🟡 Точка эвакуации / Район поиска',
-      catSupply: '🟢 Пункт снабжения / Безопасная зона',
-      catFriendly: '🔵 Свои силы / Командный пункт / ПСО',
-      optDanger: '🔴 Опасная зона / Запретный сектор (Красный)',
-      optRescue: '🟡 Точка эвакуации / Район поиска (Желтый)',
-      optSupply: '🟢 Пункт снабжения / Безопасная зона (Зеленый)',
-      optFriendly: '🔵 Свои силы / Командный пункт (Синий)',
-      fspTitle: '📋 Сводка объектов и зон',
-      fspEmpty: 'На карте пока нет отмеченных точек или фигур.',
-      shapePoint: '📍 Точка',
-      shapePoly: '⬠ Полигон / Зона',
-      shapeLine: '📏 Линия / Маршрут',
-      btnFocus: '🎯 Центрировать',
-      btnStreamOpen: '🎥 Открыть видеопоток',
-      btnEdit: '✏️ Изм. / Коорд. MGRS',
-      btnDel: '🗑️ Удалить',
-      readonlyTip: '🔒 Режим чтения (Введите токен для редактирования)',
-      logTitle: 'Журнал и Радио',
-      logReadonlyTitle: 'Журнал и Радио (Только чтение)',
-      logExpand: '▲ Открыть',
-      logCollapse: '▼ Скрыть',
-      logLockedMsg: '🔒 Журнал и редактирование защищены<br>Введите действительный GitHub-токен с правами записи выше.',
-      logEmpty: 'Записей пока нет',
-      phChat: 'Введите радиограмму (Enter для отправки)...',
-      btnSendChat: 'Отправить',
-      badgeChat: '💬 Радио',
-      badgeAction: '🛠️ Действие',
-      anonOfficer: 'Неизвестный офицер',
-      modAddTitle: '📍 Новый тактический объект',
-      modEditTitle: '✏️ Изменить объект, цвет и координаты MGRS',
-      modLblName: 'Наименование / Код точки *',
-      modPhName: 'напр.: Пост наблюдения Альфа',
-      modLblCat: 'Тактическая категория и цвет',
-      modLblMgrs: '🎯 Точные координаты MGRS (Измените для перемещения)',
-      modPhMgrs: 'напр.: 51R UH 51909 65861',
-      modLblDesc: 'Обстановка / Контакты / Примечания',
-      modPhDesc: 'Подробная информация (отображается в ATAK при нажатии)...',
-      modLblStream: '🎥 Ссылка на видеопоток (Необязательно, для окна и KML)',
-      modPhStream: 'Полный URL потока (http://... или https://...)',
-      btnCancelDel: 'Отменить и удалить',
-      btnCancelClose: 'Закрыть',
-      btnConfirm: 'Применить',
-      promptStream: 'Введите полный URL видеопотока для открытия монитора:',
-      alertEnterCode: 'Введите корректный код операции, например rescue-01!',
-      alertNoMission: (c) => `❌ Операция 【${c}】 не найдена!\n\nСоздавать новые операции могут только офицеры с верным GitHub-токеном.`,
-      confirmCreateMission: (c) => `🆕 Операция 【${c}】 еще не существует в облаке.\n\nТокен подтвержден. Создать новую операцию 【${c}】 сейчас?`,
-      alertNeedTokenScan: '🔒 Сначала введите верный GitHub-токен выше для сканирования папок!',
-      mmScanning: '⏳ Сканирование папки missions/ на GitHub...',
-      mmZero: '0 операций',
-      mmTotal: (n) => `Всего: ${n}`,
-      mmEmpty: 'В облаке нет активных папок операций',
-      mmBtnGo: '🚀 Войти',
-      mmBtnKml: '📋 KML URL',
-      mmBtnDel: '🗑️ Удалить',
-      alertCopiedKml: (c, u) => `✅ Ссылка подписки ATAK для 【${c}】 скопирована:\n${u}`,
-      alertNeedTokenDel: 'Для удаления операции необходим действительный GitHub-токен!',
-      promptDelMission: (c) => `⚠️ ПОДТВЕРЖДЕНИЕ УДАЛЕНИЯ!\nВы навсегда удаляете операцию 【${c}】 со всеми данными из облака!\n\nВведите код «${c}» для подтверждения:`,
-      alertDelCancelled: 'Код не совпадает. Удаление отменено.',
-      alertDelSuccess: (c) => `✅ Папка операции 【${c}】 полностью удалена!`,
-      confirmClearLogs: (c) => `⚠️ Вы уверены, что хотите очистить весь журнал операции 【${c}】?`,
-      alertReadonlyCreate: 'Режим чтения: введите верный GitHub-токен для добавления меток!',
-      alertBadMgrs: '❌ Неверный формат координат MGRS!\nПример: 51R UH 51909 65861',
-      alertLoginFirst: 'Сначала войдите в операцию (Mission Code)!',
-      alertFillGhInfo: 'Заполните токен GitHub, аккаунт и имя репозитория сверху!',
-      alertPubSuccess: (c, u) => `Операция 【${c}】 успешно опубликована!\n\nСсылка для подписки ATAK:\n${u}`,
-      confirmExitMission: (c) => `⚠️ Вы уверены, что хотите выйти из операции 【${c}】 и вернуться в меню управления?`,
-      confirmSaveBeforeExit: (c) => `💾 Сохранить и передать текущие изменения операции 【${c}】 перед выходом?\n\n(ОК = Сохранить и выйти; Отмена = Выйти без сохранения)`
     }
   };
 
@@ -1435,6 +1008,16 @@
     const blob = new Blob([playerHtml], { type: 'text/html;charset=utf-8' });
     const blobUrl = URL.createObjectURL(blob);
     window.open(blobUrl, winName, winSpecs);
+  };
+
+  // [修復補回] 頂部「📺 視訊監控」按鈕點擊彈出輸入框函式！
+  window.promptOpenTacticalPopout = function() {
+    const lastUrl = localStorage.getItem('hamster_custom_stream_url') || '';
+    const input = prompt(T().promptStream, lastUrl);
+    if (input !== null && input.trim() !== '') {
+      localStorage.setItem('hamster_custom_stream_url', input.trim());
+      openTacticalStreamWindow(input.trim());
+    }
   };
 
   // ============================================================================
