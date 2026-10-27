@@ -112,5 +112,11 @@
     "user": "Stephanie",
     "type": "action",
     "text": "Updated \"Team Alpha\" [🟡⬇️ 前往目標點 (Move to)] (51R UH 51874 65756 (25.00006, 121.53219))"
+  },
+  {
+    "time": "2026/10/28 02:09:15",
+    "user": "Stephanie",
+    "type": "action",
+    "text": "Added \"Team Bravo\" [🟡 待援點 / 搜索目標區] (51R UH 51884 65849 (25.00090, 121.53229))"
   }
 ]
