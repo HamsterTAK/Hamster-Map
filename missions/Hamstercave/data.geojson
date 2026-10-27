@@ -27,15 +27,15 @@
         "category": "supply",
         "desc": "",
         "stream": "",
-        "coord": "51R UH 51961 65853 (25.00095, 121.53305)",
+        "coord": "51R UH 51981 65756 (25.00007, 121.53326)",
         "time": "2026/10/24 20:58:41 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          121.533052,
-          25.000945
+          121.533256,
+          25.00007
         ]
       }
     },
@@ -46,15 +46,15 @@
         "category": "danger",
         "desc": "",
         "stream": "",
-        "coord": "51R UH 51862 65862 (25.00101, 121.53207)",
+        "coord": "51R UH 51846 65846 (25.00087, 121.53191)",
         "time": "2026/10/27 17:25:53 (Stephanie)",
         "updatedBy": "Stephanie"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          121.532065,
-          25.001008
+          121.531915,
+          25.000867
         ]
       }
     },
@@ -99,38 +99,38 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "02",
+        "name": "Team Charlie",
         "category": "hold",
         "desc": "",
         "stream": "",
-        "coord": "51R UH 51927 65831 (25.00074, 121.53271)",
-        "time": "2026/10/28 01:18:42 (Neoyang)",
-        "updatedBy": "Neoyang"
+        "coord": "51R UH 51884 65800 (25.00046, 121.53229)",
+        "time": "2026/10/28 02:09:43 (Stephanie)",
+        "updatedBy": "Stephanie"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          121.532714,
-          25.000736
+          121.532295,
+          25.000459
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "01",
+        "name": "Team Alpha",
         "category": "goto",
         "desc": "",
         "stream": "",
-        "coord": "51R UH 51874 65756 (25.00006, 121.53219)",
-        "time": "2026/10/28 01:18:34 (Neoyang)",
-        "updatedBy": "Neoyang"
+        "coord": "51R UH 51834 65728 (24.99980, 121.53180)",
+        "time": "2026/10/28 02:08:55 (Stephanie)",
+        "updatedBy": "Stephanie"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          121.532194,
-          25.000056
+          121.531802,
+          24.999803
         ]
       }
     },
@@ -212,6 +212,63 @@
               25.000586
             ]
           ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Team Bravo",
+        "category": "goto",
+        "desc": "",
+        "stream": "",
+        "coord": "51R UH 51884 65849 (25.00090, 121.53229)",
+        "time": "2026/10/28 02:09:28 (Stephanie)",
+        "updatedBy": "Stephanie"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532285,
+          25.000897
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Stephanie",
+        "category": "friendly",
+        "desc": "",
+        "stream": "",
+        "coord": "51R UH 51880 65749 (25.00000, 121.53226)",
+        "time": "2026/10/28 02:11:32 (Stephanie)",
+        "updatedBy": "Stephanie"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532258,
+          24.999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "117",
+        "category": "friendly",
+        "desc": "",
+        "stream": "",
+        "coord": "51R UH 51900 65763 (25.00012, 121.53246)",
+        "time": "2026/10/28 02:11:41 (Stephanie)",
+        "updatedBy": "Stephanie"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532459,
+          25.000124
         ]
       }
     }
