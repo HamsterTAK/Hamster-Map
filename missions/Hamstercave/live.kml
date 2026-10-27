@@ -189,5 +189,28 @@ Dynasty 61, maintain altitude, turn right heading 270, Taipei Tower.
       </Style>
       <Point><coordinates>121.530923,25.000163,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[因因]]></name>
+      <description><![CDATA[[Mission: Hamstercave]
+[⚪🔴 緊急傷患 / CASEVAC 後送點]
+
+座標：51R UH 51938 65773 (25.00022, 121.53283)
+更新：2026/10/28 00:38:01 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff0000ff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.532832,25.000217,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
