@@ -225,7 +225,7 @@
     }
 
     /* ==========================================================================
-       右上角圖資下方「點位及圖形彙整」小方塊按鈕與展開面板樣式
+       右上角圖資下方「點位及圖形彙整」分類折疊手風琴 (Accordion) 樣式
        ========================================================================== */
     .feature-summary-control { position: relative; }
     .feature-summary-btn {
@@ -242,8 +242,8 @@
       font-family: system-ui, sans-serif;
     }
     #feature-summary-panel {
-      display: none; position: absolute; top: 0; right: 54px; width: 350px;
-      max-width: calc(100vw - 80px); max-height: 68vh;
+      display: none; position: absolute; top: 0; right: 54px; width: 360px;
+      max-width: calc(100vw - 80px); max-height: 72vh;
       background: rgba(15, 23, 42, 0.96); color: #f8fafc; border: 1px solid #475569;
       border-radius: 8px; box-shadow: 0 10px 28px rgba(0,0,0,0.75);
       flex-direction: column; overflow: hidden; z-index: 2000;
@@ -260,15 +260,44 @@
     }
     .fsp-close:hover { color: #fff; }
     #fsp-list {
-      flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px;
+      flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px;
     }
+
+    /* 分類折疊外框與標題列 */
+    .fsp-cat-group {
+      border: 1px solid #334155; border-radius: 6px; overflow: hidden; background: #0f172a;
+    }
+    .fsp-cat-header {
+      background: #1e293b; padding: 9px 12px; cursor: pointer; display: flex;
+      align-items: center; justify-content: space-between; font-size: 13px; font-weight: 700;
+      border-left: 4px solid #38bdf8; user-select: none; transition: background 0.15s;
+    }
+    .fsp-cat-header:hover { background: #26354d; }
+    .fsp-cat-badge {
+      background: #0f172a; color: #00ffcc; font-size: 11px; padding: 2px 8px;
+      border-radius: 10px; border: 1px solid #334155; font-family: monospace; font-weight: 800;
+    }
+    .fsp-cat-arrow {
+      font-size: 11px; color: #94a3b8; margin-left: 6px; transition: transform 0.2s; display: inline-block;
+    }
+    .fsp-cat-group.expanded .fsp-cat-arrow {
+      transform: rotate(90deg); color: #00ffcc;
+    }
+    .fsp-cat-items {
+      display: none; padding: 8px; flex-direction: column; gap: 8px; border-top: 1px solid #334155;
+      background: #0f172a;
+    }
+    .fsp-cat-group.expanded .fsp-cat-items {
+      display: flex;
+    }
+
     .fsp-card {
       background: #1e293b; border: 1px solid #334155; border-left: 4px solid #ef4444;
-      border-radius: 6px; padding: 10px 12px; font-size: 13px; transition: border-color 0.2s;
+      border-radius: 6px; padding: 9px 11px; font-size: 13px; transition: border-color 0.2s;
     }
     .fsp-card:hover { border-color: #38bdf8; }
     .fsp-card-title {
-      font-size: 15px; font-weight: bold; color: #f8fafc; cursor: pointer;
+      font-size: 14px; font-weight: bold; color: #f8fafc; cursor: pointer;
       display: flex; align-items: center; justify-content: space-between;
     }
     .fsp-card-title:hover { color: #38bdf8; }
@@ -740,6 +769,9 @@
   let isEditingExisting = false;
   let activeBriefingLayer = null;
 
+  // 記錄右上角「點位及圖形彙整」目前展開了哪些分類 (維持折疊狀態不跳動)
+  const expandedSummaryCategories = new Set();
+
   // 背景靜態輪詢防衝突與防回朔狀態變數
   let lastKnownGeoJsonFingerprint = '';
   let lastKnownLogsFingerprint = '';
@@ -894,6 +926,7 @@
       catGoto: '🟡⬇️ 前往目標點 (Move to)',
       catHold: '🟣🛡️ 固守 / 待命警戒區 (Hold)',
       catBriefing: '📜 任務簡報 / 區域公佈欄',
+      catShapesGroup: '⬠ 標定圖形與路線 (區域 / 線段)',
       optDanger: '🔴 災情 / 危險管制區 (Red)',
       optRescue: '🟡 待援點 / 搜索目標區 (Yellow)',
       optSupply: '🟢 物資站 / 醫療點 / 安全區 (Green)',
@@ -1017,6 +1050,7 @@
       catGoto: '🟡⬇️ Target Objective (Move to)',
       catHold: '🟣🛡️ Hold / Defensive Overwatch',
       catBriefing: '📜 Mission Briefing / Notice Board',
+      catShapesGroup: '⬠ Plotted Sectors & Routes (Polygons / Lines)',
       optDanger: '🔴 Hazard / Restricted Sector (Red)',
       optRescue: '🟡 Casualty / Search Objective (Yellow)',
       optSupply: '🟢 Logistics / Aid / Safe Harbour (Green)',
@@ -1102,18 +1136,18 @@
     return I18N[currentLang] || I18N.zh;
   }
 
-  // 戰術分類設定：針對新圖標指定專屬 PNG 檔名、KML 原色保留 (ffffffff) 與錨點
+  // 戰術分類設定：升級為 _v2.png (皆具備頂部 46px 透明緩衝區，確保 ATAK 標籤文字自動上移不重疊！)
   function getCategoryConfig(cat) {
     const t = T();
     const mapCfg = {
-      danger:   { label: t.catDanger,   webColor: '#ef4444', kmlColor: 'ff0000ff', kmlPolyColor: '660000ff', kmlIconFile: 'google_pin.png',   hotSpotX: '0.5', hotSpotY: '0.04' },
-      rescue:   { label: t.catRescue,   webColor: '#eab308', kmlColor: 'ff00ffff', kmlPolyColor: '6600ffff', kmlIconFile: 'google_pin.png',   hotSpotX: '0.5', hotSpotY: '0.04' },
-      supply:   { label: t.catSupply,   webColor: '#22c55e', kmlColor: 'ff00ff00', kmlPolyColor: '6600ff00', kmlIconFile: 'google_pin.png',   hotSpotX: '0.5', hotSpotY: '0.04' },
-      friendly: { label: t.catFriendly, webColor: '#3b82f6', kmlColor: 'ffff0000', kmlPolyColor: '66ff0000', kmlIconFile: 'google_pin.png',   hotSpotX: '0.5', hotSpotY: '0.04' },
-      casevac:  { label: t.catCasevac,  webColor: '#ffffff', kmlColor: 'ffffffff', kmlPolyColor: '660000ff', kmlIconFile: 'pin_casevac.png',  hotSpotX: '0.5', hotSpotY: '0.5'  },
-      goto:     { label: t.catGoto,     webColor: '#facc15', kmlColor: 'ffffffff', kmlPolyColor: '6600ffff', kmlIconFile: 'pin_goto.png',     hotSpotX: '0.5', hotSpotY: '0.08' },
-      hold:     { label: t.catHold,     webColor: '#a855f7', kmlColor: 'ffffffff', kmlPolyColor: '66ff00aa', kmlIconFile: 'pin_hold.png',     hotSpotX: '0.5', hotSpotY: '0.5'  },
-      briefing: { label: t.catBriefing, webColor: '#fbbf24', kmlColor: 'ffffffff', kmlPolyColor: '6600aaff', kmlIconFile: 'pin_briefing.png', hotSpotX: '0.5', hotSpotY: '0.5'  }
+      danger:   { label: t.catDanger,   webColor: '#ef4444', kmlColor: 'ff0000ff', kmlPolyColor: '660000ff', kmlIconFile: 'google_pin.png',      hotSpotX: '0.5', hotSpotY: '0.04' },
+      rescue:   { label: t.catRescue,   webColor: '#eab308', kmlColor: 'ff00ffff', kmlPolyColor: '6600ffff', kmlIconFile: 'google_pin.png',      hotSpotX: '0.5', hotSpotY: '0.04' },
+      supply:   { label: t.catSupply,   webColor: '#22c55e', kmlColor: 'ff00ff00', kmlPolyColor: '6600ff00', kmlIconFile: 'google_pin.png',      hotSpotX: '0.5', hotSpotY: '0.04' },
+      friendly: { label: t.catFriendly, webColor: '#3b82f6', kmlColor: 'ffff0000', kmlPolyColor: '66ff0000', kmlIconFile: 'google_pin.png',      hotSpotX: '0.5', hotSpotY: '0.04' },
+      casevac:  { label: t.catCasevac,  webColor: '#ef4444', kmlColor: 'ffffffff', kmlPolyColor: '660000ff', kmlIconFile: 'pin_casevac_v2.png',  hotSpotX: '0.5', hotSpotY: '0.28' },
+      goto:     { label: t.catGoto,     webColor: '#facc15', kmlColor: 'ffffffff', kmlPolyColor: '6600ffff', kmlIconFile: 'pin_goto_v2.png',     hotSpotX: '0.5', hotSpotY: '0.04' },
+      hold:     { label: t.catHold,     webColor: '#a855f7', kmlColor: 'ffffffff', kmlPolyColor: '66ff00aa', kmlIconFile: 'pin_hold_v2.png',     hotSpotX: '0.5', hotSpotY: '0.28' },
+      briefing: { label: t.catBriefing, webColor: '#fbbf24', kmlColor: 'ffffffff', kmlPolyColor: '6600aaff', kmlIconFile: 'pin_briefing_v2.png', hotSpotX: '0.5', hotSpotY: '0.28' }
     };
     return mapCfg[cat] || mapCfg.danger;
   }
@@ -1443,6 +1477,19 @@
     }
   };
 
+  // 點擊分類標題列時，切換展開/收合該分類底下的細項卡片
+  window.toggleSummaryCategory = function(groupKey) {
+    if (expandedSummaryCategories.has(groupKey)) {
+      expandedSummaryCategories.delete(groupKey);
+    } else {
+      expandedSummaryCategories.add(groupKey);
+    }
+    const groupEl = document.getElementById(`fsp-group-${groupKey}`);
+    if (groupEl) {
+      groupEl.classList.toggle('expanded', expandedSummaryCategories.has(groupKey));
+    }
+  };
+
   window.focusFeatureFromSummary = function(leafletId) {
     const layer = drawnItems.getLayer(leafletId);
     if (!layer) return;
@@ -1461,6 +1508,7 @@
     }, 250);
   };
 
+  // 📋 全新「分類折疊手風琴 (Accordion)」渲染引擎
   function renderFeatureSummaryList() {
     const countBadge = document.getElementById('feature-summary-count');
     const headerTitle = document.getElementById('fsp-header-title');
@@ -1483,46 +1531,95 @@
       return;
     }
 
-    listEl.innerHTML = layers.map(layer => {
+    // 定義 9 大分類桶 (8 種點位類別 + 1 種「多邊形/路線圖形」專屬類別)
+    const groupDefs = [
+      { key: 'danger',   label: t.catDanger,      color: '#ef4444', items: [] },
+      { key: 'rescue',   label: t.catRescue,      color: '#eab308', items: [] },
+      { key: 'supply',   label: t.catSupply,      color: '#22c55e', items: [] },
+      { key: 'friendly', label: t.catFriendly,    color: '#3b82f6', items: [] },
+      { key: 'casevac',  label: t.catCasevac,     color: '#ef4444', items: [] },
+      { key: 'goto',     label: t.catGoto,        color: '#facc15', items: [] },
+      { key: 'hold',     label: t.catHold,        color: '#a855f7', items: [] },
+      { key: 'briefing', label: t.catBriefing,    color: '#fbbf24', items: [] },
+      { key: 'shapes',   label: t.catShapesGroup, color: '#38bdf8', items: [] }
+    ];
+    const groupMap = {};
+    groupDefs.forEach(g => { groupMap[g.key] = g; });
+
+    layers.forEach(layer => {
       const props = (layer.feature && layer.feature.properties) ? layer.feature.properties : {};
       const cat = props.category || 'danger';
-      const cfg = getCategoryConfig(cat);
-      const layerId = L.stamp(layer);
+      if (!(layer instanceof L.Marker)) {
+        // 多邊形與折線歸入圖形分類，同時也保留自身顏色
+        groupMap['shapes'].items.push(layer);
+      } else if (groupMap[cat]) {
+        groupMap[cat].items.push(layer);
+      } else {
+        groupMap['danger'].items.push(layer);
+      }
+    });
 
-      let shapeType = t.shapePoint;
-      if (layer instanceof L.Polygon) shapeType = t.shapePoly;
-      else if (layer instanceof L.Polyline) shapeType = t.shapeLine;
+    // 只顯示目前有項目的分類 (count > 0)，點開分類才顯示細項卡片
+    const nonEmptyGroups = groupDefs.filter(g => g.items.length > 0);
 
-      const streamBtnHtml = props.stream ? `
-        <button class="popup-btn popup-btn-video" onclick="openTacticalStreamWindow('${escapeHTML(props.stream)}')">${t.btnStreamOpen}</button>
-      ` : '';
+    listEl.innerHTML = nonEmptyGroups.map(group => {
+      const isExpanded = expandedSummaryCategories.has(group.key);
+      const cardsHtml = group.items.map(layer => {
+        const props = (layer.feature && layer.feature.properties) ? layer.feature.properties : {};
+        const cat = props.category || 'danger';
+        const cfg = getCategoryConfig(cat);
+        const layerId = L.stamp(layer);
 
-      const briefingBtnHtml = (cat === 'briefing') ? `
-        <button class="popup-btn popup-btn-briefing" onclick="openBriefingPanelForLayer(drawnItems.getLayer(${layerId}))">${t.btnOpenBriefing}</button>
-      ` : '';
+        let shapeType = t.shapePoint;
+        if (layer instanceof L.Polygon) shapeType = t.shapePoly;
+        else if (layer instanceof L.Polyline) shapeType = t.shapeLine;
 
-      const editButtonsHtml = isTokenVerified ? `
-        <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">${t.btnEdit}</button>
-        <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">${t.btnDel}</button>
-      ` : '';
+        const streamBtnHtml = props.stream ? `
+          <button class="popup-btn popup-btn-video" onclick="openTacticalStreamWindow('${escapeHTML(props.stream)}')">${t.btnStreamOpen}</button>
+        ` : '';
+
+        const briefingBtnHtml = (cat === 'briefing') ? `
+          <button class="popup-btn popup-btn-briefing" onclick="openBriefingPanelForLayer(drawnItems.getLayer(${layerId}))">${t.btnOpenBriefing}</button>
+        ` : '';
+
+        const editButtonsHtml = isTokenVerified ? `
+          <button class="popup-btn popup-btn-edit" onclick="openEditModal(${layerId})">${t.btnEdit}</button>
+          <button class="popup-btn popup-btn-del" onclick="deleteLayerById(${layerId})">${t.btnDel}</button>
+        ` : '';
+
+        return `
+          <div class="fsp-card" style="border-left-color: ${cfg.webColor};">
+            <div class="fsp-card-title" onclick="focusFeatureFromSummary(${layerId})">
+              <span>${escapeHTML(props.name || t.unnamed)}</span>
+              <span class="fsp-type-tag">${shapeType}</span>
+            </div>
+            <div style="color:#cbd5e1; font-size:11px; font-weight:600; margin-top:2px;">${cfg.label}</div>
+            <hr style="border:0; border-top:1px solid #334155; margin:5px 0;">
+            <div style="white-space:pre-wrap; color:#e2e8f0; font-size:12px; line-height:1.4;">${escapeHTML(props.desc || t.noDesc)}</div>
+            ${props.stream ? `<div style="margin-top:4px; font-size:11px; color:#34d399; font-weight:bold; word-break:break-all;">${t.streamPrefix}${escapeHTML(props.stream)}</div>` : ''}
+            <div style="margin-top:6px; font-size:11px; color:#38bdf8; font-family:monospace; font-weight:bold;">${t.coordPrefix}${escapeHTML(props.coord || '')}</div>
+            <div style="margin-top:2px; font-size:11px; color:#94a3b8;">${t.timePrefix}${escapeHTML(props.time || '')}</div>
+            <div class="popup-btn-group">
+              <button class="popup-btn popup-btn-focus" onclick="focusFeatureFromSummary(${layerId})">${t.btnFocus}</button>
+              ${briefingBtnHtml}
+              ${streamBtnHtml}
+              ${editButtonsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
 
       return `
-        <div class="fsp-card" style="border-left-color: ${cfg.webColor};">
-          <div class="fsp-card-title" onclick="focusFeatureFromSummary(${layerId})">
-            <span>${escapeHTML(props.name || t.unnamed)}</span>
-            <span class="fsp-type-tag">${shapeType}</span>
+        <div class="fsp-cat-group ${isExpanded ? 'expanded' : ''}" id="fsp-group-${group.key}">
+          <div class="fsp-cat-header" style="border-left-color: ${group.color};" onclick="toggleSummaryCategory('${group.key}')">
+            <span>${group.label}</span>
+            <div style="display:flex; align-items:center;">
+              <span class="fsp-cat-badge">${group.items.length}</span>
+              <span class="fsp-cat-arrow">▶</span>
+            </div>
           </div>
-          <div style="color:#cbd5e1; font-size:12px; font-weight:600; margin-top:3px;">${cfg.label}</div>
-          <hr style="border:0; border-top:1px solid #334155; margin:6px 0;">
-          <div style="white-space:pre-wrap; color:#e2e8f0; font-size:12px; line-height:1.4;">${escapeHTML(props.desc || t.noDesc)}</div>
-          ${props.stream ? `<div style="margin-top:4px; font-size:11px; color:#34d399; font-weight:bold; word-break:break-all;">${t.streamPrefix}${escapeHTML(props.stream)}</div>` : ''}
-          <div style="margin-top:6px; font-size:11px; color:#38bdf8; font-family:monospace; font-weight:bold;">${t.coordPrefix}${escapeHTML(props.coord || '')}</div>
-          <div style="margin-top:2px; font-size:11px; color:#94a3b8;">${t.timePrefix}${escapeHTML(props.time || '')}</div>
-          <div class="popup-btn-group">
-            <button class="popup-btn popup-btn-focus" onclick="focusFeatureFromSummary(${layerId})">${t.btnFocus}</button>
-            ${briefingBtnHtml}
-            ${streamBtnHtml}
-            ${editButtonsHtml}
+          <div class="fsp-cat-items">
+            ${cardsHtml}
           </div>
         </div>
       `;
@@ -1700,7 +1797,7 @@
   }
 
   // ============================================================================
-  // 3. 戰術圖標引擎：同時產生網頁 SVG 與 ATAK 100% 支援的 64x64 標準 RGBA PNG
+  // 3. 戰術圖標引擎：全部改為 64x96 畫布 (頂部預留 44px 透明空氣區，讓 ATAK 文字自動往上推不重疊！)
   // ============================================================================
   function generateATAKWaterdropBase64() {
     const canvas = document.createElement('canvas');
@@ -1717,98 +1814,98 @@
     return canvas.toDataURL('image/png').split(',')[1];
   }
 
-  // ⚪🔴 ATAK 專用 64x64 白底正紅十字 PNG (pin_casevac.png)
+  // ⚪🔴 ATAK 專用 64x96 白底正紅十字 PNG (pin_casevac_v2.png，上半部留白推高文字)
   function generateATAKCasevacBase64() {
     const canvas = document.createElement('canvas');
-    canvas.width = 64; canvas.height = 64;
+    canvas.width = 64; canvas.height = 96;
     const ctx = canvas.getContext('2d');
     ctx.beginPath();
-    ctx.arc(32, 32, 26, 0, Math.PI * 2);
+    ctx.arc(32, 69, 21, 0, Math.PI * 2);
     ctx.fillStyle = '#ffffff'; ctx.fill();
-    ctx.lineWidth = 4; ctx.strokeStyle = '#0f172a'; ctx.stroke();
+    ctx.lineWidth = 3.5; ctx.strokeStyle = '#0f172a'; ctx.stroke();
     ctx.fillStyle = '#ef4444';
-    ctx.fillRect(26, 14, 12, 36);
-    ctx.fillRect(14, 26, 36, 12);
+    ctx.fillRect(27, 55, 10, 28);
+    ctx.fillRect(18, 64, 28, 10);
     return canvas.toDataURL('image/png').split(',')[1];
   }
 
-  // 🟡⬇️ ATAK 專用 64x64 亮黃色向下箭頭 PNG (pin_goto.png)
+  // 🟡⬇️ ATAK 專用 64x96 亮黃色向下箭頭 PNG (pin_goto_v2.png，上半部留白推高文字，尖端在 Y=92)
   function generateATAKGotoBase64() {
     const canvas = document.createElement('canvas');
-    canvas.width = 64; canvas.height = 64;
+    canvas.width = 64; canvas.height = 96;
     const ctx = canvas.getContext('2d');
     ctx.beginPath();
-    ctx.moveTo(22, 6);
-    ctx.lineTo(42, 6);
-    ctx.lineTo(42, 32);
-    ctx.lineTo(54, 32);
-    ctx.lineTo(32, 58);
-    ctx.lineTo(10, 32);
-    ctx.lineTo(22, 32);
+    ctx.moveTo(23, 46);
+    ctx.lineTo(41, 46);
+    ctx.lineTo(41, 68);
+    ctx.lineTo(52, 68);
+    ctx.lineTo(32, 92);
+    ctx.lineTo(12, 68);
+    ctx.lineTo(23, 68);
     ctx.closePath();
     ctx.fillStyle = '#facc15'; ctx.fill();
-    ctx.lineWidth = 4; ctx.strokeStyle = '#0f172a'; ctx.lineJoin = 'round'; ctx.stroke();
+    ctx.lineWidth = 3.5; ctx.strokeStyle = '#0f172a'; ctx.lineJoin = 'round'; ctx.stroke();
     return canvas.toDataURL('image/png').split(',')[1];
   }
 
-  // 🟣🛡️ ATAK 專用 64x64 紫色戰術盾牌 PNG (pin_hold.png)
+  // 🟣🛡️ ATAK 專用 64x96 紫色戰術盾牌 PNG (pin_hold_v2.png，上半部留白推高文字)
   function generateATAKHoldBase64() {
     const canvas = document.createElement('canvas');
-    canvas.width = 64; canvas.height = 64;
+    canvas.width = 64; canvas.height = 96;
     const ctx = canvas.getContext('2d');
     ctx.beginPath();
-    ctx.moveTo(32, 6);
-    ctx.lineTo(54, 14);
-    ctx.lineTo(54, 32);
-    ctx.bezierCurveTo(54, 46, 43, 55, 32, 59);
-    ctx.bezierCurveTo(21, 55, 10, 46, 10, 32);
-    ctx.lineTo(10, 14);
+    ctx.moveTo(32, 46);
+    ctx.lineTo(52, 53);
+    ctx.lineTo(52, 69);
+    ctx.bezierCurveTo(52, 81, 42, 89, 32, 93);
+    ctx.bezierCurveTo(22, 89, 12, 81, 12, 69);
+    ctx.lineTo(12, 53);
     ctx.closePath();
     ctx.fillStyle = '#9333ea'; ctx.fill();
-    ctx.lineWidth = 4; ctx.strokeStyle = '#ffffff'; ctx.lineJoin = 'round'; ctx.stroke();
+    ctx.lineWidth = 3.5; ctx.strokeStyle = '#ffffff'; ctx.lineJoin = 'round'; ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(32, 13);
-    ctx.lineTo(47, 19);
-    ctx.lineTo(47, 31);
-    ctx.bezierCurveTo(47, 41, 39, 48, 32, 51);
-    ctx.bezierCurveTo(25, 48, 17, 41, 17, 31);
-    ctx.lineTo(17, 19);
+    ctx.moveTo(32, 52);
+    ctx.lineTo(46, 57);
+    ctx.lineTo(46, 68);
+    ctx.bezierCurveTo(46, 77, 39, 83, 32, 86);
+    ctx.bezierCurveTo(25, 83, 18, 77, 18, 68);
+    ctx.lineTo(18, 57);
     ctx.closePath();
     ctx.fillStyle = '#a855f7'; ctx.fill();
     return canvas.toDataURL('image/png').split(',')[1];
   }
 
-  // 📜 ATAK 專用 64x64 琥珀金簡報卷軸 PNG (pin_briefing.png)
+  // 📜 ATAK 專用 64x96 琥珀金簡報卷軸 PNG (pin_briefing_v2.png，上半部留白推高文字)
   function generateATAKBriefingBase64() {
     const canvas = document.createElement('canvas');
-    canvas.width = 64; canvas.height = 64;
+    canvas.width = 64; canvas.height = 96;
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#fef3c7';
     ctx.strokeStyle = '#0f172a';
-    ctx.lineWidth = 3.5;
-    ctx.fillRect(14, 10, 36, 44);
-    ctx.strokeRect(14, 10, 36, 44);
+    ctx.lineWidth = 3;
+    ctx.fillRect(16, 50, 32, 36);
+    ctx.strokeRect(16, 50, 32, 36);
     ctx.fillStyle = '#f59e0b';
-    ctx.fillRect(10, 6, 44, 8);
-    ctx.strokeRect(10, 6, 44, 8);
-    ctx.fillRect(10, 50, 44, 8);
-    ctx.strokeRect(10, 50, 44, 8);
+    ctx.fillRect(12, 46, 40, 7);
+    ctx.strokeRect(12, 46, 40, 7);
+    ctx.fillRect(12, 84, 40, 7);
+    ctx.strokeRect(12, 84, 40, 7);
     ctx.strokeStyle = '#b45309';
-    ctx.lineWidth = 3.5;
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(20, 23); ctx.lineTo(44, 23);
-    ctx.moveTo(20, 32); ctx.lineTo(44, 32);
-    ctx.moveTo(20, 41); ctx.lineTo(36, 41);
+    ctx.moveTo(21, 61); ctx.lineTo(43, 61);
+    ctx.moveTo(21, 69); ctx.lineTo(43, 69);
+    ctx.moveTo(21, 77); ctx.lineTo(36, 77);
     ctx.stroke();
     return canvas.toDataURL('image/png').split(',')[1];
   }
 
   const ATAK_ICONS_BASE64 = {
     'google_pin.png': generateATAKWaterdropBase64(),
-    'pin_casevac.png': generateATAKCasevacBase64(),
-    'pin_goto.png': generateATAKGotoBase64(),
-    'pin_hold.png': generateATAKHoldBase64(),
-    'pin_briefing.png': generateATAKBriefingBase64()
+    'pin_casevac_v2.png': generateATAKCasevacBase64(),
+    'pin_goto_v2.png': generateATAKGotoBase64(),
+    'pin_hold_v2.png': generateATAKHoldBase64(),
+    'pin_briefing_v2.png': generateATAKBriefingBase64()
   };
 
   // 🎯 Draw Marker 專用：純紅色十字瞄準線 (無外圈、中心微點對齊落點 [16, 16])
@@ -2063,6 +2160,7 @@
     drawnItems.clearLayers();
     undoStack = [];
     tacticalLogs = [];
+    expandedSummaryCategories.clear();
     lastKnownGeoJsonFingerprint = '';
     lastKnownLogsFingerprint = '';
     hasUnsavedMapChanges = false;
@@ -2859,7 +2957,7 @@
   }
 
   // ============================================================================
-  // 9. 圖資轉 KML (採用頂部共用 <Style id="..."> + 行內雙重定義，確保 ATAK 100% 顯示圖標)
+  // 9. 圖資轉 KML (採用頂部共用 <Style id="..."> + 64x96 上半留空 PNG 圖標，確保 ATAK 標籤與圖示完美分離)
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
@@ -2880,7 +2978,6 @@
     const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const baseUrl = `https://${owner}.github.io/${repo}`;
 
-    // 建立頂層共用 Style 定義 (ATAK 最穩定的讀取格式)
     const allCats = ['danger', 'rescue', 'supply', 'friendly', 'casevac', 'goto', 'hold', 'briefing'];
     let sharedStyles = '';
     allCats.forEach(catKey => {
@@ -2890,7 +2987,7 @@
     <Style id="style_${catKey}">
       <IconStyle>
         <color>${cCfg.kmlColor}</color>
-        <scale>1.15</scale>
+        <scale>1.1</scale>
         <Icon>
           <href>${iconHref}</href>
         </Icon>
@@ -2939,7 +3036,7 @@
       <Style>
         <IconStyle>
           <color>${cfg.kmlColor}</color>
-          <scale>1.15</scale>
+          <scale>1.1</scale>
           <Icon>
             <href>${iconUrl}</href>
           </Icon>
@@ -3023,7 +3120,7 @@
   async function ensureGitHubIconFile(owner, repo, path, rawBase64, token) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
     const getRes = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-    if (getRes.ok) return; // 圖標已存在，跳過重複寫入以保護 CDN 快取
+    if (getRes.ok) return;
     await putGitHubFile(owner, repo, path, rawBase64, token, `Deploy ATAK icon ${path}`, true);
   }
 
@@ -3079,7 +3176,7 @@
       const kmlStr = generateKML(collection);
       const logsStr = JSON.stringify(tacticalLogs, null, 2);
 
-      // 確保 5 張 ATAK 專用 PNG 圖標皆已存在於倉庫根目錄
+      // 確保 5 張 64x96 頂部留空版 ATAK 專用 PNG 圖標皆已存在於倉庫根目錄
       for (const [fileName, b64Data] of Object.entries(ATAK_ICONS_BASE64)) {
         await ensureGitHubIconFile(owner, repo, fileName, b64Data, token);
       }
@@ -3170,7 +3267,7 @@
 
     if (isTokenVerified && !isChatInputFocused) {
       try {
-        const logRes = await fetch(`https://` + `${owner}.github.io/${repo}/missions/${currentMissionCode}/logs.json?t=${ts}`, { cache: 'no-store' });
+        const logRes = await fetch(`https://${owner}.github.io/${repo}/missions/${currentMissionCode}/logs.json?t=${ts}`, { cache: 'no-store' });
         if (logRes.ok) {
           const newLogs = await logRes.json();
           if (Array.isArray(newLogs)) {
