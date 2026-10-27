@@ -114,6 +114,44 @@
           25.000897
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Danger",
+        "category": "aborted",
+        "desc": "",
+        "stream": "",
+        "coord": "51R UH 51928 65819 (25.00063, 121.53273)",
+        "time": "2026/10/28 03:27:49 (Stephanie)",
+        "updatedBy": "Stephanie"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532728,
+          25.000627
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Accomplished",
+        "category": "completed",
+        "desc": "",
+        "stream": "",
+        "coord": "51R UH 51908 65820 (25.00064, 121.53253)",
+        "time": "2026/10/28 03:28:06 (Stephanie)",
+        "updatedBy": "Stephanie"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532529,
+          25.000639
+        ]
+      }
     }
   ]
 }
