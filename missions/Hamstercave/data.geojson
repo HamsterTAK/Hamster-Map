@@ -65,15 +65,15 @@
         "category": "friendly",
         "desc": "空中偵查組",
         "stream": "",
-        "coord": "51R UH 51900 65935 (25.00168, 121.53244)",
+        "coord": "51R UH 51924 65896 (25.00132, 121.53268)",
         "time": "2026/10/27 16:48:00 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          121.53244,
-          25.001678
+          121.53268,
+          25.001322
         ]
       }
     },
@@ -93,25 +93,6 @@
         "coordinates": [
           121.369706,
           25.072704
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "CI最正空姐",
-        "category": "friendly",
-        "desc": "UAS",
-        "stream": "",
-        "coord": "51R UH 51948 65881 (25.00119, 121.53291)",
-        "time": "2026/10/27 22:22:41 (Stephanie)",
-        "updatedBy": "Stephanie"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.532913,
-          25.001191
         ]
       }
     }
