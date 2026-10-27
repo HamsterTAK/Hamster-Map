@@ -2004,6 +2004,14 @@
         <line x1="11" y1="12" x2="25" y2="12" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>
         <line x1="11" y1="17" x2="25" y2="17" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>
         <line x1="11" y1="22" x2="20" y2="22" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>`;
+    } else if (cat === 'completed') {
+      innerSvg = `
+        <circle cx="18" cy="18" r="13.5" fill="#10b981" stroke="#ffffff" stroke-width="2.5"/>
+        <path d="M11 18l5 5 9-10" fill="none" stroke="#ffffff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+    } else if (cat === 'aborted') {
+      innerSvg = `
+        <path d="M9 9l18 18M27 9L9 27" fill="none" stroke="#ffffff" stroke-width="7.5" stroke-linecap="round"/>
+        <path d="M9 9l18 18M27 9L9 27" fill="none" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>`;
     } else {
       innerSvg = `
         <circle cx="18" cy="18" r="13.5" fill="${cfg.webColor}" stroke="#000000" stroke-width="2.5"/>
@@ -3033,7 +3041,7 @@
     const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const baseUrl = `https://${owner}.github.io/${repo}`;
 
-    const allCats = ['danger', 'rescue', 'supply', 'friendly', 'casevac', 'goto', 'hold', 'briefing'];
+    const allCats = ['danger', 'rescue', 'supply', 'friendly', 'casevac', 'goto', 'hold', 'briefing', 'completed', 'aborted'];
     let sharedStyles = '';
     allCats.forEach(catKey => {
       const cCfg = getCategoryConfig(catKey);
