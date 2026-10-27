@@ -1061,6 +1061,8 @@
       catGoto: '🟡⬇️ Target Objective (Move to)',
       catHold: '🟣🛡️ Hold / Defensive Overwatch',
       catBriefing: '📜 Mission Briefing / Notice Board',
+      catCompleted: '🟢✅ Task Completed / Objective Cleared',
+      catAborted: '🔴❌ Action Aborted / Objective Failed',
       catShapesGroup: '⬠ Plotted Sectors & Routes (Polygons / Lines)',
       optDanger: '🔴 Hazard / Restricted Sector (Red)',
       optRescue: '🟡 Casualty / Search Objective (Yellow)',
@@ -1070,6 +1072,8 @@
       optGoto: '🟡⬇️ Target Objective / Vector (Move to)',
       optHold: '🟣🛡️ Hold / Defensive Overwatch (Hold)',
       optBriefing: '📜 Mission Briefing / Notice Board (Briefing)',
+      optCompleted: '🟢✅ Task Completed / Cleared (Green Tick)',
+      optAborted: '🔴❌ Action Aborted / Failed (Red Cross)',
       fspTitle: '📋 Tactical Features Summary',
       fspEmpty: 'No tactical points or geometries currently plotted on the map.',
       shapePoint: '📍 Point',
@@ -1158,7 +1162,9 @@
       casevac:  { label: t.catCasevac,  webColor: '#ef4444', kmlColor: 'ffffffff', kmlPolyColor: '660000ff', kmlIconFile: 'pin_casevac_v2.png',  hotSpotX: '0.5', hotSpotY: '0.28' },
       goto:     { label: t.catGoto,     webColor: '#facc15', kmlColor: 'ffffffff', kmlPolyColor: '6600ffff', kmlIconFile: 'pin_goto_v2.png',     hotSpotX: '0.5', hotSpotY: '0.04' },
       hold:     { label: t.catHold,     webColor: '#a855f7', kmlColor: 'ffffffff', kmlPolyColor: '66ff00aa', kmlIconFile: 'pin_hold_v2.png',     hotSpotX: '0.5', hotSpotY: '0.28' },
-      briefing: { label: t.catBriefing, webColor: '#fbbf24', kmlColor: 'ffffffff', kmlPolyColor: '6600aaff', kmlIconFile: 'pin_briefing_v2.png', hotSpotX: '0.5', hotSpotY: '0.28' }
+      briefing: { label: t.catBriefing, webColor: '#fbbf24', kmlColor: 'ffffffff', kmlPolyColor: '6600aaff', kmlIconFile: 'pin_briefing_v2.png', hotSpotX: '0.5', hotSpotY: '0.28' },
+      completed: { label: t.catCompleted, webColor: '#10b981', kmlColor: 'ffffffff', kmlPolyColor: '6600ff00', kmlIconFile: 'pin_completed_v2.png', hotSpotX: '0.5', hotSpotY: '0.28' },
+      aborted:   { label: t.catAborted,   webColor: '#ef4444', kmlColor: 'ffffffff', kmlPolyColor: '660000ff', kmlIconFile: 'pin_aborted_v2.png',   hotSpotX: '0.5', hotSpotY: '0.28' }
     };
     return mapCfg[cat] || mapCfg.danger;
   }
@@ -1241,6 +1247,8 @@
     document.getElementById('opt-cat-goto').innerText = t.optGoto;
     document.getElementById('opt-cat-hold').innerText = t.optHold;
     document.getElementById('opt-cat-briefing').innerText = t.optBriefing;
+    document.getElementById('opt-cat-completed').innerText = t.optCompleted;
+    document.getElementById('opt-cat-aborted').innerText = t.optAborted;
     document.getElementById('ui-mod-mgrs').innerText = t.modLblMgrs;
     document.getElementById('feat-mgrs').placeholder = t.modPhMgrs;
     document.getElementById('ui-mod-desc').innerText = t.modLblDesc;
