@@ -190,5 +190,11 @@
     "user": "Stephanie",
     "type": "action",
     "text": "Moved \"CI最正空姐\" -> 51R UH 51948 65881 (25.00119, 121.53291)"
+  },
+  {
+    "time": "2026/10/27 22:22:58",
+    "user": "Stephanie",
+    "type": "action",
+    "text": "Published mission [Hamstercave] to cloud"
   }
 ]
