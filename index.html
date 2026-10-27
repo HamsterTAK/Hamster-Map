@@ -175,7 +175,6 @@
     #topbar input, #topbar select { background: #0f172a; color: #fff; }
     #ui-app-brand { white-space: nowrap; font-size: 13px; }
 
-    /* 頂部直接顯示當下任務可匯入 ATAK 的 KML 連結框 */
     .kml-link-badge {
       background: #0f172a; color: #00ffcc; border: 1px solid #10b981;
       padding: 3px 8px; border-radius: 4px; font-family: monospace; font-weight: bold;
@@ -446,12 +445,10 @@
     @media (max-width: 900px) {
       body, html { height: 100dvh; }
 
-      /* 1. 隱藏頂部重複的設定輸入框，釋放空間 */
       #gh-token, #gh-owner, #gh-repo, #user-callsign {
         display: none !important;
       }
 
-      /* 2. 頂部導覽列緊湊化 */
       #topbar {
         padding: 5px 8px;
         gap: 5px;
@@ -486,7 +483,6 @@
         font-size: 11px;
       }
 
-      /* 3. 左側與右上角地圖按鈕微縮 */
       .leaflet-touch .leaflet-bar a {
         width: 32px;
         height: 32px;
@@ -504,7 +500,6 @@
         max-height: 55dvh;
       }
 
-      /* 4. 底部座標列與右下角戰術留言板上下錯開 */
       #coord-bar {
         bottom: 6px;
         left: 50%;
@@ -534,7 +529,6 @@
         height: calc(100dvh - 96px);
       }
 
-      /* 5. 防止手機點擊輸入框時瀏覽器強制放大畫面 */
       input, select, textarea {
         font-size: 16px !important;
       }
@@ -736,7 +730,7 @@
 
 <script>
   // ============================================================================
-  // 0. 雙語字典 (I18N: 繁中 zh / 英式英語 UK en)
+  // 0. 雙語字典 (I18N: 繁中 zh / 英式英語 UK en) 與繁體中文 Geoman 翻譯庫
   // ============================================================================
   let savedLangPref = localStorage.getItem('hamster_lang') || 'zh';
   let currentLang = (savedLangPref === 'en') ? 'en' : 'zh';
@@ -757,6 +751,43 @@
     en: { flag: 'https://flagcdn.com/w40/gb.png', short: 'EN' }
   };
 
+  // 🇹🇼 徹底消滅簡體字：自訂正體繁體中文 Geoman 工具列語系字典
+  const GEOMAN_ZH_TW = {
+    tooltips: {
+      placeMarker: '點擊地圖以標定戰術點位',
+      firstVertex: '點擊地圖設定第一個頂點',
+      continueLine: '點擊繼續繪製，或雙擊完成繪製',
+      finishLine: '點擊任意既有頂點以完成路線',
+      finishPoly: '點擊起點以閉合多邊形區域',
+      finishRect: '點擊以完成矩形區域標定',
+      startCircle: '點擊設定圓心位置',
+      finishCircle: '點擊設定半徑以完成圓形',
+      placeCircleMarker: '點擊地圖放置圓形標記',
+      placeText: '點擊地圖輸入文字標籤'
+    },
+    actions: {
+      finish: '完成',
+      cancel: '取消',
+      removeLastVertex: '移除上一個頂點'
+    },
+    buttonTitles: {
+      drawMarkerButton: '標定戰術點位 (Marker)',
+      drawPolyButton: '繪製多邊形區域 (Polygon)',
+      drawLineButton: '繪製戰術路線 (Polyline)',
+      drawCircleButton: '繪製圓形區域',
+      drawRectButton: '繪製矩形區域 (Rectangle)',
+      editButton: '編輯圖形頂點 (Edit)',
+      dragButton: '拖曳移動圖資 (Drag)',
+      cutButton: '裁切多邊形',
+      deleteButton: '點擊刪除標記圖資 (Delete)',
+      drawCircleMarkerButton: '繪製圓點標記',
+      snappingButton: '頂點吸附對齊',
+      pinningButton: '共用頂點鎖定',
+      rotateButton: '旋轉圖形方位 (Rotate)',
+      drawTextButton: '新增文字'
+    }
+  };
+
   function setSystemStatus(text, ledState = 'ok') {
     const statusEl = document.getElementById('status');
     const ledEl = document.getElementById('status-led');
@@ -768,7 +799,6 @@
     }
   }
 
-  // 更新頂部導覽列左側的 ATAK KML 專屬連結顯示
   function updateTopbarKmlUrlDisplay() {
     const kmlEl = document.getElementById('current-kml-url');
     const badgeEl = document.getElementById('ui-kml-badge');
@@ -821,7 +851,7 @@
 
   const I18N = {
     zh: {
-      locale: 'zh-TW', pmLang: 'zh',
+      locale: 'zh-TW', pmLang: 'zh_tw',
       loginTitle: '🐹 HamsterTAK 戰術指揮系統',
       loginSub: '請輸入現有任務代號進入，或輸入情報官 Token 以創立/管理任務',
       lblMission: '🎯 任務代號 (Mission Code) *',
@@ -1072,17 +1102,18 @@
     return I18N[currentLang] || I18N.zh;
   }
 
+  // 戰術分類設定：針對新圖標指定專屬 PNG 檔名、KML 原色保留 (ffffffff) 與錨點
   function getCategoryConfig(cat) {
     const t = T();
     const mapCfg = {
-      danger:   { label: t.catDanger,   webColor: '#ef4444', kmlColor: 'ff0000ff', kmlPolyColor: '660000ff' },
-      rescue:   { label: t.catRescue,   webColor: '#eab308', kmlColor: 'ff00ffff', kmlPolyColor: '6600ffff' },
-      supply:   { label: t.catSupply,   webColor: '#22c55e', kmlColor: 'ff00ff00', kmlPolyColor: '6600ff00' },
-      friendly: { label: t.catFriendly, webColor: '#3b82f6', kmlColor: 'ffff0000', kmlPolyColor: '66ff0000' },
-      casevac:  { label: t.catCasevac,  webColor: '#ffffff', kmlColor: 'ff0000ff', kmlPolyColor: '660000ff' },
-      goto:     { label: t.catGoto,     webColor: '#facc15', kmlColor: 'ff00ffff', kmlPolyColor: '6600ffff' },
-      hold:     { label: t.catHold,     webColor: '#a855f7', kmlColor: 'ffff00aa', kmlPolyColor: '66ff00aa' },
-      briefing: { label: t.catBriefing, webColor: '#fbbf24', kmlColor: 'ff00aaff', kmlPolyColor: '6600aaff' }
+      danger:   { label: t.catDanger,   webColor: '#ef4444', kmlColor: 'ff0000ff', kmlPolyColor: '660000ff', kmlIconFile: 'google_pin.png',   hotSpotX: '0.5', hotSpotY: '0.04' },
+      rescue:   { label: t.catRescue,   webColor: '#eab308', kmlColor: 'ff00ffff', kmlPolyColor: '6600ffff', kmlIconFile: 'google_pin.png',   hotSpotX: '0.5', hotSpotY: '0.04' },
+      supply:   { label: t.catSupply,   webColor: '#22c55e', kmlColor: 'ff00ff00', kmlPolyColor: '6600ff00', kmlIconFile: 'google_pin.png',   hotSpotX: '0.5', hotSpotY: '0.04' },
+      friendly: { label: t.catFriendly, webColor: '#3b82f6', kmlColor: 'ffff0000', kmlPolyColor: '66ff0000', kmlIconFile: 'google_pin.png',   hotSpotX: '0.5', hotSpotY: '0.04' },
+      casevac:  { label: t.catCasevac,  webColor: '#ffffff', kmlColor: 'ffffffff', kmlPolyColor: '660000ff', kmlIconFile: 'pin_casevac.png',  hotSpotX: '0.5', hotSpotY: '0.5'  },
+      goto:     { label: t.catGoto,     webColor: '#facc15', kmlColor: 'ffffffff', kmlPolyColor: '6600ffff', kmlIconFile: 'pin_goto.png',     hotSpotX: '0.5', hotSpotY: '0.08' },
+      hold:     { label: t.catHold,     webColor: '#a855f7', kmlColor: 'ffffffff', kmlPolyColor: '66ff00aa', kmlIconFile: 'pin_hold.png',     hotSpotX: '0.5', hotSpotY: '0.5'  },
+      briefing: { label: t.catBriefing, webColor: '#fbbf24', kmlColor: 'ffffffff', kmlPolyColor: '6600aaff', kmlIconFile: 'pin_briefing.png', hotSpotX: '0.5', hotSpotY: '0.5'  }
     };
     return mapCfg[cat] || mapCfg.danger;
   }
@@ -1184,9 +1215,14 @@
     document.getElementById('bp-del-btn').innerText = t.btnDel;
 
     if (typeof map !== 'undefined' && map.pm) {
-      try { map.pm.setLang(t.pmLang); } catch (e) {}
+      try {
+        if (lang === 'zh') {
+          map.pm.setLang('zh_tw', GEOMAN_ZH_TW, 'en');
+        } else {
+          map.pm.setLang('en');
+        }
+      } catch (e) {}
       injectCustomToolbarIcons();
-      // 切換語系後重新綁定純紅十字準星圖標
       try {
         map.pm.Draw.Marker.setOptions({ markerStyle: { icon: TACTICAL_CROSSHAIR_ICON } });
       } catch (e) {}
@@ -1298,7 +1334,7 @@
   };
 
   // ============================================================================
-  // 1. 初始化底圖與圖資切換器
+  // 1. 初始化底圖與圖資切換器 (Open Topo Map 置於選單最頂端)
   // ============================================================================
   const map = L.map('map', { maxZoom: 22 }).setView([25.002, 121.533], 16);
 
@@ -1316,6 +1352,10 @@
   if (window.ResizeObserver) {
     new ResizeObserver(adjustMapHeight).observe(document.getElementById('topbar'));
   }
+
+  const openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    subdomains: ['a', 'b', 'c'], minZoom: 1, maxZoom: 22, maxNativeZoom: 17, attribution: '© OpenTopoMap'
+  });
 
   const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
     minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© Google Hybrid'
@@ -1341,10 +1381,6 @@
     minZoom: 0, maxZoom: 22, maxNativeZoom: 20, attribution: '© Google Satellite'
   });
 
-  const openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-    subdomains: ['a', 'b', 'c'], minZoom: 1, maxZoom: 22, maxNativeZoom: 17, attribution: '© OpenTopoMap'
-  });
-
   const nlscEMap = L.tileLayer('https://wmts.nlsc.gov.tw/wmts/EMAP/default/GoogleMapsCompatible/{z}/{y}/{x}', {
     maxZoom: 22, maxNativeZoom: 19, attribution: '© 內政部國土測繪中心'
   });
@@ -1354,14 +1390,15 @@
 
   const mgrsGridGroup = L.layerGroup().addTo(map);
 
+  // 🗺️ Open Topo Map 放在圖資選單最上面第一項！
   const baseMaps = {
+    "🧭 Open Topo Map": openTopo,
     "🛰️ Google Hybrid (Sat + Roads)": googleHybrid,
     "⛰️ TW_HAPPYMAN (Taiwan Topo)": twHappyman,
     "🚴 Cycle OSM (Topo / Trails)": cycleOsm,
     "✈️ Aviation Enroute Chart": aviationEnroute,
     "🗺️ Google Roadmap": googleRoadmap,
     "🌎 Google Satellite": googleSat,
-    "🧭 Open Topo Map": openTopo,
     "🇹🇼 NLSC E-Map (Taiwan)": nlscEMap,
     "📷 NLSC Ortho Photo": nlscPhoto
   };
@@ -1663,7 +1700,7 @@
   }
 
   // ============================================================================
-  // 3. 戰術圖標引擎 (純紅十字瞄準線 + 紅十字CASEVAC + 黃色箭頭 + 紫色盾牌 + 簡報卷軸)
+  // 3. 戰術圖標引擎：同時產生網頁 SVG 與 ATAK 100% 支援的 64x64 標準 RGBA PNG
   // ============================================================================
   function generateATAKWaterdropBase64() {
     const canvas = document.createElement('canvas');
@@ -1680,7 +1717,99 @@
     return canvas.toDataURL('image/png').split(',')[1];
   }
 
-  const ATAK_WATERDROP_RAW_BASE64 = generateATAKWaterdropBase64();
+  // ⚪🔴 ATAK 專用 64x64 白底正紅十字 PNG (pin_casevac.png)
+  function generateATAKCasevacBase64() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64; canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.arc(32, 32, 26, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff'; ctx.fill();
+    ctx.lineWidth = 4; ctx.strokeStyle = '#0f172a'; ctx.stroke();
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(26, 14, 12, 36);
+    ctx.fillRect(14, 26, 36, 12);
+    return canvas.toDataURL('image/png').split(',')[1];
+  }
+
+  // 🟡⬇️ ATAK 專用 64x64 亮黃色向下箭頭 PNG (pin_goto.png)
+  function generateATAKGotoBase64() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64; canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(22, 6);
+    ctx.lineTo(42, 6);
+    ctx.lineTo(42, 32);
+    ctx.lineTo(54, 32);
+    ctx.lineTo(32, 58);
+    ctx.lineTo(10, 32);
+    ctx.lineTo(22, 32);
+    ctx.closePath();
+    ctx.fillStyle = '#facc15'; ctx.fill();
+    ctx.lineWidth = 4; ctx.strokeStyle = '#0f172a'; ctx.lineJoin = 'round'; ctx.stroke();
+    return canvas.toDataURL('image/png').split(',')[1];
+  }
+
+  // 🟣🛡️ ATAK 專用 64x64 紫色戰術盾牌 PNG (pin_hold.png)
+  function generateATAKHoldBase64() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64; canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(32, 6);
+    ctx.lineTo(54, 14);
+    ctx.lineTo(54, 32);
+    ctx.bezierCurveTo(54, 46, 43, 55, 32, 59);
+    ctx.bezierCurveTo(21, 55, 10, 46, 10, 32);
+    ctx.lineTo(10, 14);
+    ctx.closePath();
+    ctx.fillStyle = '#9333ea'; ctx.fill();
+    ctx.lineWidth = 4; ctx.strokeStyle = '#ffffff'; ctx.lineJoin = 'round'; ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(32, 13);
+    ctx.lineTo(47, 19);
+    ctx.lineTo(47, 31);
+    ctx.bezierCurveTo(47, 41, 39, 48, 32, 51);
+    ctx.bezierCurveTo(25, 48, 17, 41, 17, 31);
+    ctx.lineTo(17, 19);
+    ctx.closePath();
+    ctx.fillStyle = '#a855f7'; ctx.fill();
+    return canvas.toDataURL('image/png').split(',')[1];
+  }
+
+  // 📜 ATAK 專用 64x64 琥珀金簡報卷軸 PNG (pin_briefing.png)
+  function generateATAKBriefingBase64() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64; canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fef3c7';
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 3.5;
+    ctx.fillRect(14, 10, 36, 44);
+    ctx.strokeRect(14, 10, 36, 44);
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(10, 6, 44, 8);
+    ctx.strokeRect(10, 6, 44, 8);
+    ctx.fillRect(10, 50, 44, 8);
+    ctx.strokeRect(10, 50, 44, 8);
+    ctx.strokeStyle = '#b45309';
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(20, 23); ctx.lineTo(44, 23);
+    ctx.moveTo(20, 32); ctx.lineTo(44, 32);
+    ctx.moveTo(20, 41); ctx.lineTo(36, 41);
+    ctx.stroke();
+    return canvas.toDataURL('image/png').split(',')[1];
+  }
+
+  const ATAK_ICONS_BASE64 = {
+    'google_pin.png': generateATAKWaterdropBase64(),
+    'pin_casevac.png': generateATAKCasevacBase64(),
+    'pin_goto.png': generateATAKGotoBase64(),
+    'pin_hold.png': generateATAKHoldBase64(),
+    'pin_briefing.png': generateATAKBriefingBase64()
+  };
 
   // 🎯 Draw Marker 專用：純紅色十字瞄準線 (無外圈、中心微點對齊落點 [16, 16])
   const TACTICAL_CROSSHAIR_ICON = L.divIcon({
@@ -1704,22 +1833,18 @@
     let innerSvg = '';
 
     if (cat === 'casevac') {
-      // ⚪🔴 白底紅十字 CASEVAC
       innerSvg = `
         <circle cx="18" cy="18" r="13.5" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
         <path d="M15 8h6v7h7v6h-7v7h-6v-7H8v-6h7V8z" fill="#ef4444"/>`;
     } else if (cat === 'goto') {
-      // 🟡⬇️ 黃色向下粗箭頭 (尖端對齊座標點 [18, 30])
       innerSvg = `
         <path d="M12 4h12v13h6L18 30 6 17h6V4z" fill="#facc15" stroke="#0f172a" stroke-width="2.5" stroke-linejoin="round"/>
         <path d="M14 6h8v11h4L18 26 10 17h4V6z" fill="#fef08a"/>`;
     } else if (cat === 'hold') {
-      // 🟣🛡️ 紫色戰術盾牌
       innerSvg = `
         <path d="M18 4l12 4.5v9.5c0 8-6 13.5-12 15-6-1.5-12-7-12-15V8.5L18 4z" fill="#9333ea" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round"/>
         <path d="M18 8l8 3v6.5c0 5.5-4 9.5-8 10.5-4-1-8-5-8-10.5V11l8-3z" fill="#a855f7"/>`;
     } else if (cat === 'briefing') {
-      // 📜 琥珀金卷軸公佈欄圖標
       innerSvg = `
         <rect x="7" y="5" width="22" height="26" rx="2" fill="#fef3c7" stroke="#0f172a" stroke-width="2.2"/>
         <rect x="5" y="3" width="26" height="5" rx="2.5" fill="#f59e0b" stroke="#0f172a" stroke-width="1.8"/>
@@ -1728,7 +1853,6 @@
         <line x1="11" y1="17" x2="25" y2="17" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>
         <line x1="11" y1="22" x2="20" y2="22" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>`;
     } else {
-      // 標準 CoT 圓點 (紅/黃/綠/藍)
       innerSvg = `
         <circle cx="18" cy="18" r="13.5" fill="${cfg.webColor}" stroke="#000000" stroke-width="2.5"/>
         <circle cx="18" cy="18" r="10.5" fill="none" stroke="#ffffff" stroke-width="2"/>
@@ -1951,7 +2075,6 @@
     await verifyGitHubToken();
   }
 
-  // 兩段式戰術防呆退出與切換任務彈窗
   window.switchMissionPrompt = async function() {
     const t = T();
     if (currentMissionCode) {
@@ -2231,7 +2354,7 @@
   });
 
   // ============================================================================
-  // 6. 恢復上一步 (Undo) 系統與 Geoman 工具列 (套用純紅十字瞄準線)
+  // 6. 恢復上一步 (Undo) 系統與 Geoman 工具列 (套用純紅十字瞄準線與正體繁中)
   // ============================================================================
   const drawnItems = new L.FeatureGroup().addTo(map);
   const MAX_UNDO_STEPS = 10;
@@ -2312,21 +2435,20 @@
     editMode: true, dragMode: true, cutPolygon: false, removalMode: true, rotateMode: true
   });
 
-  // 🎯 將 Geoman 的 Draw Marker 游標替換為「純紅色十字瞄準線」
   try {
     map.pm.Draw.Marker.setOptions({ markerStyle: { icon: TACTICAL_CROSSHAIR_ICON } });
   } catch (e) {}
 
   map.pm.Toolbar.createCustomControl({
     name: 'UndoAction', block: 'edit',
-    title: 'Undo (Ctrl+Z)',
+    title: '恢復上一步 (Ctrl+Z)',
     toggle: false, onClick: () => undoLastAction(), afterClick: () => {},
     className: 'leaflet-pm-icon-undo'
   });
 
   map.pm.Toolbar.createCustomControl({
     name: 'FullscreenAction', block: 'custom',
-    title: 'Fullscreen',
+    title: '切換全螢幕 (Fullscreen)',
     toggle: false, onClick: () => toggleFullScreenMode(), afterClick: () => {},
     className: 'leaflet-pm-icon-fullscreen'
   });
@@ -2496,7 +2618,6 @@
     isEditingExisting = false;
     document.getElementById('modal-overlay').style.display = 'none';
 
-    // 若標定的是「📜 任務簡報 / 區域公佈欄」，確認後自動在右側展開公佈欄讓情報官繼續編輯！
     if (cat === 'briefing') {
       openBriefingPanelForLayer(savedLayerRef);
     }
@@ -2612,7 +2733,6 @@
       layer._hasCoordUpdateListener = true;
     }
 
-    // 📜 若為卷軸公佈欄，點擊圖標時直接打開右側 420px 公佈欄抽屜，不跳出地圖小氣泡
     if (cat === 'briefing') {
       layer.unbindPopup();
       if (layer._briefingClickHandler) {
@@ -2739,7 +2859,7 @@
   }
 
   // ============================================================================
-  // 9. 圖資轉 KML
+  // 9. 圖資轉 KML (採用頂部共用 <Style id="..."> + 行內雙重定義，確保 ATAK 100% 顯示圖標)
   // ============================================================================
   function collectGeoJSON() {
     const collection = { type: 'FeatureCollection', features: [] };
@@ -2756,11 +2876,43 @@
 
   function generateKML(geojson) {
     const t = T();
-    let placemarks = '';
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
     const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
-    const waterdropPinUrl = `https://${owner}.github.io/${repo}/google_pin.png`;
+    const baseUrl = `https://${owner}.github.io/${repo}`;
 
+    // 建立頂層共用 Style 定義 (ATAK 最穩定的讀取格式)
+    const allCats = ['danger', 'rescue', 'supply', 'friendly', 'casevac', 'goto', 'hold', 'briefing'];
+    let sharedStyles = '';
+    allCats.forEach(catKey => {
+      const cCfg = getCategoryConfig(catKey);
+      const iconHref = `${baseUrl}/${cCfg.kmlIconFile}`;
+      sharedStyles += `
+    <Style id="style_${catKey}">
+      <IconStyle>
+        <color>${cCfg.kmlColor}</color>
+        <scale>1.15</scale>
+        <Icon>
+          <href>${iconHref}</href>
+        </Icon>
+        <hotSpot x="${cCfg.hotSpotX}" y="${cCfg.hotSpotY}" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>${cCfg.kmlColor}</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>${cCfg.kmlPolyColor}</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>`;
+    });
+
+    let placemarks = '';
     geojson.features.forEach(f => {
       const p = f.properties || {};
       const g = f.geometry;
@@ -2768,6 +2920,7 @@
 
       const cat = p.category || 'danger';
       const cfg = getCategoryConfig(cat);
+      const iconUrl = `${baseUrl}/${cfg.kmlIconFile}`;
       
       let streamHtmlLine = '';
       if (p.stream) {
@@ -2782,14 +2935,15 @@
     <Placemark>
       <name><![CDATA[${p.name || t.unnamed}]]></name>
       <description><![CDATA[${descText}]]></description>
+      <styleUrl>#style_${cat}</styleUrl>
       <Style>
         <IconStyle>
           <color>${cfg.kmlColor}</color>
-          <scale>1.1</scale>
+          <scale>1.15</scale>
           <Icon>
-            <href>${waterdropPinUrl}</href>
+            <href>${iconUrl}</href>
           </Icon>
-          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+          <hotSpot x="${cfg.hotSpotX}" y="${cfg.hotSpotY}" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffffffff</color>
@@ -2812,6 +2966,7 @@
     <Placemark>
       <name><![CDATA[${p.name || t.unnamedZone}]]></name>
       <description><![CDATA[${descText}]]></description>
+      <styleUrl>#style_${cat}</styleUrl>
       <Style>
         <LineStyle>
           <color>${cfg.kmlColor}</color>
@@ -2832,13 +2987,14 @@
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
     <name>HamsterTAK - Mission [${currentMissionCode}]</name>
+    ${sharedStyles}
     ${placemarks}
   </Document>
 </kml>`;
   }
 
   // ============================================================================
-  // 10. GitHub API 寫入、發布與刪除函式
+  // 10. GitHub API 寫入、發布與智慧圖標快取部署函式
   // ============================================================================
   async function putGitHubFile(owner, repo, path, content, token, message, isRawBase64 = false) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`;
@@ -2861,6 +3017,14 @@
       const err = await putRes.json();
       throw new Error(err.message || 'GitHub API Write Error');
     }
+  }
+
+  // 智慧檢查：若雲端已經存在該張 PNG 圖標就不再重複覆寫，確保 GitHub Pages CDN 永久秒讀不掉圖！
+  async function ensureGitHubIconFile(owner, repo, path, rawBase64, token) {
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const getRes = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (getRes.ok) return; // 圖標已存在，跳過重複寫入以保護 CDN 快取
+    await putGitHubFile(owner, repo, path, rawBase64, token, `Deploy ATAK icon ${path}`, true);
   }
 
   async function deleteGitHubFileIfExist(owner, repo, path, token, message) {
@@ -2915,7 +3079,11 @@
       const kmlStr = generateKML(collection);
       const logsStr = JSON.stringify(tacticalLogs, null, 2);
 
-      await putGitHubFile(owner, repo, 'google_pin.png', ATAK_WATERDROP_RAW_BASE64, token, `Deploy ATAK pin`, true);
+      // 確保 5 張 ATAK 專用 PNG 圖標皆已存在於倉庫根目錄
+      for (const [fileName, b64Data] of Object.entries(ATAK_ICONS_BASE64)) {
+        await ensureGitHubIconFile(owner, repo, fileName, b64Data, token);
+      }
+
       await putGitHubFile(owner, repo, getMissionFilePath('data.geojson'), geojsonStr, token, `[${currentMissionCode}] Update GeoJSON (${timeStr}${byWho})`);
       await putGitHubFile(owner, repo, getMissionFilePath('live.kml'), kmlStr, token, `[${currentMissionCode}] Update KML (${timeStr}${byWho})`);
       await putGitHubFile(owner, repo, getMissionFilePath('logs.json'), logsStr, token, `[${currentMissionCode}] Update Logs (${timeStr}${byWho})`);
@@ -2942,7 +3110,6 @@
     const isLoginOpen = document.getElementById('mission-login-overlay').style.display !== 'none';
     if (isLoginOpen) return;
 
-    // 防時光倒流機制：若剛透過 API 寫入或讀取未滿 65 秒，等待 GitHub Pages CDN 快取更新完畢再輪詢
     if (Date.now() - lastCloudWriteTimestamp < 65000) return;
 
     const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
@@ -2962,7 +3129,6 @@
     const isChatInputFocused = (document.activeElement && document.activeElement.id === 'log-input');
     const isBriefingInputFocused = (document.activeElement && (document.activeElement.id === 'bp-title-input' || document.activeElement.id === 'bp-content-input'));
 
-    // [地圖點位同步]：僅在未開啟彈窗、未處於繪圖模式、未在編輯公佈欄且本地無未發布修改時才靜默更新圖層
     if (!isModalOpen && !isDrawingOrEditing && !hasUnsavedMapChanges && !isBriefingInputFocused) {
       try {
         const geoRes = await fetch(`https://${owner}.github.io/${repo}/missions/${currentMissionCode}/data.geojson?t=${ts}`, { cache: 'no-store' });
@@ -2985,7 +3151,6 @@
               });
               renderFeatureSummaryList();
 
-              // 若隊員正開著某個卷軸公佈欄，同步刷新該公佈欄的顯示文字
               if (prevBriefingName) {
                 const updatedBriefingLayer = drawnItems.getLayers().find(l =>
                   l.feature && l.feature.properties && l.feature.properties.category === 'briefing' && l.feature.properties.name === prevBriefingName
@@ -3003,10 +3168,9 @@
       } catch (e) {}
     }
 
-    // [戰術留言板同步]：僅在情報官已解鎖 Token 且未停留在打字框時更新
     if (isTokenVerified && !isChatInputFocused) {
       try {
-        const logRes = await fetch(`https://${owner}.github.io/${repo}/missions/${currentMissionCode}/logs.json?t=${ts}`, { cache: 'no-store' });
+        const logRes = await fetch(`https://` + `${owner}.github.io/${repo}/missions/${currentMissionCode}/logs.json?t=${ts}`, { cache: 'no-store' });
         if (logRes.ok) {
           const newLogs = await logRes.json();
           if (Array.isArray(newLogs)) {
@@ -3024,7 +3188,6 @@
     }
   }
 
-  // 每 15 秒執行一次背景靜態 CDN 快取檢查 (0 API 消耗)
   setInterval(pollTacticalCloudUpdates, 15000);
 </script>
 </body>
