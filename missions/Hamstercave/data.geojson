@@ -152,6 +152,25 @@
           25.000163
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "因因",
+        "category": "casevac",
+        "desc": "",
+        "stream": "",
+        "coord": "51R UH 51938 65773 (25.00022, 121.53283)",
+        "time": "2026/10/28 00:38:01 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532832,
+          25.000217
+        ]
+      }
     }
   ]
 }
