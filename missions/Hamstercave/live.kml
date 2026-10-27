@@ -120,5 +120,74 @@
       </Style>
       <Point><coordinates>121.369706,25.072704,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[Team Bravo]]></name>
+      <description><![CDATA[[Mission: Hamstercave]
+[🟣🛡️ 固守 / 待命警戒區 (Hold)]
+
+座標：51R UH 51927 65831 (25.00074, 121.53271)
+更新：2026/10/28 00:34:36 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ffff00aa</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.532714,25.000736,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[Team Alpha]]></name>
+      <description><![CDATA[[Mission: Hamstercave]
+[🟡⬇️ 前往目標點 (Move to)]
+
+座標：51R UH 51874 65756 (25.00006, 121.53219)
+更新：2026/10/28 00:34:55 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff00ffff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.532194,25.000056,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[1028]]></name>
+      <description><![CDATA[[Mission: Hamstercave]
+[📜 任務簡報 / 區域公佈欄]
+Dynasty 61, maintain altitude, turn right heading 270, Taipei Tower.
+座標：51R UH 51746 65769 (25.00016, 121.53092)
+更新：2026/10/28 00:36:26 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff00aaff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.530923,25.000163,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
