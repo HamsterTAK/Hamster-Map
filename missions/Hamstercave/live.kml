@@ -121,12 +121,12 @@
       <Point><coordinates>121.369706,25.072704,0</coordinates></Point>
     </Placemark>
     <Placemark>
-      <name><![CDATA[Stephanie]]></name>
+      <name><![CDATA[CI最正空姐]]></name>
       <description><![CDATA[[Mission: Hamstercave]
 [🔵 友軍單位 / 搜救隊]
-UAS First Officer
-座標：51R UH 51928 65815 (25.00059, 121.53272)
-更新：2026/10/27 22:05:37 (Neoyang)]]></description>
+UAS
+座標：51R UH 51948 65881 (25.00119, 121.53291)
+更新：2026/10/27 22:22:41 (Stephanie)]]></description>
       <Style>
         <IconStyle>
           <color>ffff0000</color>
@@ -141,7 +141,7 @@ UAS First Officer
           <scale>1.0</scale>
         </LabelStyle>
       </Style>
-      <Point><coordinates>121.532725,25.000595,0</coordinates></Point>
+      <Point><coordinates>121.532913,25.001191,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
