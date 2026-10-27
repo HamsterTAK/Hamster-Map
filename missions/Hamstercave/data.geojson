@@ -95,6 +95,63 @@
           25.072704
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Team Bravo",
+        "category": "hold",
+        "desc": "",
+        "stream": "",
+        "coord": "51R UH 51927 65831 (25.00074, 121.53271)",
+        "time": "2026/10/28 00:34:36 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532714,
+          25.000736
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Team Alpha",
+        "category": "goto",
+        "desc": "",
+        "stream": "",
+        "coord": "51R UH 51874 65756 (25.00006, 121.53219)",
+        "time": "2026/10/28 00:34:55 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532194,
+          25.000056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "1028",
+        "category": "briefing",
+        "desc": "Dynasty 61, maintain altitude, turn right heading 270, Taipei Tower.",
+        "stream": "",
+        "coord": "51R UH 51746 65769 (25.00016, 121.53092)",
+        "time": "2026/10/28 00:36:26 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.530923,
+          25.000163
+        ]
+      }
     }
   ]
 }
