@@ -311,12 +311,12 @@
       <Point><coordinates>121.369706,25.072704,0</coordinates></Point>
     </Placemark>
     <Placemark>
-      <name><![CDATA[Team Bravo]]></name>
+      <name><![CDATA[02]]></name>
       <description><![CDATA[[Mission: Hamstercave]
 [🟣🛡️ 固守 / 待命警戒區 (Hold)]
 
 座標：51R UH 51927 65831 (25.00074, 121.53271)
-更新：2026/10/28 00:34:36 (Neoyang)]]></description>
+更新：2026/10/28 01:18:42 (Neoyang)]]></description>
       <styleUrl>#style_hold</styleUrl>
       <Style>
         <IconStyle>
@@ -335,12 +335,12 @@
       <Point><coordinates>121.532714,25.000736,0</coordinates></Point>
     </Placemark>
     <Placemark>
-      <name><![CDATA[Team Alpha]]></name>
+      <name><![CDATA[01]]></name>
       <description><![CDATA[[Mission: Hamstercave]
 [🟡⬇️ 前往目標點 (Move to)]
 
 座標：51R UH 51874 65756 (25.00006, 121.53219)
-更新：2026/10/28 00:34:55 (Neoyang)]]></description>
+更新：2026/10/28 01:18:34 (Neoyang)]]></description>
       <styleUrl>#style_goto</styleUrl>
       <Style>
         <IconStyle>
