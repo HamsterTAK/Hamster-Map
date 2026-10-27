@@ -406,5 +406,26 @@ Dynasty 61, maintain altitude, turn right heading 270, Taipei Tower.
       </Style>
       <Point><coordinates>121.532832,25.000217,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[邪惡祭壇]]></name>
+      <description><![CDATA[[Mission: Hamstercave]
+[🔴 災情 / 危險管制區]
+
+座標：51R UH 51823 65798 (25.00043, 121.53169)
+更新：2026/10/28 02:06:17 (Stephanie)]]></description>
+      <styleUrl>#style_danger</styleUrl>
+      <Style>
+        <LineStyle>
+          <color>ff0000ff</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>660000ff</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
+      <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.53191,25.000586,0 121.531663,25.000649,0 121.531464,25.000493,0 121.531466,25.000289,0 121.531717,25.000207,0 121.53191,25.000586,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
+    </Placemark>
   </Document>
 </kml>
