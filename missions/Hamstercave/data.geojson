@@ -99,12 +99,12 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Team Bravo",
+        "name": "02",
         "category": "hold",
         "desc": "",
         "stream": "",
         "coord": "51R UH 51927 65831 (25.00074, 121.53271)",
-        "time": "2026/10/28 00:34:36 (Neoyang)",
+        "time": "2026/10/28 01:18:42 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
@@ -118,12 +118,12 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Team Alpha",
+        "name": "01",
         "category": "goto",
         "desc": "",
         "stream": "",
         "coord": "51R UH 51874 65756 (25.00006, 121.53219)",
-        "time": "2026/10/28 00:34:55 (Neoyang)",
+        "time": "2026/10/28 01:18:34 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
