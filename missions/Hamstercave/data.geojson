@@ -83,9 +83,9 @@
         "name": "林口文化二路忠孝二路",
         "category": "danger",
         "desc": "",
-        "stream": "https://cctvatis4.ntpc.gov.tw/hls/C000184",
+        "stream": "https://cctvatis4.ntpc.gov.tw/hls/C000184/live.m3u8",
         "coord": "51R UH 35570 73990 (25.07270, 121.36971)",
-        "time": "2026/10/27 20:22:43 (Stephanie)",
+        "time": "2026/10/27 20:23:51 (Stephanie)",
         "updatedBy": "Stephanie"
       },
       "geometry": {
