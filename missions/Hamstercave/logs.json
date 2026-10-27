@@ -142,5 +142,11 @@
     "user": "Stephanie",
     "type": "action",
     "text": "Updated \"Team Charlie\" [🟣🛡️ 固守 / 待命警戒區 (Hold)] (51R UH 51826 65741 (24.99991, 121.53172))"
+  },
+  {
+    "time": "2026/10/28 02:10:34",
+    "user": "Stephanie",
+    "type": "action",
+    "text": "Moved \"Team Charlie\" -> 51R UH 51885 65814 (25.00058, 121.53230)"
   }
 ]
