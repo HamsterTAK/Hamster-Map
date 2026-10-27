@@ -120,5 +120,28 @@
       </Style>
       <Point><coordinates>121.369706,25.072704,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[Stephanie]]></name>
+      <description><![CDATA[[Mission: Hamstercave]
+[🔵 友軍單位 / 搜救隊]
+UAS First Officer
+座標：51R UH 51947 65884 (25.00122, 121.53291)
+更新：2026/10/27 22:05:37 (Neoyang)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ffff0000</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.532908,25.001218,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
