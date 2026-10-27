@@ -85,7 +85,7 @@
     .status-led.busy {
       background-color: #f59e0b;
       box-shadow: 0 0 8px #f59e0b, 0 0 14px #f59e0b;
-      animation: breathe-amber 0.8s infinite ease-in-out;
+      animation: breathe-amber 0.9s infinite ease-in-out;
     }
     .status-led.error {
       background-color: #ef4444;
@@ -162,7 +162,7 @@
     .login-hint { margin-top: 12px; font-size: 11px; color: #64748b; text-align: left; background: #0f172a; padding: 10px; border-radius: 6px; line-height: 1.5; }
 
     /* ==========================================================================
-       頂部導覽列 (緊湊單行排版)
+       頂部導覽列 (緊湊單行排版 + ATAK KML 專屬連結複製框)
        ========================================================================== */
     #topbar {
       display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
@@ -174,18 +174,30 @@
     }
     #topbar input, #topbar select { background: #0f172a; color: #fff; }
     #ui-app-brand { white-space: nowrap; font-size: 13px; }
-    .mission-badge {
-      background: #0f172a; color: #00ffcc; border: 1px solid #00ffcc;
-      padding: 3px 7px; border-radius: 4px; font-family: monospace; font-weight: bold;
-      display: flex; align-items: center; gap: 5px; cursor: pointer; white-space: nowrap;
-      font-size: 12px;
+
+    /* 新增：頂部直接顯示當下任務可匯入 ATAK 的 KML 連結框 */
+    .kml-link-badge {
+      background: #0f172a; color: #00ffcc; border: 1px solid #10b981;
+      padding: 3px 8px; border-radius: 4px; font-family: monospace; font-weight: bold;
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap;
+      font-size: 11px; max-width: 320px; overflow: hidden; text-overflow: ellipsis;
+      transition: all 0.15s;
     }
+    .kml-link-badge:hover {
+      border-color: #00ffcc; background: #1e293b;
+      box-shadow: 0 0 8px rgba(0, 255, 204, 0.25);
+    }
+    #current-kml-url {
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      color: #38bdf8;
+    }
+
     .btn { cursor: pointer; font-weight: 600; border: none !important; color: white; transition: opacity 0.2s; white-space: nowrap; }
     .btn:hover:not(:disabled) { opacity: 0.9; }
     .btn-save { background: #ef4444; }
     .btn-atak { background: #3b82f6; }
     .btn-video { background: #059669; }
-    .btn-manage { background: #0284c7; display: none; }
+    .btn-manage { background: #0284c7; }
     .btn-del-mission { background: #7f1d1d; color: #fecaca; display: none; }
     .btn-del-mission:hover { background: #dc2626; color: #fff; }
 
@@ -382,12 +394,12 @@
     @media (max-width: 900px) {
       body, html { height: 100dvh; }
 
-      /* 1. 隱藏頂部重複的設定輸入框 (皆可點擊任務徽章回登入卡修改)，釋放 70% 空間 */
+      /* 1. 隱藏頂部重複的設定輸入框，釋放空間 */
       #gh-token, #gh-owner, #gh-repo, #user-callsign {
         display: none !important;
       }
 
-      /* 2. 頂部導覽列緊湊化：確保最多兩排、按鈕自動均分不擠壓 */
+      /* 2. 頂部導覽列緊湊化 */
       #topbar {
         padding: 5px 8px;
         gap: 5px;
@@ -395,9 +407,10 @@
       #ui-app-brand {
         font-size: 12px;
       }
-      .mission-badge {
+      .kml-link-badge {
         padding: 2px 6px;
-        font-size: 11px;
+        font-size: 10px;
+        max-width: 155px;
       }
       .right-group {
         margin-left: auto;
@@ -421,7 +434,7 @@
         font-size: 11px;
       }
 
-      /* 3. 左側與右上角地圖按鈕微縮，避免在小螢幕遮擋過多圖資 */
+      /* 3. 左側與右上角地圖按鈕微縮 */
       .leaflet-touch .leaflet-bar a {
         width: 32px;
         height: 32px;
@@ -439,7 +452,7 @@
         max-height: 55dvh;
       }
 
-      /* 4. 底部座標列與右下角戰術留言板上下錯開，絕不重疊 */
+      /* 4. 底部座標列與右下角戰術留言板上下錯開 */
       #coord-bar {
         bottom: 6px;
         left: 50%;
@@ -461,7 +474,7 @@
         height: 170px;
       }
 
-      /* 5. 防止手機點擊輸入框時瀏覽器強制放大畫面導致版面歪斜 */
+      /* 5. 防止手機點擊輸入框時瀏覽器強制放大畫面 */
       input, select, textarea {
         font-size: 16px !important;
       }
@@ -469,14 +482,13 @@
         padding: 18px 16px;
       }
     }
-    
   </style>
 </head>
 <body class="readonly-mode">
 
 <div id="mission-login-overlay">
   <div class="login-card">
-    <!-- 登入頁頂部小國旗語言切換器 (僅保留 繁中 / EN UK) -->
+    <!-- 登入頁頂部小國旗語言切換器 (繁中 / EN UK) -->
     <div class="login-lang-bar">
       <div class="lang-switcher">
         <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')"><img src="https://flagcdn.com/w40/tw.png" alt="TW"> 繁中</button>
@@ -521,10 +533,12 @@
 
 <div id="topbar">
   <strong id="ui-app-brand">🐹黃金鼠圖資</strong>
-  <div class="mission-badge" onclick="switchMissionPrompt()" id="ui-mission-badge">
-    <span id="ui-top-mission-prefix">🎯 任務:</span>
-    <span id="current-mission-label">未登入</span>
-    <span style="font-size:10px; color:#94a3b8;">🔄</span>
+
+  <!-- 取代原本重複的任務名稱，改為直接顯示當下任務可匯入 ATAK 的 KML 連結（點擊一鍵複製） -->
+  <div class="kml-link-badge" onclick="copyCurrentMissionKml()" id="ui-kml-badge" title="點擊一鍵複製當前任務的 ATAK KML 訂閱網址">
+    <span id="ui-top-kml-prefix">📲 ATAK KML:</span>
+    <span id="current-kml-url">尚未載入任務</span>
+    <span style="font-size:11px;">📋</span>
   </div>
 
   <input type="password" id="gh-token" placeholder="GitHub Token (寫入密碼)" style="width:120px;" />
@@ -537,7 +551,7 @@
   <button class="btn btn-del-mission" id="btn-delete-mission" onclick="deleteMissionByCode(currentMissionCode)">💣 刪除此任務</button>
   
   <div class="right-group">
-    <!-- 1.9秒呼吸燈號 + 任務狀態顯示 -->
+    <!-- 1.9秒呼吸燈號 + 任務名稱顯示 -->
     <div class="status-container" title="Tactical System Telemetry Status">
       <span id="status-led" class="status-led"></span>
       <span id="status">準備就緒</span>
@@ -638,6 +652,12 @@
   let activeLayer = null;
   let isEditingExisting = false;
 
+  // 背景靜態輪詢防衝突與防回朔狀態變數
+  let lastKnownGeoJsonFingerprint = '';
+  let lastKnownLogsFingerprint = '';
+  let hasUnsavedMapChanges = false;
+  let lastCloudWriteTimestamp = 0;
+
   const LANG_META = {
     zh: { flag: 'https://flagcdn.com/w40/tw.png', short: '繁中' },
     en: { flag: 'https://flagcdn.com/w40/gb.png', short: 'EN' }
@@ -653,6 +673,31 @@
       else if (ledState === 'error') ledEl.classList.add('error');
     }
   }
+
+  // 更新頂部導覽列左側的 ATAK KML 專屬連結顯示
+  function updateTopbarKmlUrlDisplay() {
+    const kmlEl = document.getElementById('current-kml-url');
+    const badgeEl = document.getElementById('ui-kml-badge');
+    if (!kmlEl) return;
+    if (!currentMissionCode) {
+      kmlEl.innerText = T().notLoggedIn;
+      if (badgeEl) badgeEl.title = '';
+      return;
+    }
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
+    const fullKmlUrl = `https://${owner}.github.io/${repo}/missions/${currentMissionCode}/live.kml`;
+    kmlEl.innerText = fullKmlUrl;
+    if (badgeEl) badgeEl.title = `${T().kmlBadgeTip}\n${fullKmlUrl}`;
+  }
+
+  window.copyCurrentMissionKml = function() {
+    if (!currentMissionCode) {
+      alert(T().alertLoginFirst);
+      return;
+    }
+    copyMissionKmlUrl(currentMissionCode);
+  };
 
   function injectCustomToolbarIcons() {
     const undoIconEl = document.querySelector('.leaflet-pm-icon-undo');
@@ -697,8 +742,9 @@
       mmFolder: '📂 雲端現有任務資料夾 (`missions/`)',
       loginHint: '🛡️ <strong>安全防亂創機制：</strong>路人若無正確 Token，只能進入「已經存在」的任務唯讀觀看，<strong>絕對無法創立新任務或產生垃圾資料夾</strong>！只有驗證通過的 Token 才能創立或刪除任務。',
       brand: '🐹黃金鼠圖資',
-      topMissionPrefix: '🎯 任務:',
-      notLoggedIn: '未登入',
+      topKmlPrefix: '📲 ATAK KML:',
+      kmlBadgeTip: '點擊一鍵複製當前任務的 ATAK KML 訂閱網址：',
+      notLoggedIn: '未載入任務',
       phTopToken: 'GitHub Token (寫入密碼)',
       phOwner: '帳號',
       btnSave: '☁️ 儲存並發布',
@@ -781,7 +827,7 @@
       alertBadMgrs: '❌ MGRS 座標格式不正確！\n請輸入標準 MGRS 格式，例如：51R UH 51909 65861',
       alertLoginFirst: '請先登入 Mission Code！',
       alertFillGhInfo: '請先在上方輸入 GitHub Token、GitHub 帳號與 Repo 名稱！',
-      alertPubSuccess: (c, u) => `🟢 任務【${c}】發布成功！\n\n此任務專屬 ATAK 訂閱網址：\n${u}`,
+      alertPubSuccess: (c, u) => `任務【${c}】發布成功！\n\n此任務專屬 ATAK 訂閱網址：\n${u}`,
       confirmExitMission: (c) => `⚠️ 確定要退出當前任務【${c}】並返回任務管理畫面嗎？`,
       confirmSaveBeforeExit: (c) => `💾 離開前，是否要先「儲存並發布」任務【${c}】目前的圖資變更？\n\n(按「確定」自動儲存並退出；按「取消」不儲存直接退出)`
     },
@@ -801,8 +847,9 @@
       mmFolder: '📂 Active Cloud Mission Directories (`missions/`)',
       loginHint: '🛡️ <strong>Unauthorised Creation Safeguard:</strong> Personnel without a valid Token may only view existing operations in read-only mode. Creating or purging mission databases requires verified Officer credentials.',
       brand: '🐹 HamsterTAK',
-      topMissionPrefix: '🎯 Mission:',
-      notLoggedIn: 'None',
+      topKmlPrefix: '📲 ATAK KML:',
+      kmlBadgeTip: 'Click to copy the ATAK KML subscription URL for this mission:',
+      notLoggedIn: 'No Mission',
       phTopToken: 'GitHub Token (Key)',
       phOwner: 'Account',
       btnSave: '☁️ Publish',
@@ -951,10 +998,9 @@
     document.getElementById('ui-login-hint').innerHTML = t.loginHint;
 
     document.getElementById('ui-app-brand').innerText = t.brand;
-    document.getElementById('ui-top-mission-prefix').innerText = t.topMissionPrefix;
-    if (!currentMissionCode) {
-      document.getElementById('current-mission-label').innerText = t.notLoggedIn;
-    }
+    document.getElementById('ui-top-kml-prefix').innerText = t.topKmlPrefix;
+    updateTopbarKmlUrlDisplay();
+
     document.getElementById('gh-token').placeholder = t.phTopToken;
     document.getElementById('gh-owner').placeholder = t.phOwner;
     document.getElementById('btn-publish').innerText = t.btnSave;
@@ -1091,7 +1137,6 @@
     window.open(blobUrl, winName, winSpecs);
   };
 
-  // [修復補回] 頂部「📺 視訊監控」按鈕點擊彈出輸入框函式！
   window.promptOpenTacticalPopout = function() {
     const lastUrl = localStorage.getItem('hamster_custom_stream_url') || '';
     const input = prompt(T().promptStream, lastUrl);
@@ -1113,6 +1158,7 @@
       const topbarHeight = topbar.offsetHeight;
       mapEl.style.height = `calc(100% - ${topbarHeight}px)`;
       map.invalidateSize();
+      setTimeout(() => map.invalidateSize(), 150);
     }
   }
   window.addEventListener('resize', adjustMapHeight);
@@ -1661,7 +1707,7 @@
 
   window.openMissionManagerModal = async function() {
     const exited = await switchMissionPrompt();
-    if (exited) {
+    if (exited && isTokenVerified) {
       loadMissionDirectoryList();
     }
   };
@@ -1673,13 +1719,16 @@
     const newUrl = `${window.location.pathname}?mission=${encodeURIComponent(currentMissionCode)}`;
     window.history.replaceState({}, '', newUrl);
 
-    document.getElementById('current-mission-label').innerText = currentMissionCode;
+    updateTopbarKmlUrlDisplay();
     document.getElementById('mission-login-overlay').style.display = 'none';
     adjustMapHeight();
 
     drawnItems.clearLayers();
     undoStack = [];
     tacticalLogs = [];
+    lastKnownGeoJsonFingerprint = '';
+    lastKnownLogsFingerprint = '';
+    hasUnsavedMapChanges = false;
     cleanAndRefreshUndoUI();
     renderFeatureSummaryList();
 
@@ -1746,6 +1795,7 @@
       if (currentMissionCode === targetCode) {
         localStorage.removeItem('hamster_last_mission');
         currentMissionCode = '';
+        updateTopbarKmlUrlDisplay();
         document.getElementById('login-mission-code').value = '';
         document.getElementById('mission-login-overlay').style.display = 'flex';
         setSystemStatus(t.statusReady, 'ok');
@@ -1820,13 +1870,11 @@
     const inputArea = document.getElementById('log-input-area');
     const clearBtn = document.getElementById('btn-clear-logs');
     const publishBtn = document.getElementById('btn-publish');
-    const topManageBtn = document.getElementById('btn-top-manage');
     const delMissionBtn = document.getElementById('btn-delete-mission');
 
     if (verified) {
       document.body.classList.remove('readonly-mode');
       publishBtn.style.display = 'inline-block';
-      topManageBtn.style.display = 'inline-block';
       delMissionBtn.style.display = 'inline-block';
       lockIcon.innerText = '📋';
       lockedMsg.style.display = 'none';
@@ -1837,7 +1885,6 @@
     } else {
       document.body.classList.add('readonly-mode');
       publishBtn.style.display = 'none';
-      topManageBtn.style.display = 'none';
       delMissionBtn.style.display = 'none';
       lockIcon.innerText = '🔒';
       lockedMsg.style.display = 'flex';
@@ -1924,6 +1971,7 @@
         const parsed = JSON.parse(decoded);
         if (Array.isArray(parsed)) {
           tacticalLogs = parsed;
+          lastKnownLogsFingerprint = JSON.stringify(parsed);
           renderLogList();
         }
       }
@@ -1943,13 +1991,18 @@
       const logsStr = JSON.stringify(tacticalLogs, null, 2);
       const msg = customMsg || `Update logs ${currentMissionCode} (${getCurrentCallsign()})`;
       await putGitHubFile(owner, repo, getMissionFilePath('logs.json'), logsStr, token, msg);
+      lastKnownLogsFingerprint = JSON.stringify(tacticalLogs);
+      lastCloudWriteTimestamp = Date.now();
     } catch (e) {} finally {
       isSyncingLogs = false;
     }
   }
 
   ['gh-token', 'gh-owner', 'gh-repo'].forEach(id => {
-    document.getElementById(id).addEventListener('change', () => verifyGitHubToken());
+    document.getElementById(id).addEventListener('change', () => {
+      updateTopbarKmlUrlDisplay();
+      verifyGitHubToken();
+    });
   });
 
   // ============================================================================
@@ -1979,6 +2032,7 @@
   setInterval(cleanAndRefreshUndoUI, 1000);
 
   function recordUndoSnapshot(extraRemovedLayer = null) {
+    hasUnsavedMapChanges = true;
     cleanAndRefreshUndoUI();
     const collection = collectGeoJSON();
     if (extraRemovedLayer && extraRemovedLayer.feature && (extraRemovedLayer instanceof L.Marker || extraRemovedLayer instanceof L.Path)) {
@@ -1998,6 +2052,7 @@
     if (!isTokenVerified) return;
     cleanAndRefreshUndoUI();
     if (undoStack.length === 0) return;
+    hasUnsavedMapChanges = true;
     const lastSnapshot = undoStack.pop();
     const geojson = JSON.parse(lastSnapshot.geojsonStr);
     drawnItems.clearLayers();
@@ -2322,10 +2377,14 @@
       }
 
       if (!geojson) {
+        lastKnownGeoJsonFingerprint = JSON.stringify({ type: 'FeatureCollection', features: [] });
         renderFeatureSummaryList();
         setSystemStatus(`[${currentMissionCode}]`, 'ok');
         return;
       }
+
+      lastKnownGeoJsonFingerprint = JSON.stringify(geojson);
+      lastCloudWriteTimestamp = Date.now();
 
       L.geoJSON(geojson, {
         onEachFeature: (feature, layer) => {
@@ -2526,6 +2585,11 @@
       await putGitHubFile(owner, repo, getMissionFilePath('live.kml'), kmlStr, token, `[${currentMissionCode}] Update KML (${timeStr}${byWho})`);
       await putGitHubFile(owner, repo, getMissionFilePath('logs.json'), logsStr, token, `[${currentMissionCode}] Update Logs (${timeStr}${byWho})`);
 
+      hasUnsavedMapChanges = false;
+      lastKnownGeoJsonFingerprint = JSON.stringify(collection);
+      lastKnownLogsFingerprint = JSON.stringify(tacticalLogs);
+      lastCloudWriteTimestamp = Date.now();
+
       const missionKmlUrl = `https://${owner}.github.io/${repo}/${getMissionFilePath('live.kml')}`;
       setSystemStatus(`[${currentMissionCode}] (${timeStr})`, 'ok');
       alert(t.alertPubSuccess(currentMissionCode, missionKmlUrl));
@@ -2534,6 +2598,87 @@
       alert(err.message);
     }
   }
+
+  // ============================================================================
+  // 11. 戰術背景靜態輪詢引擎 (0 API 消耗 + 未存檔防覆蓋鎖 + CDN 快取防回朔)
+  // ============================================================================
+  async function pollTacticalCloudUpdates() {
+    if (!currentMissionCode) return;
+    const isLoginOpen = document.getElementById('mission-login-overlay').style.display !== 'none';
+    if (isLoginOpen) return;
+
+    // 防時光倒流機制：若剛透過 API 寫入或讀取未滿 65 秒，等待 GitHub Pages CDN 快取更新完畢再輪詢
+    if (Date.now() - lastCloudWriteTimestamp < 65000) return;
+
+    const owner = document.getElementById('gh-owner').value.trim() || 'HamsterTAK';
+    const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
+    const ts = Date.now();
+
+    const isModalOpen = document.getElementById('modal-overlay').style.display === 'flex';
+    const isDrawingOrEditing = Boolean(
+      map.pm && (
+        map.pm.globalDrawModeEnabled() ||
+        map.pm.globalEditModeEnabled() ||
+        map.pm.globalDragModeEnabled() ||
+        map.pm.globalRemovalModeEnabled() ||
+        map.pm.globalRotateModeEnabled()
+      )
+    );
+    const isChatInputFocused = (document.activeElement && document.activeElement.id === 'log-input');
+
+    // [地圖點位同步]：僅在未開啟彈窗、未處於繪圖模式且本地無未發布修改時才靜默更新圖層
+    if (!isModalOpen && !isDrawingOrEditing && !hasUnsavedMapChanges) {
+      try {
+        const geoRes = await fetch(`https://${owner}.github.io/${repo}/missions/${currentMissionCode}/data.geojson?t=${ts}`, { cache: 'no-store' });
+        if (geoRes.ok) {
+          const parsed = await geoRes.json();
+          if (parsed && parsed.type === 'FeatureCollection') {
+            const newFingerprint = JSON.stringify(parsed);
+            if (lastKnownGeoJsonFingerprint && newFingerprint !== lastKnownGeoJsonFingerprint) {
+              lastKnownGeoJsonFingerprint = newFingerprint;
+
+              drawnItems.clearLayers();
+              L.geoJSON(parsed, {
+                onEachFeature: (feature, layer) => {
+                  drawnItems.addLayer(layer);
+                  applyFeatureProperties(layer, feature.properties || {});
+                }
+              });
+              renderFeatureSummaryList();
+
+              setSystemStatus(`[${currentMissionCode}] 🔄 SYNC`, 'busy');
+              setTimeout(() => setSystemStatus(`[${currentMissionCode}]`, 'ok'), 1200);
+            } else if (!lastKnownGeoJsonFingerprint) {
+              lastKnownGeoJsonFingerprint = newFingerprint;
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    // [戰術留言板同步]：僅在情報官已解鎖 Token 且未停留在打字框時更新
+    if (isTokenVerified && !isChatInputFocused) {
+      try {
+        const logRes = await fetch(`https://${owner}.github.io/${repo}/missions/${currentMissionCode}/logs.json?t=${ts}`, { cache: 'no-store' });
+        if (logRes.ok) {
+          const newLogs = await logRes.json();
+          if (Array.isArray(newLogs)) {
+            const newLogFp = JSON.stringify(newLogs);
+            if (lastKnownLogsFingerprint && newLogFp !== lastKnownLogsFingerprint) {
+              lastKnownLogsFingerprint = newLogFp;
+              tacticalLogs = newLogs;
+              renderLogList();
+            } else if (!lastKnownLogsFingerprint) {
+              lastKnownLogsFingerprint = newLogFp;
+            }
+          }
+        }
+      } catch (e) {}
+    }
+  }
+
+  // 每 15 秒執行一次背景靜態 CDN 快取檢查 (0 API 消耗)
+  setInterval(pollTacticalCloudUpdates, 15000);
 </script>
 </body>
 </html>
