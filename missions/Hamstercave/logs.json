@@ -124,5 +124,11 @@
     "user": "Stephanie",
     "type": "action",
     "text": "Updated \"Team Bravo\" [🟡⬇️ 前往目標點 (Move to)] (51R UH 51884 65849 (25.00090, 121.53229))"
+  },
+  {
+    "time": "2026/10/28 02:09:36",
+    "user": "Stephanie",
+    "type": "action",
+    "text": "Moved \"02\" -> 51R UH 51826 65741 (24.99991, 121.53172)"
   }
 ]
