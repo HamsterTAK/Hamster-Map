@@ -218,7 +218,7 @@
       <description><![CDATA[[Mission: Hamstercave]
 [🟢 物資站 / 安全集結區]
 
-座標：51R UH 51981 65756 (25.00007, 121.53326)
+座標：51R UH 51953 65856 (25.00096, 121.53297)
 更新：2026/10/24 20:58:41 (Neoyang)]]></description>
       <styleUrl>#style_supply</styleUrl>
       <Style>
@@ -235,14 +235,14 @@
           <scale>1.0</scale>
         </LabelStyle>
       </Style>
-      <Point><coordinates>121.533256,25.00007,0</coordinates></Point>
+      <Point><coordinates>121.532966,25.000964,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name><![CDATA[邪教教徒]]></name>
       <description><![CDATA[[Mission: Hamstercave]
 [🔴 災情 / 危險管制區]
 
-座標：51R UH 51846 65846 (25.00087, 121.53191)
+座標：51R UH 51847 65846 (25.00087, 121.53191)
 更新：2026/10/27 17:25:53 (Stephanie)]]></description>
       <styleUrl>#style_danger</styleUrl>
       <Style>
@@ -311,129 +311,12 @@
       <Point><coordinates>121.369706,25.072704,0</coordinates></Point>
     </Placemark>
     <Placemark>
-      <name><![CDATA[Team Charlie]]></name>
-      <description><![CDATA[[Mission: Hamstercave]
-[🟣🛡️ 固守 / 待命警戒區 (Hold)]
-
-座標：51R UH 51884 65800 (25.00046, 121.53229)
-更新：2026/10/28 02:09:43 (Stephanie)]]></description>
-      <styleUrl>#style_hold</styleUrl>
-      <Style>
-        <IconStyle>
-          <color>ffffffff</color>
-          <scale>1.1</scale>
-          <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/pin_hold_v2.png</href>
-          </Icon>
-          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
-      </Style>
-      <Point><coordinates>121.532295,25.000459,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
-      <name><![CDATA[Team Alpha]]></name>
-      <description><![CDATA[[Mission: Hamstercave]
-[🟡⬇️ 前往目標點 (Move to)]
-
-座標：51R UH 51834 65728 (24.99980, 121.53180)
-更新：2026/10/28 02:08:55 (Stephanie)]]></description>
-      <styleUrl>#style_goto</styleUrl>
-      <Style>
-        <IconStyle>
-          <color>ffffffff</color>
-          <scale>1.1</scale>
-          <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto_v2.png</href>
-          </Icon>
-          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
-      </Style>
-      <Point><coordinates>121.531802,24.999803,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
-      <name><![CDATA[1028]]></name>
-      <description><![CDATA[[Mission: Hamstercave]
-[📜 任務簡報 / 區域公佈欄]
-Dynasty 61, maintain altitude, turn right heading 270, Taipei Tower.
-座標：51R UH 51746 65769 (25.00016, 121.53092)
-更新：2026/10/28 00:36:26 (Neoyang)]]></description>
-      <styleUrl>#style_briefing</styleUrl>
-      <Style>
-        <IconStyle>
-          <color>ffffffff</color>
-          <scale>1.1</scale>
-          <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/pin_briefing_v2.png</href>
-          </Icon>
-          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
-      </Style>
-      <Point><coordinates>121.530923,25.000163,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
-      <name><![CDATA[因因]]></name>
-      <description><![CDATA[[Mission: Hamstercave]
-[⚪🔴 緊急傷患 / CASEVAC 後送點]
-
-座標：51R UH 51938 65773 (25.00022, 121.53283)
-更新：2026/10/28 00:38:01 (Neoyang)]]></description>
-      <styleUrl>#style_casevac</styleUrl>
-      <Style>
-        <IconStyle>
-          <color>ffffffff</color>
-          <scale>1.1</scale>
-          <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/pin_casevac_v2.png</href>
-          </Icon>
-          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
-      </Style>
-      <Point><coordinates>121.532832,25.000217,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
-      <name><![CDATA[邪惡祭壇]]></name>
-      <description><![CDATA[[Mission: Hamstercave]
-[🔴 災情 / 危險管制區]
-
-座標：51R UH 51823 65798 (25.00043, 121.53169)
-更新：2026/10/28 02:06:17 (Stephanie)]]></description>
-      <styleUrl>#style_danger</styleUrl>
-      <Style>
-        <LineStyle>
-          <color>ff0000ff</color>
-          <width>4</width>
-        </LineStyle>
-        <PolyStyle>
-          <color>660000ff</color>
-          <fill>1</fill>
-          <outline>1</outline>
-        </PolyStyle>
-      </Style>
-      <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.53191,25.000586,0 121.531663,25.000649,0 121.531464,25.000493,0 121.531466,25.000289,0 121.531717,25.000207,0 121.53191,25.000586,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
-    </Placemark>
-    <Placemark>
-      <name><![CDATA[Team Bravo]]></name>
+      <name><![CDATA[Stephanie]]></name>
       <description><![CDATA[[Mission: Hamstercave]
 [🟡⬇️ 前往目標點 (Move to)]
 
 座標：51R UH 51884 65849 (25.00090, 121.53229)
-更新：2026/10/28 02:09:28 (Stephanie)]]></description>
+更新：2026/10/28 03:04:35 (Stephanie)]]></description>
       <styleUrl>#style_goto</styleUrl>
       <Style>
         <IconStyle>
@@ -450,54 +333,6 @@ Dynasty 61, maintain altitude, turn right heading 270, Taipei Tower.
         </LabelStyle>
       </Style>
       <Point><coordinates>121.532285,25.000897,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
-      <name><![CDATA[Stephanie]]></name>
-      <description><![CDATA[[Mission: Hamstercave]
-[🔵 友軍單位 / 搜救隊]
-
-座標：51R UH 51880 65749 (25.00000, 121.53226)
-更新：2026/10/28 02:11:32 (Stephanie)]]></description>
-      <styleUrl>#style_friendly</styleUrl>
-      <Style>
-        <IconStyle>
-          <color>ffff0000</color>
-          <scale>1.1</scale>
-          <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
-          </Icon>
-          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
-      </Style>
-      <Point><coordinates>121.532258,24.999998,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
-      <name><![CDATA[117]]></name>
-      <description><![CDATA[[Mission: Hamstercave]
-[🔵 友軍單位 / 搜救隊]
-
-座標：51R UH 51900 65763 (25.00012, 121.53246)
-更新：2026/10/28 02:11:41 (Stephanie)]]></description>
-      <styleUrl>#style_friendly</styleUrl>
-      <Style>
-        <IconStyle>
-          <color>ffff0000</color>
-          <scale>1.1</scale>
-          <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
-          </Icon>
-          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
-      </Style>
-      <Point><coordinates>121.532459,25.000124,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
