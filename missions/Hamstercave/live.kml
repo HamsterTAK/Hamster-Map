@@ -101,9 +101,9 @@
       <description><![CDATA[[Mission: Hamstercave]
 [🔴 災情 / 危險管制區]
 
-🎥 Live Feed: <a href="https://cctvatis4.ntpc.gov.tw/hls/C000184">https://cctvatis4.ntpc.gov.tw/hls/C000184</a>
+🎥 Live Feed: <a href="https://cctvatis4.ntpc.gov.tw/hls/C000184/live.m3u8">https://cctvatis4.ntpc.gov.tw/hls/C000184/live.m3u8</a>
 座標：51R UH 35570 73990 (25.07270, 121.36971)
-更新：2026/10/27 20:22:43 (Stephanie)]]></description>
+更新：2026/10/27 20:23:51 (Stephanie)]]></description>
       <Style>
         <IconStyle>
           <color>ff0000ff</color>
