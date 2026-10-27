@@ -57,6 +57,25 @@
           25.001008
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ad Hoc",
+        "category": "danger",
+        "desc": "",
+        "stream": "https://www.youtube.com/watch?v=6HeYP46CMgg",
+        "coord": "51R UH 51843 66063 (25.00282, 121.53186)",
+        "time": "2026/10/27 15:25:14 (Stephanie)",
+        "updatedBy": "Stephanie"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.531856,
+          25.002821
+        ]
+      }
     }
   ]
 }
