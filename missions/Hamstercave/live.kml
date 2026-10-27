@@ -73,5 +73,29 @@
       </Style>
       <Point><coordinates>121.532065,25.001008,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[Ad Hoc]]></name>
+      <description><![CDATA[[Mission: Hamstercave]
+[🔴 災情 / 危險管制區]
+
+🎥 Live Feed: <a href="https://www.youtube.com/watch?v=6HeYP46CMgg">https://www.youtube.com/watch?v=6HeYP46CMgg</a>
+座標：51R UH 51843 66063 (25.00282, 121.53186)
+更新：2026/10/27 15:25:14 (Stephanie)]]></description>
+      <Style>
+        <IconStyle>
+          <color>ff0000ff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.531856,25.002821,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
