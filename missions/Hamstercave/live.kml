@@ -187,6 +187,52 @@
         <outline>1</outline>
       </PolyStyle>
     </Style>
+    <Style id="style_completed">
+      <IconStyle>
+        <color>ffffffff</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_completed_v2.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ffffffff</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>6600ff00</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="style_aborted">
+      <IconStyle>
+        <color>ffffffff</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_aborted_v2.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ffffffff</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>660000ff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
     
     <Placemark>
       <name><![CDATA[微笑狗]]></name>
@@ -333,6 +379,54 @@
         </LabelStyle>
       </Style>
       <Point><coordinates>121.532285,25.000897,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[Danger]]></name>
+      <description><![CDATA[[Mission: Hamstercave]
+[🔴❌ 行動取消 / 任務失敗]
+
+座標：51R UH 51928 65819 (25.00063, 121.53273)
+更新：2026/10/28 03:27:49 (Stephanie)]]></description>
+      <styleUrl>#style_aborted</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ffffffff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_aborted_v2.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.532728,25.000627,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[Accomplished]]></name>
+      <description><![CDATA[[Mission: Hamstercave]
+[🟢✅ 任務完成 / 目標解除]
+
+座標：51R UH 51908 65820 (25.00064, 121.53253)
+更新：2026/10/28 03:28:06 (Stephanie)]]></description>
+      <styleUrl>#style_completed</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ffffffff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_completed_v2.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.532529,25.000639,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
