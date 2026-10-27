@@ -541,9 +541,9 @@
     <span style="font-size:11px;">📋</span>
   </div>
 
-  <input type="password" id="gh-token" placeholder="GitHub Token (寫入密碼)" style="width:120px;" />
-  <input type="text" id="gh-owner" placeholder="帳號" style="width:75px;" />
-  <input type="text" id="gh-repo" placeholder="Repo" style="width:80px;" />
+  <input type="hidden" id="gh-token" value="" />
+  <input type="hidden" id="gh-owner" value="HamsterTAK" />
+  <input type="hidden" id="gh-repo" value="Hamster-Map" />
   
   <button class="btn btn-save" id="btn-publish" onclick="publishToGitHub()" style="display:none;">☁️ 儲存並發布</button>
   <button class="btn btn-video" id="btn-video-pop" onclick="promptOpenTacticalPopout()">📺 視訊監控</button>
