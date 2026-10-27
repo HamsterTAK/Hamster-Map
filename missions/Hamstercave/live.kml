@@ -78,7 +78,7 @@
       <description><![CDATA[[Mission: Hamstercave]
 [🔵 友軍單位 / 搜救隊]
 空中偵查組
-座標：51R UH 51900 65935 (25.00168, 121.53244)
+座標：51R UH 51924 65896 (25.00132, 121.53268)
 更新：2026/10/27 16:48:00 (Neoyang)]]></description>
       <Style>
         <IconStyle>
@@ -94,7 +94,7 @@
           <scale>1.0</scale>
         </LabelStyle>
       </Style>
-      <Point><coordinates>121.53244,25.001678,0</coordinates></Point>
+      <Point><coordinates>121.53268,25.001322,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name><![CDATA[林口文化二路忠孝二路]]></name>
@@ -119,29 +119,6 @@
         </LabelStyle>
       </Style>
       <Point><coordinates>121.369706,25.072704,0</coordinates></Point>
-    </Placemark>
-    <Placemark>
-      <name><![CDATA[CI最正空姐]]></name>
-      <description><![CDATA[[Mission: Hamstercave]
-[🔵 友軍單位 / 搜救隊]
-UAS
-座標：51R UH 51948 65881 (25.00119, 121.53291)
-更新：2026/10/27 22:22:41 (Stephanie)]]></description>
-      <Style>
-        <IconStyle>
-          <color>ffff0000</color>
-          <scale>1.1</scale>
-          <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
-          </Icon>
-          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
-        </IconStyle>
-        <LabelStyle>
-          <color>ffffffff</color>
-          <scale>1.0</scale>
-        </LabelStyle>
-      </Style>
-      <Point><coordinates>121.532913,25.001191,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
