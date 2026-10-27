@@ -125,7 +125,7 @@
       <description><![CDATA[[Mission: Hamstercave]
 [🔵 友軍單位 / 搜救隊]
 UAS First Officer
-座標：51R UH 51947 65884 (25.00122, 121.53291)
+座標：51R UH 51975 65814 (25.00059, 121.53319)
 更新：2026/10/27 22:05:37 (Neoyang)]]></description>
       <Style>
         <IconStyle>
@@ -141,7 +141,7 @@ UAS First Officer
           <scale>1.0</scale>
         </LabelStyle>
       </Style>
-      <Point><coordinates>121.532908,25.001218,0</coordinates></Point>
+      <Point><coordinates>121.533191,25.000589,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
