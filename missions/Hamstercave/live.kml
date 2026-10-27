@@ -78,7 +78,7 @@
       <description><![CDATA[[Mission: Hamstercave]
 [🔵 友軍單位 / 搜救隊]
 空中偵查組
-座標：51R UH 51900 65875 (25.00113, 121.53245)
+座標：51R UH 51915 65839 (25.00081, 121.53259)
 更新：2026/10/27 16:48:00 (Neoyang)]]></description>
       <Style>
         <IconStyle>
@@ -94,7 +94,7 @@
           <scale>1.0</scale>
         </LabelStyle>
       </Style>
-      <Point><coordinates>121.532447,25.001132,0</coordinates></Point>
+      <Point><coordinates>121.53259,25.000814,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
