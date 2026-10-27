@@ -6,7 +6,7 @@
     <Style id="style_danger">
       <IconStyle>
         <color>ff0000ff</color>
-        <scale>1.15</scale>
+        <scale>1.1</scale>
         <Icon>
           <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
         </Icon>
@@ -29,7 +29,7 @@
     <Style id="style_rescue">
       <IconStyle>
         <color>ff00ffff</color>
-        <scale>1.15</scale>
+        <scale>1.1</scale>
         <Icon>
           <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
         </Icon>
@@ -52,7 +52,7 @@
     <Style id="style_supply">
       <IconStyle>
         <color>ff00ff00</color>
-        <scale>1.15</scale>
+        <scale>1.1</scale>
         <Icon>
           <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
         </Icon>
@@ -75,7 +75,7 @@
     <Style id="style_friendly">
       <IconStyle>
         <color>ffff0000</color>
-        <scale>1.15</scale>
+        <scale>1.1</scale>
         <Icon>
           <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
         </Icon>
@@ -98,11 +98,11 @@
     <Style id="style_casevac">
       <IconStyle>
         <color>ffffffff</color>
-        <scale>1.15</scale>
+        <scale>1.1</scale>
         <Icon>
-          <href>https://HamsterTAK.github.io/Hamster-Map/pin_casevac.png</href>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_casevac_v2.png</href>
         </Icon>
-        <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+        <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
       </IconStyle>
       <LabelStyle>
         <color>ffffffff</color>
@@ -121,11 +121,11 @@
     <Style id="style_goto">
       <IconStyle>
         <color>ffffffff</color>
-        <scale>1.15</scale>
+        <scale>1.1</scale>
         <Icon>
-          <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto.png</href>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto_v2.png</href>
         </Icon>
-        <hotSpot x="0.5" y="0.08" xunits="fraction" yunits="fraction"/>
+        <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
       </IconStyle>
       <LabelStyle>
         <color>ffffffff</color>
@@ -144,11 +144,11 @@
     <Style id="style_hold">
       <IconStyle>
         <color>ffffffff</color>
-        <scale>1.15</scale>
+        <scale>1.1</scale>
         <Icon>
-          <href>https://HamsterTAK.github.io/Hamster-Map/pin_hold.png</href>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_hold_v2.png</href>
         </Icon>
-        <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+        <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
       </IconStyle>
       <LabelStyle>
         <color>ffffffff</color>
@@ -167,11 +167,11 @@
     <Style id="style_briefing">
       <IconStyle>
         <color>ffffffff</color>
-        <scale>1.15</scale>
+        <scale>1.1</scale>
         <Icon>
-          <href>https://HamsterTAK.github.io/Hamster-Map/pin_briefing.png</href>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_briefing_v2.png</href>
         </Icon>
-        <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+        <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
       </IconStyle>
       <LabelStyle>
         <color>ffffffff</color>
@@ -200,7 +200,7 @@
       <Style>
         <IconStyle>
           <color>ffff0000</color>
-          <scale>1.15</scale>
+          <scale>1.1</scale>
           <Icon>
             <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
@@ -224,7 +224,7 @@
       <Style>
         <IconStyle>
           <color>ff00ff00</color>
-          <scale>1.15</scale>
+          <scale>1.1</scale>
           <Icon>
             <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
@@ -248,7 +248,7 @@
       <Style>
         <IconStyle>
           <color>ff0000ff</color>
-          <scale>1.15</scale>
+          <scale>1.1</scale>
           <Icon>
             <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
@@ -272,7 +272,7 @@
       <Style>
         <IconStyle>
           <color>ffff0000</color>
-          <scale>1.15</scale>
+          <scale>1.1</scale>
           <Icon>
             <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
@@ -297,7 +297,7 @@
       <Style>
         <IconStyle>
           <color>ff0000ff</color>
-          <scale>1.15</scale>
+          <scale>1.1</scale>
           <Icon>
             <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
           </Icon>
@@ -321,11 +321,11 @@
       <Style>
         <IconStyle>
           <color>ffffffff</color>
-          <scale>1.15</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/pin_hold.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_hold_v2.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffffffff</color>
@@ -345,11 +345,11 @@
       <Style>
         <IconStyle>
           <color>ffffffff</color>
-          <scale>1.15</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto_v2.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.08" xunits="fraction" yunits="fraction"/>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffffffff</color>
@@ -369,11 +369,11 @@ Dynasty 61, maintain altitude, turn right heading 270, Taipei Tower.
       <Style>
         <IconStyle>
           <color>ffffffff</color>
-          <scale>1.15</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/pin_briefing.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_briefing_v2.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffffffff</color>
@@ -393,11 +393,11 @@ Dynasty 61, maintain altitude, turn right heading 270, Taipei Tower.
       <Style>
         <IconStyle>
           <color>ffffffff</color>
-          <scale>1.15</scale>
+          <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/pin_casevac.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_casevac_v2.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffffffff</color>
