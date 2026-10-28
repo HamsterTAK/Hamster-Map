@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>HamsterTAK - Mission [Test5566]</name>
+    
+    <Style id="style_danger">
+      <IconStyle>
+        <color>ff0000ff</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ff0000ff</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>660000ff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="style_rescue">
+      <IconStyle>
+        <color>ff00ffff</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ff00ffff</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>6600ffff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="style_supply">
+      <IconStyle>
+        <color>ff00ff00</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ff00ff00</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>6600ff00</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="style_friendly">
+      <IconStyle>
+        <color>ffff0000</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ffff0000</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>66ff0000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="style_casevac">
+      <IconStyle>
+        <color>ffffffff</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_casevac_v2.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ffffffff</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>660000ff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="style_goto">
+      <IconStyle>
+        <color>ffffffff</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto_v2.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ffffffff</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>6600ffff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="style_hold">
+      <IconStyle>
+        <color>ffffffff</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_hold_v2.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ffffffff</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>66ff00aa</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="style_briefing">
+      <IconStyle>
+        <color>ffffffff</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_briefing_v2.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ffffffff</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>6600aaff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="style_completed">
+      <IconStyle>
+        <color>ffffffff</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_completed_v2.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ffffffff</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>6600ff00</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="style_aborted">
+      <IconStyle>
+        <color>ffffffff</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://HamsterTAK.github.io/Hamster-Map/pin_aborted_v2.png</href>
+        </Icon>
+        <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+      </IconStyle>
+      <LabelStyle>
+        <color>ffffffff</color>
+        <scale>1.0</scale>
+      </LabelStyle>
+      <LineStyle>
+        <color>ffffffff</color>
+        <width>4</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>660000ff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    
+  </Document>
+</kml>
