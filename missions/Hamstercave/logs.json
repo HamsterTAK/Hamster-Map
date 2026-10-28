@@ -52,5 +52,11 @@
     "user": "Neoyang",
     "type": "action",
     "text": "Added \"Briefing\" [📜 任務簡報 / 區域公佈欄] (51R UH 51822 65916 (25.00150, 121.53167))"
+  },
+  {
+    "time": "2026/10/28 21:27:25",
+    "user": "Neoyang",
+    "type": "action",
+    "text": "Updated Briefing Board \"Briefing\""
   }
 ]
