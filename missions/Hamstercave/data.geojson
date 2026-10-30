@@ -64,9 +64,9 @@
         "name": "公雞",
         "category": "friendly",
         "desc": "空中偵查組",
-        "stream": "",
+        "stream": "https://129.225.167.253:8889/wanlong",
         "coord": "51R UH 51924 65896 (25.00132, 121.53268)",
-        "time": "2026/10/27 16:48:00 (Neoyang)",
+        "time": "2026/10/30 21:31:08 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
