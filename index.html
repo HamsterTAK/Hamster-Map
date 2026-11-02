@@ -1744,7 +1744,7 @@
           const lonAtLine = p1[1] + (p2[1] - p1[1]) * 0.5;
           if (lonAtLine >= bounds.getWest() && lonAtLine <= bounds.getEast()) {
             L.marker([topLat, lonAtLine], {
-              interactive: false,
+              interactive: false, pmIgnore: true, snapIgnore: true,
               icon: L.divIcon({ className: '', html: `<span class="mgrs-grid-label">${formatGridLabel(e)}</span>`, iconAnchor: [22, 10] })
             }).addTo(mgrsGridGroup);
           }
@@ -1760,7 +1760,7 @@
           const latAtLine = p1[0] + (p2[0] - p1[0]) * 0.5;
           if (latAtLine >= bounds.getSouth() && latAtLine <= bounds.getNorth()) {
             L.marker([latAtLine, leftLng], {
-              interactive: false,
+              interactive: false, pmIgnore: true, snapIgnore: true,
               icon: L.divIcon({ className: '', html: `<span class="mgrs-grid-label">${formatGridLabel(n)}</span>`, iconAnchor: [0, 10] })
             }).addTo(mgrsGridGroup);
           }
