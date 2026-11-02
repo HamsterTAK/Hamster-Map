@@ -1441,7 +1441,7 @@
     maxZoom: 22, maxNativeZoom: 19, attribution: '© 內政部國土測繪中心航照'
   });
 
-  const mgrsGridGroup = L.layerGroup().addTo(map);
+  const mgrsGridGroup = L.layerGroup([], { pmIgnore: true }).addTo(map);
 
   // 🗺️ Open Topo Map 放在圖資選單最上面第一項！
   const baseMaps = {
@@ -1739,7 +1739,7 @@
         if (e > 99999) continue;
         try {
           const p1 = mgrsToLatLng(e, startN), p2 = mgrsToLatLng(e, Math.min(99999, endN + step));
-          L.polyline([p1, p2], { color: '#2563eb', weight: 1.6, opacity: 0.75, interactive: false }).addTo(mgrsGridGroup);
+          L.polyline([p1, p2], { color: '#2563eb', weight: 1.6, opacity: 0.75, interactive: false, pmIgnore: true, snapIgnore: true }).addTo(mgrsGridGroup);
           const topLat = bounds.getNorth() - (bounds.getNorth() - bounds.getSouth()) * 0.06;
           const lonAtLine = p1[1] + (p2[1] - p1[1]) * 0.5;
           if (lonAtLine >= bounds.getWest() && lonAtLine <= bounds.getEast()) {
@@ -1755,7 +1755,7 @@
         if (n > 99999) continue;
         try {
           const p1 = mgrsToLatLng(startE, n), p2 = mgrsToLatLng(Math.min(99999, endE + step), n);
-          L.polyline([p1, p2], { color: '#2563eb', weight: 1.6, opacity: 0.75, interactive: false }).addTo(mgrsGridGroup);
+          L.polyline([p1, p2], { color: '#2563eb', weight: 1.6, opacity: 0.75, interactive: false, pmIgnore: true, snapIgnore: true }).addTo(mgrsGridGroup);
           const leftLng = bounds.getWest() + (bounds.getEast() - bounds.getWest()) * 0.04;
           const latAtLine = p1[0] + (p2[0] - p1[0]) * 0.5;
           if (latAtLine >= bounds.getSouth() && latAtLine <= bounds.getNorth()) {
@@ -2595,7 +2595,9 @@
     drawCircle: false, drawCircleMarker: false, drawText: false,
     editMode: true, dragMode: true, cutPolygon: false, removalMode: true, rotateMode: true
   });
+  map.pm.setGlobalOptions({ snappable: false, snapDistance: 15 });
 
+  
   try {
     map.pm.Draw.Marker.setOptions({ markerStyle: { icon: TACTICAL_CROSSHAIR_ICON } });
   } catch (e) {}
