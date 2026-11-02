@@ -311,26 +311,27 @@
       border-radius: 4px; border: 1px solid #334155; font-weight: normal;
     }
 
-    #bottom-coord-container {
-      position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
-      display: flex; align-items: center; gap: 8px; z-index: 1000;
-      max-width: 96vw; pointer-events: none;
-    }
-    #coord-bar {
-      background: rgba(15, 23, 42, 0.92); color: #38bdf8; padding: 6px 14px;
-      border-radius: 6px; font-family: 'Courier New', Consolas, monospace; font-size: 13px;
-      font-weight: bold; border: 1px solid #334155; pointer-events: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6); white-space: nowrap;
-      letter-spacing: 0.5px; overflow: hidden; text-overflow: ellipsis;
-    }
-    #current-pos-box {
-      background: rgba(15, 23, 42, 0.95); color: #00ffcc; padding: 6px 12px;
-      border-radius: 6px; font-family: 'Courier New', Consolas, monospace; font-size: 13px;
-      font-weight: bold; border: 1px solid #10b981; cursor: pointer;
-      pointer-events: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      max-width: 280px; transition: all 0.15s; user-select: none;
-    }
+    /* 原本手機版單獨設定 #coord-bar 的那段刪掉，改貼這段： */
+      #bottom-coord-container {
+        bottom: 6px;
+        width: calc(100vw - 12px);
+        max-width: calc(100vw - 12px);
+        justify-content: center;
+        gap: 4px;
+      }
+      #coord-bar {
+        flex: 1 1 auto;
+        min-width: 0;
+        text-align: center;
+        font-size: 11px;
+        padding: 4px 6px;
+      }
+      #current-pos-box {
+        flex-shrink: 0;
+        font-size: 11px;
+        padding: 4px 8px;
+        max-width: 125px;
+      }
     #current-pos-box:hover {
       background: #1e293b; border-color: #00ffcc;
       box-shadow: 0 0 8px rgba(0, 255, 204, 0.35);
@@ -1292,6 +1293,17 @@
     document.getElementById('bp-focus-btn').innerText = t.btnFocus;
     document.getElementById('bp-save-btn').innerText = t.bpBtnSave;
     document.getElementById('bp-del-btn').innerText = t.btnDel;
+    // 🌍 連動更新底部 [現在位置] 的多國語言顯示與提示字
+    const posTextEl = document.getElementById('current-pos-text');
+    const posBoxEl = document.getElementById('current-pos-box');
+    if (posTextEl && (typeof savedCurrentPos === 'undefined' || !savedCurrentPos)) {
+      posTextEl.innerText = (lang === 'en') ? '[Current Pos]' : '[現在位置]';
+    }
+    if (posBoxEl) {
+      posBoxEl.title = (lang === 'en')
+        ? 'Click to enter MGRS, Lat/Lng, or Address'
+        : '點擊輸入 MGRS 座標、經緯度或地址';
+    }
 
     if (typeof map !== 'undefined' && map.pm) {
       try {
