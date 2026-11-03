@@ -16,5 +16,11 @@
     "user": "Stephanie",
     "type": "action",
     "text": "Added \"Reparieren\" [🔧 需要修理 / 裝備故障] (51R UH 51852 66076 (25.00294, 121.53195))"
+  },
+  {
+    "time": "2026/11/3 23:11:33",
+    "user": "Stephanie",
+    "type": "action",
+    "text": "Deleted \"Reparieren\" (51R UH 51852 66076 (25.00294, 121.53195))"
   }
 ]
