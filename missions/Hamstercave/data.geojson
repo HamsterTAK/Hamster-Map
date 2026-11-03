@@ -114,6 +114,25 @@
           25.000897
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Reparieren",
+        "category": "repair",
+        "desc": "",
+        "stream": "",
+        "coord": "51R UH 51868 66090 (25.00307, 121.53210)",
+        "time": "2026/11/4 03:42:14 (Stephanie)",
+        "updatedBy": "Stephanie"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.532097,
+          25.00307
+        ]
+      }
     }
   ]
 }
