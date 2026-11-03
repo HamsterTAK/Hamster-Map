@@ -2043,27 +2043,43 @@
     return canvas.toDataURL('image/png').split(',')[1];
   }
 
-// 🔧 ATAK 專用 64x96 黃底交叉扳手起子 PNG (pin_repair_v2.png)
+// 🔧 ATAK 專用 64x96 透明背景單支黃色扳手 PNG (無外圈，上半部留白推高文字)
   function generateATAKRepairBase64() {
     const canvas = document.createElement('canvas');
     canvas.width = 64; canvas.height = 96;
     const ctx = canvas.getContext('2d');
-    ctx.beginPath();
-    ctx.arc(32, 69, 21, 0, Math.PI * 2);
-    ctx.fillStyle = '#0f172a'; ctx.fill();
-    ctx.lineWidth = 3.5; ctx.strokeStyle = '#eab308'; ctx.stroke();
 
-    ctx.strokeStyle = '#eab308'; ctx.fillStyle = '#eab308';
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    // 交叉起子與扳手桿身
-    ctx.lineWidth = 4.5;
-    ctx.beginPath(); ctx.moveTo(21, 80); ctx.lineTo(43, 58); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(21, 58); ctx.lineTo(43, 80); ctx.stroke();
-    // 扳手開口頭與圓頭
-    ctx.beginPath(); ctx.arc(21, 58, 4.5, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(43, 80, 4.5, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(43, 58, 4, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(21, 80, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.save();
+    // 將原點移至下半部中心 (32, 69)，旋轉 -45 度畫出斜向扳手
+    ctx.translate(32, 69);
+    ctx.rotate(-Math.PI / 4);
+
+    // 1. 先畫深色外描邊 (確保在衛星圖或亮色底圖上依然立體清晰)
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.roundRect(-6, -15, 12, 30, 4);
+    ctx.arc(0, -17, 11.5, 0, Math.PI * 2);
+    ctx.arc(0, 17, 9.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. 再畫亮黃色扳手本體 (#eab308)
+    ctx.fillStyle = '#eab308';
+    ctx.beginPath();
+    ctx.roundRect(-3.8, -14, 7.6, 28, 2);
+    ctx.arc(0, -17, 9, 0, Math.PI * 2);
+    ctx.arc(0, 17, 7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 3. 挖空上端扳手夾口 (U型開口) 與下端掛孔，讓背景完全透明穿透
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.rect(-4.2, -28, 8.4, 12);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(0, 17, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
     return canvas.toDataURL('image/png').split(',')[1];
   }
 
@@ -2157,12 +2173,12 @@
         <path d="M9 9l18 18M27 9L9 27" fill="none" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>`;
     } else if (cat === 'repair') {
       innerSvg = `
-        <circle cx="18" cy="18" r="14.5" fill="#0f172a" stroke="#eab308" stroke-width="2.2"/>
-        <path d="M11 25L25 11M11 11l14 14" stroke="#eab308" stroke-width="3.4" stroke-linecap="round"/>
-        <circle cx="11" cy="11" r="3.2" fill="#0f172a" stroke="#eab308" stroke-width="2.2"/>
-        <circle cx="25" cy="25" r="3.2" fill="#0f172a" stroke="#eab308" stroke-width="2.2"/>
-        <rect x="22.5" y="8.5" width="5" height="5" rx="1" transform="rotate(45 25 11)" fill="#eab308"/>
-        <rect x="8.5" y="22.5" width="5" height="5" rx="1" transform="rotate(45 11 25)" fill="#eab308"/>`;
+        <g transform="translate(18, 18) rotate(-45)">
+          <path d="M-3.5 -10 L-3.5 11 A 5.5 5.5 0 1 0 3.5 11 L3.5 -10 A 7.5 7.5 0 1 0 -3.5 -10 Z"
+                fill="#eab308" stroke="#0f172a" stroke-width="2.4" stroke-linejoin="round"/>
+          <path d="M-3.2 -20 L-3.2 -12.5 L3.2 -12.5 L3.2 -20 Z" fill="#0f172a"/>
+          <circle cx="0" cy="12.5" r="2.2" fill="#0f172a"/>
+        </g>`;
     } else if (cat === 'uav') {
       innerSvg = `
         <circle cx="18" cy="18" r="14.5" fill="#0f172a" stroke="#06b6d4" stroke-width="2.2"/>
