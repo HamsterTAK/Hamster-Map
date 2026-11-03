@@ -4,5 +4,11 @@
     "user": "Stephanie",
     "type": "action",
     "text": "Added \"Reparieren\" [🔧 需要修理 / 裝備故障] (51R UH 51863 66125 (25.00339, 121.53205))"
+  },
+  {
+    "time": "2026/11/3 22:32:27",
+    "user": "Stephanie",
+    "type": "action",
+    "text": "Added \"Drone\" [🛸 無人機 / FPV 作業點] (51R UH 51825 66043 (25.00264, 121.53168))"
   }
 ]
