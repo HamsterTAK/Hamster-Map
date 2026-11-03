@@ -2043,41 +2043,41 @@
     return canvas.toDataURL('image/png').split(',')[1];
   }
 
-// 🔧 ATAK 專用 64x96 透明背景單支黃色扳手 PNG (無外圈，上半部留白推高文字)
+// 🔧 ATAK 專用 64x96 透明背景「雙頭開口黃色扳手」PNG (同 Reparatur 造型)
   function generateATAKRepairBase64() {
     const canvas = document.createElement('canvas');
     canvas.width = 64; canvas.height = 96;
     const ctx = canvas.getContext('2d');
 
     ctx.save();
-    // 將原點移至下半部中心 (32, 69)，旋轉 -45 度畫出斜向扳手
+    // 移至下半部中心 (32, 69)，旋轉 -45 度呈現左上至右下斜向雙頭扳手
     ctx.translate(32, 69);
     ctx.rotate(-Math.PI / 4);
+    ctx.scale(1.25, 1.25);
 
-    // 1. 先畫深色外描邊 (確保在衛星圖或亮色底圖上依然立體清晰)
-    ctx.fillStyle = '#0f172a';
-    ctx.beginPath();
-    ctx.roundRect(-6, -15, 12, 30, 4);
-    ctx.arc(0, -17, 11.5, 0, Math.PI * 2);
-    ctx.arc(0, 17, 9.5, 0, Math.PI * 2);
-    ctx.fill();
+    // 一體成型的雙頭開口扳手路徑 (兩端皆有 U 型夾口)
+    const wrenchPath = new Path2D(
+      "M -3.5 -6.5 " +
+      "A 7.5 7.5 0 0 1 -3.2 -19.5 " +
+      "L -3.2 -12.5 L 3.2 -12.5 L 3.2 -19.5 " +
+      "A 7.5 7.5 0 0 1 3.5 -6.5 " +
+      "L 3.5 6.5 " +
+      "A 7.5 7.5 0 0 1 3.2 19.5 " +
+      "L 3.2 12.5 L -3.2 12.5 L -3.2 19.5 " +
+      "A 7.5 7.5 0 0 1 -3.5 6.5 Z"
+    );
 
-    // 2. 再畫亮黃色扳手本體 (#eab308)
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
+    // 1. 先畫深色外描邊 (連開口內側都會有黑邊，立體感十足！)
+    ctx.lineWidth = 4.2;
+    ctx.strokeStyle = '#0f172a';
+    ctx.stroke(wrenchPath);
+
+    // 2. 再填滿亮黃色扳手本體
     ctx.fillStyle = '#eab308';
-    ctx.beginPath();
-    ctx.roundRect(-3.8, -14, 7.6, 28, 2);
-    ctx.arc(0, -17, 9, 0, Math.PI * 2);
-    ctx.arc(0, 17, 7, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 3. 挖空上端扳手夾口 (U型開口) 與下端掛孔，讓背景完全透明穿透
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.beginPath();
-    ctx.rect(-4.2, -28, 8.4, 12);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(0, 17, 3, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.fill(wrenchPath);
 
     ctx.restore();
     return canvas.toDataURL('image/png').split(',')[1];
@@ -2173,11 +2173,9 @@
         <path d="M9 9l18 18M27 9L9 27" fill="none" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>`;
     } else if (cat === 'repair') {
       innerSvg = `
-        <g transform="translate(18, 18) rotate(-45)">
-          <path d="M-3.5 -10 L-3.5 11 A 5.5 5.5 0 1 0 3.5 11 L3.5 -10 A 7.5 7.5 0 1 0 -3.5 -10 Z"
-                fill="#eab308" stroke="#0f172a" stroke-width="2.4" stroke-linejoin="round"/>
-          <path d="M-3.2 -20 L-3.2 -12.5 L3.2 -12.5 L3.2 -20 Z" fill="#0f172a"/>
-          <circle cx="0" cy="12.5" r="2.2" fill="#0f172a"/>
+        <g transform="translate(18, 18) rotate(-45) scale(0.82)">
+          <path d="M -3.5 -6.5 A 7.5 7.5 0 0 1 -3.2 -19.5 L -3.2 -12.5 L 3.2 -12.5 L 3.2 -19.5 A 7.5 7.5 0 0 1 3.5 -6.5 L 3.5 6.5 A 7.5 7.5 0 0 1 3.2 19.5 L 3.2 12.5 L -3.2 12.5 L -3.2 19.5 A 7.5 7.5 0 0 1 -3.5 6.5 Z"
+                fill="#eab308" stroke="#0f172a" stroke-width="3.8" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill"/>
         </g>`;
     } else if (cat === 'uav') {
       innerSvg = `
