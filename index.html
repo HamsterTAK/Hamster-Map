@@ -1211,7 +1211,9 @@
       hold:     { label: t.catHold,     webColor: '#a855f7', kmlColor: 'ffffffff', kmlPolyColor: '66ff00aa', kmlIconFile: 'pin_hold_v2.png',     hotSpotX: '0.5', hotSpotY: '0.28' },
       briefing: { label: t.catBriefing, webColor: '#fbbf24', kmlColor: 'ffffffff', kmlPolyColor: '6600aaff', kmlIconFile: 'pin_briefing_v2.png', hotSpotX: '0.5', hotSpotY: '0.28' },
       completed: { label: t.catCompleted, webColor: '#10b981', kmlColor: 'ffffffff', kmlPolyColor: '6600ff00', kmlIconFile: 'pin_completed_v2.png', hotSpotX: '0.5', hotSpotY: '0.28' },
-      aborted:   { label: t.catAborted,   webColor: '#ef4444', kmlColor: 'ffffffff', kmlPolyColor: '660000ff', kmlIconFile: 'pin_aborted_v2.png',   hotSpotX: '0.5', hotSpotY: '0.28' }
+      aborted:   { label: t.catAborted,   webColor: '#ef4444', kmlColor: 'ffffffff', kmlPolyColor: '660000ff', kmlIconFile: 'pin_aborted_v2.png',   hotSpotX: '0.5', hotSpotY: '0.28' },
+      repair:    { label: t.catRepair,    webColor: '#38bdf8', kmlColor: 'ffffffff', kmlPolyColor: '66f8bd38', kmlIconFile: 'pin_repair_v2.png',    hotSpotX: '0.5', hotSpotY: '0.28' },
+      uav:       { label: t.catUav,       webColor: '#06b6d4', kmlColor: 'ffffffff', kmlPolyColor: '66d4b606', kmlIconFile: 'pin_uav_v2.png',       hotSpotX: '0.5', hotSpotY: '0.28' }
     };
     return mapCfg[cat] || mapCfg.danger;
   }
@@ -1296,6 +1298,8 @@
     document.getElementById('opt-cat-briefing').innerText = t.optBriefing;
     document.getElementById('opt-cat-completed').innerText = t.optCompleted;
     document.getElementById('opt-cat-aborted').innerText = t.optAborted;
+    document.getElementById('opt-cat-repair').innerText = t.optRepair;
+    document.getElementById('opt-cat-uav').innerText = t.optUav;
     document.getElementById('ui-mod-mgrs').innerText = t.modLblMgrs;
     document.getElementById('feat-mgrs').placeholder = t.modPhMgrs;
     document.getElementById('ui-mod-desc').innerText = t.modLblDesc;
@@ -1646,6 +1650,8 @@
       { key: 'briefing', label: t.catBriefing,    color: '#fbbf24', items: [] },
       { key: 'completed', label: t.catCompleted,  color: '#10b981', items: [] },
       { key: 'aborted',  label: t.catAborted,     color: '#ef4444', items: [] },
+      { key: 'repair',    label: t.catRepair,    color: '#38bdf8', items: [] },
+      { key: 'uav',       label: t.catUav,       color: '#06b6d4', items: [] },
       { key: 'shapes',   label: t.catShapesGroup, color: '#38bdf8', items: [] }
     ];
     const groupMap = {};
