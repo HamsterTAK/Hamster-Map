@@ -114,25 +114,6 @@
           25.000897
         ]
       }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "橋梁斷裂",
-        "category": "repair",
-        "desc": "",
-        "stream": "",
-        "coord": "51R UH 51872 66125 (25.00339, 121.53214)",
-        "time": "2026/11/4 03:52:23 (Stephanie)",
-        "updatedBy": "Stephanie"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.532138,
-          25.003391
-        ]
-      }
     }
   ]
 }
