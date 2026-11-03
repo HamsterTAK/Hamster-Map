@@ -1212,7 +1212,7 @@
       briefing: { label: t.catBriefing, webColor: '#fbbf24', kmlColor: 'ffffffff', kmlPolyColor: '6600aaff', kmlIconFile: 'pin_briefing_v2.png', hotSpotX: '0.5', hotSpotY: '0.28' },
       completed: { label: t.catCompleted, webColor: '#10b981', kmlColor: 'ffffffff', kmlPolyColor: '6600ff00', kmlIconFile: 'pin_completed_v2.png', hotSpotX: '0.5', hotSpotY: '0.28' },
       aborted:   { label: t.catAborted,   webColor: '#ef4444', kmlColor: 'ffffffff', kmlPolyColor: '660000ff', kmlIconFile: 'pin_aborted_v2.png',   hotSpotX: '0.5', hotSpotY: '0.28' },
-      repair:    { label: t.catRepair,    webColor: '#38bdf8', kmlColor: 'ffffffff', kmlPolyColor: '66f8bd38', kmlIconFile: 'pin_repair_v2.png',    hotSpotX: '0.5', hotSpotY: '0.28' },
+      repair:    { label: t.catRepair,    webColor: '#eab308', kmlColor: 'ff00ffff', kmlPolyColor: '6600ffff', kmlIconFile: 'pin_repair_v2.png',    hotSpotX: '0.5', hotSpotY: '0.28' },
       uav:       { label: t.catUav,       webColor: '#06b6d4', kmlColor: 'ffffffff', kmlPolyColor: '66d4b606', kmlIconFile: 'pin_uav_v2.png',       hotSpotX: '0.5', hotSpotY: '0.28' }
     };
     return mapCfg[cat] || mapCfg.danger;
@@ -2043,7 +2043,7 @@
     return canvas.toDataURL('image/png').split(',')[1];
   }
 
-  // 🔧 ATAK 專用 64x96 藍底交叉扳手起子 PNG (pin_repair_v2.png，上半部留白推高文字)
+// 🔧 ATAK 專用 64x96 黃底交叉扳手起子 PNG (pin_repair_v2.png)
   function generateATAKRepairBase64() {
     const canvas = document.createElement('canvas');
     canvas.width = 64; canvas.height = 96;
@@ -2051,9 +2051,9 @@
     ctx.beginPath();
     ctx.arc(32, 69, 21, 0, Math.PI * 2);
     ctx.fillStyle = '#0f172a'; ctx.fill();
-    ctx.lineWidth = 3.5; ctx.strokeStyle = '#38bdf8'; ctx.stroke();
+    ctx.lineWidth = 3.5; ctx.strokeStyle = '#eab308'; ctx.stroke();
 
-    ctx.strokeStyle = '#38bdf8'; ctx.fillStyle = '#38bdf8';
+    ctx.strokeStyle = '#eab308'; ctx.fillStyle = '#eab308';
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     // 交叉起子與扳手桿身
     ctx.lineWidth = 4.5;
@@ -2157,12 +2157,12 @@
         <path d="M9 9l18 18M27 9L9 27" fill="none" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>`;
     } else if (cat === 'repair') {
       innerSvg = `
-        <circle cx="18" cy="18" r="14.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2.2"/>
-        <path d="M11 25L25 11M11 11l14 14" stroke="#38bdf8" stroke-width="3.4" stroke-linecap="round"/>
-        <circle cx="11" cy="11" r="3.2" fill="#0f172a" stroke="#38bdf8" stroke-width="2.2"/>
-        <circle cx="25" cy="25" r="3.2" fill="#0f172a" stroke="#38bdf8" stroke-width="2.2"/>
-        <rect x="22.5" y="8.5" width="5" height="5" rx="1" transform="rotate(45 25 11)" fill="#38bdf8"/>
-        <rect x="8.5" y="22.5" width="5" height="5" rx="1" transform="rotate(45 11 25)" fill="#38bdf8"/>`;
+        <circle cx="18" cy="18" r="14.5" fill="#0f172a" stroke="#eab308" stroke-width="2.2"/>
+        <path d="M11 25L25 11M11 11l14 14" stroke="#eab308" stroke-width="3.4" stroke-linecap="round"/>
+        <circle cx="11" cy="11" r="3.2" fill="#0f172a" stroke="#eab308" stroke-width="2.2"/>
+        <circle cx="25" cy="25" r="3.2" fill="#0f172a" stroke="#eab308" stroke-width="2.2"/>
+        <rect x="22.5" y="8.5" width="5" height="5" rx="1" transform="rotate(45 25 11)" fill="#eab308"/>
+        <rect x="8.5" y="22.5" width="5" height="5" rx="1" transform="rotate(45 11 25)" fill="#eab308"/>`;
     } else if (cat === 'uav') {
       innerSvg = `
         <circle cx="18" cy="18" r="14.5" fill="#0f172a" stroke="#06b6d4" stroke-width="2.2"/>
