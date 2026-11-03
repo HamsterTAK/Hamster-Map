@@ -3204,7 +3204,7 @@
     const repo = document.getElementById('gh-repo').value.trim() || 'Hamster-Map';
     const baseUrl = `https://${owner}.github.io/${repo}`;
 
-    const allCats = ['danger', 'rescue', 'supply', 'friendly', 'casevac', 'goto', 'hold', 'briefing', 'completed', 'aborted'];
+    const allCats = ['danger', 'rescue', 'supply', 'friendly', 'casevac', 'goto', 'hold', 'briefing', 'completed', 'aborted', 'repair', 'uav'];
     let sharedStyles = '';
     allCats.forEach(catKey => {
       const cCfg = getCategoryConfig(catKey);
