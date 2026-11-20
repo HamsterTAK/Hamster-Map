@@ -280,5 +280,29 @@
       </PolyStyle>
     </Style>
     
+    <Placemark>
+      <name><![CDATA[關渡宮]]></name>
+      <description><![CDATA[[Mission: 2026112122]
+[🟢 物資站 / 安全集結區]
+台北市長沈伯洋!!!
+座標：51R UH 45133 78838 (25.11749, 121.46394)
+更新：2026/11/20 21:52:40 (HeenHQ)]]></description>
+      <styleUrl>#style_supply</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ff00ff00</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.463943,25.117485,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
