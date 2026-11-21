@@ -116,6 +116,25 @@
           24.996135
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "生態北公園",
+        "category": "rescue",
+        "desc": "拍照偵查目標: 大笨鳥或狗",
+        "stream": "",
+        "coord": "51R UH 44189 65837 (25.00002, 121.45606)",
+        "time": "2026/11/21 23:01:42 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.456061,
+          25.000018
+        ]
+      }
     }
   ]
 }
