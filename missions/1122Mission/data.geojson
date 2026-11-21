@@ -97,6 +97,25 @@
           24.996599
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "華東公園",
+        "category": "rescue",
+        "desc": "偵查籃球場狀況並回報",
+        "stream": "",
+        "coord": "51R UH 43484 65415 (24.99613, 121.44912)",
+        "time": "2026/11/21 22:55:25 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.449123,
+          24.996135
+        ]
+      }
     }
   ]
 }
