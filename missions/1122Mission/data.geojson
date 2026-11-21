@@ -154,6 +154,25 @@
           25.000964
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "消防局",
+        "category": "rescue",
+        "desc": "門口有幾輛消防車或救護車? 拍照回傳",
+        "stream": "",
+        "coord": "51R UH 44030 65944 (25.00097, 121.45447)",
+        "time": "2026/11/21 23:14:20 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.454469,
+          25.000967
+        ]
+      }
     }
   ]
 }
