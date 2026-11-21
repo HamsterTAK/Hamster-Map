@@ -304,5 +304,26 @@
       </Style>
       <Point><coordinates>121.453721,24.995525,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[葛瑪蘭客運停車場]]></name>
+      <description><![CDATA[[Mission: 1122Mission]
+[🟡 待援點 / 搜索目標區]
+有多少輛葛瑪蘭客運? 拍照回報
+座標：51R UH 43659 65587 (24.99771, 121.45084)
+更新：2026/11/21 22:44:18 (Neoyang)]]></description>
+      <styleUrl>#style_rescue</styleUrl>
+      <Style>
+        <LineStyle>
+          <color>ff00ffff</color>
+          <width>4</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>6600ffff</color>
+          <fill>1</fill>
+          <outline>1</outline>
+        </PolyStyle>
+      </Style>
+      <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.450613,24.997565,0 121.450554,24.997678,0 121.450545,24.997764,0 121.450801,24.997916,0 121.450946,24.997945,0 121.451095,24.997933,0 121.451128,24.997834,0 121.45103,24.997543,0 121.450853,24.997472,0 121.450613,24.997565,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
+    </Placemark>
   </Document>
 </kml>
