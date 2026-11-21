@@ -78,6 +78,25 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "生態南公園",
+        "category": "rescue",
+        "desc": "1. 觀察公園內有什麼動物並回報\n2. 拍一張狗或是湖裡面魚的照片",
+        "stream": "",
+        "coord": "51R UH 44065 65460 (24.99660, 121.45487)",
+        "time": "2026/11/21 22:49:38 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.454871,
+          24.996599
+        ]
+      }
     }
   ]
 }
