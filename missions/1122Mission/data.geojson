@@ -23,71 +23,12 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "葛瑪蘭客運停車場",
-        "category": "rescue",
-        "desc": "有多少輛葛瑪蘭客運? 拍照回報",
-        "stream": "",
-        "coord": "51R UH 43659 65587 (24.99771, 121.45084)",
-        "time": "2026/11/21 22:44:18 (Neoyang)",
-        "updatedBy": "Neoyang"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              121.450613,
-              24.997565
-            ],
-            [
-              121.450554,
-              24.997678
-            ],
-            [
-              121.450545,
-              24.997764
-            ],
-            [
-              121.450801,
-              24.997916
-            ],
-            [
-              121.450946,
-              24.997945
-            ],
-            [
-              121.451095,
-              24.997933
-            ],
-            [
-              121.451128,
-              24.997834
-            ],
-            [
-              121.45103,
-              24.997543
-            ],
-            [
-              121.450853,
-              24.997472
-            ],
-            [
-              121.450613,
-              24.997565
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "name": "生態南公園",
-        "category": "rescue",
+        "category": "hold",
         "desc": "1. 觀察公園內有什麼動物並回報\n2. 拍一張狗或是湖裡面魚的照片",
         "stream": "",
         "coord": "51R UH 44065 65460 (24.99660, 121.45487)",
-        "time": "2026/11/21 22:49:38 (Neoyang)",
+        "time": "2026/11/21 23:28:27 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
@@ -106,7 +47,7 @@
         "desc": "偵查籃球場狀況並回報",
         "stream": "",
         "coord": "51R UH 43484 65415 (24.99613, 121.44912)",
-        "time": "2026/11/21 22:55:25 (Neoyang)",
+        "time": "2026/11/21 23:27:17 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
@@ -121,11 +62,11 @@
       "type": "Feature",
       "properties": {
         "name": "生態北公園",
-        "category": "rescue",
+        "category": "goto",
         "desc": "拍照偵查目標: 大笨鳥或狗",
         "stream": "",
         "coord": "51R UH 44189 65837 (25.00002, 121.45606)",
-        "time": "2026/11/21 23:01:42 (Neoyang)",
+        "time": "2026/11/21 23:26:51 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
@@ -140,11 +81,11 @@
       "type": "Feature",
       "properties": {
         "name": "歐義式",
-        "category": "rescue",
+        "category": "goto",
         "desc": "拍攝門口菜單",
         "stream": "",
         "coord": "51R UH 43908 65945 (25.00096, 121.45326)",
-        "time": "2026/11/21 23:04:26 (Neoyang)",
+        "time": "2026/11/21 23:27:11 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
@@ -163,7 +104,7 @@
         "desc": "門口有幾輛消防車或救護車? 拍照回傳",
         "stream": "",
         "coord": "51R UH 44030 65944 (25.00097, 121.45447)",
-        "time": "2026/11/21 23:14:20 (Neoyang)",
+        "time": "2026/11/21 23:27:34 (Neoyang)",
         "updatedBy": "Neoyang"
       },
       "geometry": {
@@ -171,6 +112,44 @@
         "coordinates": [
           121.454469,
           25.000967
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "不快樂的小花",
+        "category": "goto",
+        "desc": "拍攝店門口",
+        "stream": "",
+        "coord": "51R UH 43537 65306 (24.99515, 121.44966)",
+        "time": "2026/11/21 23:26:31 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.449656,
+          24.995154
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "葛瑪蘭客運停車場",
+        "category": "goto",
+        "desc": "有多少輛葛瑪蘭客運? 拍照回報",
+        "stream": "",
+        "coord": "51R UH 43664 65589 (24.99772, 121.45089)",
+        "time": "2026/11/21 23:28:16 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.450888,
+          24.997725
         ]
       }
     }
