@@ -1,4 +1,24 @@
 {
   "type": "FeatureCollection",
-  "features": []
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "咕咕G寵物城",
+        "category": "goto",
+        "desc": "拍一張店內動物照片",
+        "stream": "",
+        "coord": "51R UH 43947 65342 (24.99552, 121.45372)",
+        "time": "2026/11/21 22:41:41 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.453721,
+          24.995525
+        ]
+      }
+    }
+  ]
 }
