@@ -325,5 +325,30 @@
       </Style>
       <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.450613,24.997565,0 121.450554,24.997678,0 121.450545,24.997764,0 121.450801,24.997916,0 121.450946,24.997945,0 121.451095,24.997933,0 121.451128,24.997834,0 121.45103,24.997543,0 121.450853,24.997472,0 121.450613,24.997565,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[生態南公園]]></name>
+      <description><![CDATA[[Mission: 1122Mission]
+[🟡 待援點 / 搜索目標區]
+1. 觀察公園內有什麼動物並回報
+2. 拍一張狗或是湖裡面魚的照片
+座標：51R UH 44065 65460 (24.99660, 121.45487)
+更新：2026/11/21 22:49:38 (Neoyang)]]></description>
+      <styleUrl>#style_rescue</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ff00ffff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.454871,24.996599,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
