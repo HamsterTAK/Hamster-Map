@@ -374,5 +374,29 @@
       </Style>
       <Point><coordinates>121.449123,24.996135,0</coordinates></Point>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[生態北公園]]></name>
+      <description><![CDATA[[Mission: 1122Mission]
+[🟡 待援點 / 搜索目標區]
+拍照偵查目標: 大笨鳥或狗
+座標：51R UH 44189 65837 (25.00002, 121.45606)
+更新：2026/11/21 23:01:42 (Neoyang)]]></description>
+      <styleUrl>#style_rescue</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ff00ffff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.456061,25.000018,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
