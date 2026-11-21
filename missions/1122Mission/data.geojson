@@ -135,6 +135,25 @@
           25.000018
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "歐義式",
+        "category": "rescue",
+        "desc": "拍攝門口菜單",
+        "stream": "",
+        "coord": "51R UH 43908 65945 (25.00096, 121.45326)",
+        "time": "2026/11/21 23:04:26 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.453261,
+          25.000964
+        ]
+      }
     }
   ]
 }
