@@ -305,43 +305,22 @@
       <Point><coordinates>121.453721,24.995525,0</coordinates></Point>
     </Placemark>
     <Placemark>
-      <name><![CDATA[葛瑪蘭客運停車場]]></name>
-      <description><![CDATA[[Mission: 1122Mission]
-[🟡 待援點 / 搜索目標區]
-有多少輛葛瑪蘭客運? 拍照回報
-座標：51R UH 43659 65587 (24.99771, 121.45084)
-更新：2026/11/21 22:44:18 (Neoyang)]]></description>
-      <styleUrl>#style_rescue</styleUrl>
-      <Style>
-        <LineStyle>
-          <color>ff00ffff</color>
-          <width>4</width>
-        </LineStyle>
-        <PolyStyle>
-          <color>6600ffff</color>
-          <fill>1</fill>
-          <outline>1</outline>
-        </PolyStyle>
-      </Style>
-      <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.450613,24.997565,0 121.450554,24.997678,0 121.450545,24.997764,0 121.450801,24.997916,0 121.450946,24.997945,0 121.451095,24.997933,0 121.451128,24.997834,0 121.45103,24.997543,0 121.450853,24.997472,0 121.450613,24.997565,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
-    </Placemark>
-    <Placemark>
       <name><![CDATA[生態南公園]]></name>
       <description><![CDATA[[Mission: 1122Mission]
-[🟡 待援點 / 搜索目標區]
+[🟣🛡️ 固守 / 待命警戒區 (Hold)]
 1. 觀察公園內有什麼動物並回報
 2. 拍一張狗或是湖裡面魚的照片
 座標：51R UH 44065 65460 (24.99660, 121.45487)
-更新：2026/11/21 22:49:38 (Neoyang)]]></description>
-      <styleUrl>#style_rescue</styleUrl>
+更新：2026/11/21 23:28:27 (Neoyang)]]></description>
+      <styleUrl>#style_hold</styleUrl>
       <Style>
         <IconStyle>
-          <color>ff00ffff</color>
+          <color>ffffffff</color>
           <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_hold_v2.png</href>
           </Icon>
-          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
         </IconStyle>
         <LabelStyle>
           <color>ffffffff</color>
@@ -356,7 +335,7 @@
 [🟡 待援點 / 搜索目標區]
 偵查籃球場狀況並回報
 座標：51R UH 43484 65415 (24.99613, 121.44912)
-更新：2026/11/21 22:55:25 (Neoyang)]]></description>
+更新：2026/11/21 23:27:17 (Neoyang)]]></description>
       <styleUrl>#style_rescue</styleUrl>
       <Style>
         <IconStyle>
@@ -377,17 +356,17 @@
     <Placemark>
       <name><![CDATA[生態北公園]]></name>
       <description><![CDATA[[Mission: 1122Mission]
-[🟡 待援點 / 搜索目標區]
+[🟡⬇️ 前往目標點 (Move to)]
 拍照偵查目標: 大笨鳥或狗
 座標：51R UH 44189 65837 (25.00002, 121.45606)
-更新：2026/11/21 23:01:42 (Neoyang)]]></description>
-      <styleUrl>#style_rescue</styleUrl>
+更新：2026/11/21 23:26:51 (Neoyang)]]></description>
+      <styleUrl>#style_goto</styleUrl>
       <Style>
         <IconStyle>
-          <color>ff00ffff</color>
+          <color>ffffffff</color>
           <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto_v2.png</href>
           </Icon>
           <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
         </IconStyle>
@@ -401,17 +380,17 @@
     <Placemark>
       <name><![CDATA[歐義式]]></name>
       <description><![CDATA[[Mission: 1122Mission]
-[🟡 待援點 / 搜索目標區]
+[🟡⬇️ 前往目標點 (Move to)]
 拍攝門口菜單
 座標：51R UH 43908 65945 (25.00096, 121.45326)
-更新：2026/11/21 23:04:26 (Neoyang)]]></description>
-      <styleUrl>#style_rescue</styleUrl>
+更新：2026/11/21 23:27:11 (Neoyang)]]></description>
+      <styleUrl>#style_goto</styleUrl>
       <Style>
         <IconStyle>
-          <color>ff00ffff</color>
+          <color>ffffffff</color>
           <scale>1.1</scale>
           <Icon>
-            <href>https://HamsterTAK.github.io/Hamster-Map/google_pin.png</href>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto_v2.png</href>
           </Icon>
           <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
         </IconStyle>
@@ -428,7 +407,7 @@
 [🟡 待援點 / 搜索目標區]
 門口有幾輛消防車或救護車? 拍照回傳
 座標：51R UH 44030 65944 (25.00097, 121.45447)
-更新：2026/11/21 23:14:20 (Neoyang)]]></description>
+更新：2026/11/21 23:27:34 (Neoyang)]]></description>
       <styleUrl>#style_rescue</styleUrl>
       <Style>
         <IconStyle>
@@ -445,6 +424,54 @@
         </LabelStyle>
       </Style>
       <Point><coordinates>121.454469,25.000967,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[不快樂的小花]]></name>
+      <description><![CDATA[[Mission: 1122Mission]
+[🟡⬇️ 前往目標點 (Move to)]
+拍攝店門口
+座標：51R UH 43537 65306 (24.99515, 121.44966)
+更新：2026/11/21 23:26:31 (Neoyang)]]></description>
+      <styleUrl>#style_goto</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ffffffff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto_v2.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.449656,24.995154,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[葛瑪蘭客運停車場]]></name>
+      <description><![CDATA[[Mission: 1122Mission]
+[🟡⬇️ 前往目標點 (Move to)]
+有多少輛葛瑪蘭客運? 拍照回報
+座標：51R UH 43664 65589 (24.99772, 121.45089)
+更新：2026/11/21 23:28:16 (Neoyang)]]></description>
+      <styleUrl>#style_goto</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ffffffff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto_v2.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.450888,24.997725,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
