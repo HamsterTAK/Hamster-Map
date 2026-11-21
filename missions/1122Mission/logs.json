@@ -88,5 +88,11 @@
     "user": "Neoyang",
     "type": "action",
     "text": "Added \"消防局\" [🟡 待援點 / 搜索目標區] (51R UH 44030 65944 (25.00097, 121.45447))"
+  },
+  {
+    "time": "2026/11/21 23:14:25",
+    "user": "Neoyang",
+    "type": "action",
+    "text": "Published mission [1122Mission] to cloud"
   }
 ]
