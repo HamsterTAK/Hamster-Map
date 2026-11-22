@@ -285,7 +285,7 @@
       <description><![CDATA[[Mission: 2026112122]
 [🟢 物資站 / 安全集結區]
 台北市長沈伯洋!!!
-座標：51R UH 45133 78838 (25.11749, 121.46394)
+座標：51R UH 45133 78838 (25.11748, 121.46394)
 更新：2026/11/20 21:52:40 (HeenHQ)]]></description>
       <styleUrl>#style_supply</styleUrl>
       <Style>
@@ -303,6 +303,54 @@
         </LabelStyle>
       </Style>
       <Point><coordinates>121.463943,25.117485,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[邪惡祭壇]]></name>
+      <description><![CDATA[[Mission: 2026112122]
+[📜 任務簡報 / 區域公佈欄]
+
+座標：51R UH 44769 79014 (25.11904, 121.46032)
+更新：2026/11/22 12:02:46 (Neoyang)]]></description>
+      <styleUrl>#style_briefing</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ffffffff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_briefing_v2.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.460316,25.119039,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name><![CDATA[未命名標記]]></name>
+      <description><![CDATA[[Mission: 2026112122]
+[🟡⬇️ 前往目標點 (Move to)]
+
+座標：51R UH 45044 79059 (25.11947, 121.46304)
+更新：2026/11/22 12:03:00 (Neoyang)]]></description>
+      <styleUrl>#style_goto</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ffffffff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_goto_v2.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.04" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.463041,25.119466,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
