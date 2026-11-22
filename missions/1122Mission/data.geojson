@@ -8,7 +8,7 @@
         "category": "goto",
         "desc": "拍一張店內動物照片",
         "stream": "",
-        "coord": "51R UH 43947 65342 (24.99552, 121.45372)",
+        "coord": "51R UH 43948 65342 (24.99553, 121.45372)",
         "time": "2026/11/21 22:41:41 (Neoyang)",
         "updatedBy": "Neoyang"
       },
@@ -150,6 +150,25 @@
         "coordinates": [
           121.450888,
           24.997725
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "本日任務",
+        "category": "briefing",
+        "desc": "1. 拍照用TAK Geo CAM回傳\n2. 描述可用訊息傳至Neoyang",
+        "stream": "",
+        "coord": "51R UH 43360 65629 (24.99806, 121.44787)",
+        "time": "2026/11/22 15:01:22 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.447871,
+          24.998058
         ]
       }
     }
