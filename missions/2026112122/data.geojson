@@ -19,44 +19,6 @@
           25.117485
         ]
       }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "邪惡祭壇",
-        "category": "briefing",
-        "desc": "",
-        "stream": "",
-        "coord": "51R UH 44769 79014 (25.11904, 121.46032)",
-        "time": "2026/11/22 12:02:46 (Neoyang)",
-        "updatedBy": "Neoyang"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.460316,
-          25.119039
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "未命名標記",
-        "category": "goto",
-        "desc": "",
-        "stream": "",
-        "coord": "51R UH 45044 79059 (25.11947, 121.46304)",
-        "time": "2026/11/22 12:03:00 (Neoyang)",
-        "updatedBy": "Neoyang"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          121.463041,
-          25.119466
-        ]
-      }
     }
   ]
 }
