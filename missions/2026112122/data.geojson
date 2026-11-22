@@ -116,6 +116,25 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "傷患",
+        "category": "casevac",
+        "desc": "",
+        "stream": "",
+        "coord": "51R UH 45077 78760 (25.11678, 121.46340)",
+        "time": "2026/11/22 12:47:46 (Neoyang)",
+        "updatedBy": "Neoyang"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.463395,
+          25.116777
+        ]
+      }
     }
   ]
 }
