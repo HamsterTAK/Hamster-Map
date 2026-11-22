@@ -76,5 +76,11 @@
     "user": "Neoyang",
     "type": "action",
     "text": "Published mission [2026112122] to cloud"
+  },
+  {
+    "time": "2026/11/22 12:45:38",
+    "user": "Neoyang",
+    "type": "action",
+    "text": "Added \"無人機\" [🛸 無人機 / FPV 作業點] (51R UH 44927 78865 (25.11771, 121.46190))"
   }
 ]
