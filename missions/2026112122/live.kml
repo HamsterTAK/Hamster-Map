@@ -373,5 +373,29 @@
       </Style>
       <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing><coordinates>121.462998,25.117165,0 121.462548,25.117718,0 121.462129,25.118466,0 121.46214,25.11899,0 121.462752,25.119175,0 121.463041,25.118602,0 121.462945,25.118039,0 121.463181,25.117709,0 121.463256,25.117369,0 121.462998,25.117165,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
     </Placemark>
+    <Placemark>
+      <name><![CDATA[傷患]]></name>
+      <description><![CDATA[[Mission: 2026112122]
+[⚪🔴 緊急傷患 / CASEVAC 後送點]
+
+座標：51R UH 45077 78760 (25.11678, 121.46340)
+更新：2026/11/22 12:47:46 (Neoyang)]]></description>
+      <styleUrl>#style_casevac</styleUrl>
+      <Style>
+        <IconStyle>
+          <color>ffffffff</color>
+          <scale>1.1</scale>
+          <Icon>
+            <href>https://HamsterTAK.github.io/Hamster-Map/pin_casevac_v2.png</href>
+          </Icon>
+          <hotSpot x="0.5" y="0.28" xunits="fraction" yunits="fraction"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ffffffff</color>
+          <scale>1.0</scale>
+        </LabelStyle>
+      </Style>
+      <Point><coordinates>121.463395,25.116777,0</coordinates></Point>
+    </Placemark>
   </Document>
 </kml>
